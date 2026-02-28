@@ -47,13 +47,19 @@ The codebase has three distinct layers with a strict dependency direction:
 
 - **Module-defined vs user-defined commands**: Module-defined commands (`ModuleDefinedCommand`) are built-in with typed parameters. User-defined commands (`UserDefinedCommand`) are parsed from hex strings entered by users. Error handling differs: user-defined command errors are non-fatal.
 
+### Variables and Feedbacks
+
+- **Variables** (`src/variables.ts`): Camera state is polled every 5 seconds via VISCA inquiries and exposed as Companion variables (`pan_position`, `tilt_position`, `focus_mode`, `exposure_mode`, `osd_state`). After each poll, `checkFeedbacks()` is called to re-evaluate feedback state.
+
+- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback.
+
 ### Instance Lifecycle
 
 `PtzOpticsInstance` (extends `InstanceBase<RawConfig>`) implements three Companion lifecycle methods:
 
-- `init()` — Registers actions/presets, opens VISCA connection
-- `configUpdated()` — Validates new config, reconnects if needed
-- `destroy()` — Closes connection
+- `init()` — Registers actions, feedbacks, presets, and variables; opens VISCA connection
+- `configUpdated()` — Validates new config, reconnects and restarts polling if needed
+- `destroy()` — Stops polling, closes connection
 
 ### Upgrade System
 

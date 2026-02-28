@@ -39,13 +39,23 @@ export function focusActions(instance: PtzOpticsInstance): ActionDefinitions<Foc
 					choices: [
 						{ id: '0', label: 'Auto focus' },
 						{ id: '1', label: 'Manual focus' },
+						{ id: '2', label: 'Toggle' },
 					],
 					default: '0',
 				},
 			],
 			callback: async ({ options }) => {
-				const mode = getFocusMode(options)
-				instance.sendCommand(FocusMode, { mode })
+				if (String(options[FocusModeId]) === '2') {
+					const answer = await instance.sendInquiry(FocusModeInquiry)
+					if (answer === null) {
+						return
+					}
+					const mode = answer.mode === 'auto' ? 'manual' : 'auto'
+					instance.sendCommand(FocusMode, { mode })
+				} else {
+					const mode = getFocusMode(options)
+					instance.sendCommand(FocusMode, { mode })
+				}
 			},
 			learn: async (_event: CompanionActionEvent) => {
 				const answer = await instance.sendInquiry(FocusModeInquiry)

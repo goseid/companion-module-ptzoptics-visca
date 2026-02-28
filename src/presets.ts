@@ -1,5 +1,6 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
 import { ExposureActionId, ExposureModeId } from './actions/exposure.js'
+import { FeedbackId } from './feedbacks.js'
 import { FocusActionId, FocusModeId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
@@ -474,21 +475,23 @@ export function getPresets(): CompanionPresetDefinitions {
 					{
 						actionId: FocusActionId.SelectFocusMode,
 						options: {
-							[FocusModeId]: 0,
+							[FocusModeId]: '2',
 						},
 					},
 				],
-				up: [
-					{
-						actionId: FocusActionId.SelectFocusMode,
-						options: {
-							[FocusModeId]: 1,
-						},
-					},
-				],
+				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.FocusModeAuto,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(255, 0, 0),
+				},
+			},
+		],
 	}
 
 	presets['focus_lock_preset'] = {
@@ -572,8 +575,46 @@ export function getPresets(): CompanionPresetDefinitions {
 				],
 				up: [],
 			},
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: 2,
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: 3,
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: 4,
+						},
+					},
+				],
+				up: [],
+			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureModeText,
+				options: {},
+			},
+		],
 	}
 
 	presets['iris_up_preset'] = {

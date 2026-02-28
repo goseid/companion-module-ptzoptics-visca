@@ -1,5 +1,6 @@
 import { InstanceBase, InstanceStatus, type SomeCompanionConfigField } from '@companion-module/base'
 import { getActions } from './actions/actions.js'
+import { getFeedbacks } from './feedbacks.js'
 import {
 	canUpdateConfigWithoutRestarting,
 	type RawConfig,
@@ -11,6 +12,7 @@ import {
 } from './config.js'
 import { getPresets } from './presets.js'
 import { repr } from './utils/repr.js'
+import { getVariableDefinitions, pollVariables } from './variables.js'
 import type { Command, CommandParameters, CommandParamValues, NoCommandParameters } from './visca/command.js'
 import type { Answer, AnswerParameters, Inquiry } from './visca/inquiry.js'
 import { VISCAPort } from './visca/port.js'
@@ -26,6 +28,9 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 
 	/** A port to use to communicate with the represented camera. */
 	#visca = new VISCAPort(this)
+
+	/** Timer handle for periodic variable polling, or null if not polling. */
+	#pollTimer: ReturnType<typeof setInterval> | null = null
 
 	/**
 	 * Send the given command to the camera, filling in any parameters from the
@@ -131,12 +136,32 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		if (this.#speed > 0x01) this.#speed--
 	}
 
+	/** The polling interval in milliseconds. */
+	static readonly #POLL_INTERVAL_MS = 5000
+
+	#startPolling(): void {
+		this.#stopPolling()
+		this.#pollTimer = setInterval(() => {
+			pollVariables(this).catch((reason: Error) => {
+				this.log('error', `Variable polling error: ${reason.message}`)
+			})
+		}, PtzOpticsInstance.#POLL_INTERVAL_MS)
+	}
+
+	#stopPolling(): void {
+		if (this.#pollTimer !== null) {
+			clearInterval(this.#pollTimer)
+			this.#pollTimer = null
+		}
+	}
+
 	override getConfigFields(): SomeCompanionConfigField[] {
 		return getConfigFields()
 	}
 
 	override async destroy(): Promise<void> {
 		this.log('info', `destroying module: ${this.id}`)
+		this.#stopPolling()
 		this.#visca.close('Instance is being destroyed', InstanceStatus.Disconnected)
 	}
 
@@ -144,7 +169,9 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		this.#logConfig(config, 'init()')
 
 		this.setActionDefinitions(getActions(this))
+		this.setFeedbackDefinitions(getFeedbacks(this))
 		this.setPresetDefinitions(getPresets())
+		this.setVariableDefinitions(getVariableDefinitions())
 
 		return this.configUpdated(config)
 	}
@@ -162,12 +189,14 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		}
 
 		if (!isValidHost(this.#config.host)) {
+			this.#stopPolling()
 			this.#visca.close('no host specified', InstanceStatus.Disconnected)
 		} else {
 			// Initiate the connection (closing any prior connection), but don't
 			// delay to fully establish it as `await this.#visca.connect()`
 			// would, because network vagaries might make this take a long time.
 			this.#visca.open(this.#config.host, this.#config.port)
+			this.#startPolling()
 		}
 	}
 
