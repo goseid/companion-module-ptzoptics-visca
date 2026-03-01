@@ -1,4 +1,4 @@
-import type { ExposureMode } from './exposure.js'
+import type { ExposureMode, IrisSetting, ShutterSetting } from './exposure.js'
 import type { WhiteBalanceMode } from './white-balance.js'
 import { ModuleDefinedInquiry } from '../visca/inquiry.js'
 
@@ -70,9 +70,81 @@ export const CameraBlockInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x7e, 0x
 		},
 		shutterPosition: {
 			nibbles: [20, 21],
+			convert: (param: number): ShutterSetting => {
+				switch (param) {
+					case 0x11:
+						return '1/1000000'
+					case 0x10:
+						return '1/6000'
+					case 0x0f:
+						return '1/4000'
+					case 0x0e:
+						return '1/3000'
+					case 0x0d:
+						return '1/2000'
+					case 0x0c:
+						return '1/1500'
+					case 0x0b:
+						return '1/1000'
+					case 0x0a:
+						return '1/725'
+					case 0x09:
+						return '1/500'
+					case 0x08:
+						return '1/350'
+					case 0x07:
+						return '1/250'
+					case 0x06:
+						return '1/180'
+					case 0x05:
+						return '1/125'
+					case 0x04:
+						return '1/100'
+					case 0x03:
+						return '1/90'
+					case 0x02:
+						return '1/60'
+					case 0x01:
+						return '1/30'
+					default:
+						return '1/100'
+				}
+			},
 		},
 		irisPosition: {
 			nibbles: [22, 23],
+			convert: (param: number): IrisSetting => {
+				switch (param) {
+					case 0x0c:
+						return 'ƒ 1.8'
+					case 0x0b:
+						return 'ƒ 2.0'
+					case 0x0a:
+						return 'ƒ 2.4'
+					case 0x09:
+						return 'ƒ 2.8'
+					case 0x08:
+						return 'ƒ 3.4'
+					case 0x07:
+						return 'ƒ 4.0'
+					case 0x06:
+						return 'ƒ 4.8'
+					case 0x05:
+						return 'ƒ 5.6'
+					case 0x04:
+						return 'ƒ 6.8'
+					case 0x03:
+						return 'ƒ 8.0'
+					case 0x02:
+						return 'ƒ 9.6'
+					case 0x01:
+						return 'ƒ 11.0'
+					case 0x00:
+						return 'CLOSED'
+					default:
+						return 'ƒ 4.0'
+				}
+			},
 		},
 		gainPosition: {
 			nibbles: [24, 25],

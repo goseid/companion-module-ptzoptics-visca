@@ -730,7 +730,7 @@ export function getPresets(): CompanionPresetDefinitions {
 					{
 						actionId: ExposureActionId.SetIris,
 						options: {
-							val: '10',
+							val: '0B',
 						},
 					},
 				],

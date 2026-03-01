@@ -1,4 +1,4 @@
-import type { CompanionActionEvent, CompanionOptionValues } from '@companion-module/base'
+import type { CompanionActionEvent, CompanionMigrationAction, CompanionOptionValues } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
 import {
 	BrightDirect,
@@ -65,18 +65,18 @@ const IrisSettingId = 'val'
 const [getIrisSetting] = optionConversions<IrisSetting, typeof IrisSettingId>(
 	IrisSettingId,
 	[
-		['11', 'F1.8'],
-		['10', 'F2.0'],
-		['0F', 'F2.4'],
-		['0E', 'F2.8'],
-		['0D', 'F3.4'],
-		['0C', 'F4.0'],
-		['0B', 'F4.8'],
-		['0A', 'F5.6'],
-		['09', 'F6.8'],
-		['08', 'F8.0'],
-		['07', 'F9.6'],
-		['06', 'F11.0'],
+		['0C', 'ƒ 1.8'],
+		['0B', 'ƒ 2.0'],
+		['0A', 'ƒ 2.4'],
+		['09', 'ƒ 2.8'],
+		['08', 'ƒ 3.4'],
+		['07', 'ƒ 4.0'],
+		['06', 'ƒ 4.8'],
+		['05', 'ƒ 5.6'],
+		['04', 'ƒ 6.8'],
+		['03', 'ƒ 8.0'],
+		['02', 'ƒ 9.6'],
+		['01', 'ƒ 11.0'],
 		['00', 'CLOSED'],
 	],
 	'CLOSED',
@@ -190,21 +190,21 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 					label: 'Iris setting',
 					id: IrisSettingId,
 					choices: [
-						{ id: '11', label: 'F1.8' },
-						{ id: '10', label: 'F2.0' },
-						{ id: '0F', label: 'F2.4' },
-						{ id: '0E', label: 'F2.8' },
-						{ id: '0D', label: 'F3.4' },
-						{ id: '0C', label: 'F4.0' },
-						{ id: '0B', label: 'F4.8' },
-						{ id: '0A', label: 'F5.6' },
-						{ id: '09', label: 'F6.8' },
-						{ id: '08', label: 'F8.0' },
-						{ id: '07', label: 'F9.6' },
-						{ id: '06', label: 'F11.0' },
+						{ id: '0C', label: 'ƒ 1.8' },
+						{ id: '0B', label: 'ƒ 2.0' },
+						{ id: '0A', label: 'ƒ 2.4' },
+						{ id: '09', label: 'ƒ 2.8' },
+						{ id: '08', label: 'ƒ 3.4' },
+						{ id: '07', label: 'ƒ 4.0' },
+						{ id: '06', label: 'ƒ 4.8' },
+						{ id: '05', label: 'ƒ 5.6' },
+						{ id: '04', label: 'ƒ 6.8' },
+						{ id: '03', label: 'ƒ 8.0' },
+						{ id: '02', label: 'ƒ 9.6' },
+						{ id: '01', label: 'ƒ 11.0' },
 						{ id: '00', label: 'CLOSED' },
 					],
-					default: '0C',
+					default: '07',
 				},
 			],
 			callback: async ({ options }) => {
@@ -354,4 +354,31 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 			},
 		},
 	}
+}
+
+/** Old hex IDs → corrected hex IDs for Set Iris actions. */
+const oldIrisHexToNew: Record<string, string> = {
+	'11': '0C',
+	'10': '0B',
+	'0F': '0A',
+	'0E': '09',
+	'0D': '08',
+	'0C': '07',
+	'0B': '06',
+	'0A': '05',
+	'09': '04',
+	'08': '03',
+	'07': '02',
+	'06': '01',
+}
+
+export function tryUpdateIrisHexValues(action: CompanionMigrationAction): boolean {
+	if (action.actionId !== (ExposureActionId.SetIris as string)) return false
+	const val = action.options[IrisSettingId]
+	if (typeof val !== 'string') return false
+	const upper = val.toUpperCase()
+	const replacement = oldIrisHexToNew[upper]
+	if (replacement === undefined) return false
+	action.options[IrisSettingId] = replacement
+	return true
 }

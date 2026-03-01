@@ -59,7 +59,7 @@ The codebase has three distinct layers with a strict dependency direction:
 
 ### Variables and Feedbacks
 
-- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, focus mode, OSD state, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, aperture, shutter/iris/bright/gain positions, backlight, exposure comp).
+- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, focus mode, OSD state, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, aperture, shutter/iris/bright/gain positions, backlight, exposure comp). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters.
 
 - **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto, WB Mode: Auto/Indoor/Outdoor/OnePush/Manual). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback.
 
@@ -84,6 +84,8 @@ Commands and inquiries follow consistent byte patterns for related camera proper
 | Exp Comp | `04 0E` | `04 4E` | `04 4E` |
 
 Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 00 00 0p 0q FF` with position in nibbles [13, 15]. Note: `04 A1` is a separate "Brightness" (image quality) parameter, distinct from "Bright" (AE bright level) at `04 0D`/`04 4D`.
+
+**Iris hex values** (verified against camera): `00` = CLOSED, `01` = ƒ 11.0, `02` = ƒ 9.6, `03` = ƒ 8.0, `04` = ƒ 6.8, `05` = ƒ 5.6, `06` = ƒ 4.8, `07` = ƒ 4.0, `08` = ƒ 3.4, `09` = ƒ 2.8, `0A` = ƒ 2.4, `0B` = ƒ 2.0, `0C` = ƒ 1.8. These differ from the PTZOptics API documentation, which lists incorrect/reversed mappings.
 
 ### Upgrade System
 

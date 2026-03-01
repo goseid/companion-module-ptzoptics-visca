@@ -5,6 +5,7 @@ import type {
 	CompanionUpgradeContext,
 } from '@companion-module/base'
 import { tryUpdateCustomCommandsWithCommandParamOptions } from './actions/custom-command.js'
+import { tryUpdateIrisHexValues } from './actions/exposure.js'
 import { tryUpdatePresetAndSpeedEncodingsInActions, tryUpdateRecallSetPresetActions } from './actions/presets.js'
 import { type RawConfig, tryUpdateConfigWithDebugLogging } from './config.js'
 
@@ -35,4 +36,5 @@ export const UpgradeScripts = [
 	ConfigUpdater(tryUpdateConfigWithDebugLogging),
 	ActionUpdater(tryUpdateRecallSetPresetActions),
 	ActionUpdater(tryUpdatePresetAndSpeedEncodingsInActions),
+	ActionUpdater(tryUpdateIrisHexValues),
 ] satisfies CompanionStaticUpgradeScript<RawConfig>[]

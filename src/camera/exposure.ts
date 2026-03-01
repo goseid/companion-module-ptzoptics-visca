@@ -62,18 +62,18 @@ export const IrisUp = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x0b, 0x02, 0x
 export const IrisDown = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x0b, 0x03, 0xff])
 
 export type IrisSetting =
-	| 'F1.8'
-	| 'F2.0'
-	| 'F2.4'
-	| 'F2.8'
-	| 'F3.4'
-	| 'F4.0'
-	| 'F4.8'
-	| 'F5.6'
-	| 'F6.8'
-	| 'F8.0'
-	| 'F9.6'
-	| 'F11.0'
+	| 'ƒ 1.8'
+	| 'ƒ 2.0'
+	| 'ƒ 2.4'
+	| 'ƒ 2.8'
+	| 'ƒ 3.4'
+	| 'ƒ 4.0'
+	| 'ƒ 4.8'
+	| 'ƒ 5.6'
+	| 'ƒ 6.8'
+	| 'ƒ 8.0'
+	| 'ƒ 9.6'
+	| 'ƒ 11.0'
 	| 'CLOSED'
 
 export const IrisSet = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x4b, 0x00, 0x00, 0x00, 0x00, 0xff], {
@@ -81,34 +81,34 @@ export const IrisSet = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x4b, 0x00, 0
 		nibbles: [13, 15],
 		convert: (setting: IrisSetting): number => {
 			switch (setting) {
-				case 'F1.8':
-					return 0x11
-				case 'F2.0':
-					return 0x10
-				case 'F2.4':
-					return 0x0f
-				case 'F2.8':
-					return 0x0e
-				case 'F3.4':
-					return 0x0d
+				case 'ƒ 1.8':
+					return 0x0c
+				case 'ƒ 2.0':
+					return 0x0b
+				case 'ƒ 2.4':
+					return 0x0a
+				case 'ƒ 2.8':
+					return 0x09
+				case 'ƒ 3.4':
+					return 0x08
 				// @ts-expect-error intentional fallthrough
 				default:
 					assertNever(setting) // reset to default for a bad setting
 				// eslint-disable-next-line no-fallthrough
-				case 'F4.0':
-					return 0x0c
-				case 'F4.8':
-					return 0x0b
-				case 'F5.6':
-					return 0x0a
-				case 'F6.8':
-					return 0x09
-				case 'F8.0':
-					return 0x08
-				case 'F9.6':
+				case 'ƒ 4.0':
 					return 0x07
-				case 'F11.0':
+				case 'ƒ 4.8':
 					return 0x06
+				case 'ƒ 5.6':
+					return 0x05
+				case 'ƒ 6.8':
+					return 0x04
+				case 'ƒ 8.0':
+					return 0x03
+				case 'ƒ 9.6':
+					return 0x02
+				case 'ƒ 11.0':
+					return 0x01
 				case 'CLOSED':
 					return 0x00
 			}
