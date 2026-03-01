@@ -713,10 +713,321 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
-	presets['auto_white_balance_preset'] = {
+	presets['iris_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Iris\\n$(ptzoptics-visca:iris_position)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SetIris,
+						options: {
+							val: '10',
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.IrisDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.IrisUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['gain_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Gain\\n$(ptzoptics-visca:gain_position)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainDirect,
+						options: {
+							gain: 0x00,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.GainDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.GainUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exp_comp_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Exp Comp\\n$(ptzoptics-visca:exp_comp_position)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompDirect,
+						options: {
+							position: 0x00,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.ExpCompDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.ExpCompUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['bright_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Bright\\n$(ptzoptics-visca:bright_position)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BrightDirect,
+						options: {
+							position: 7,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.BrightDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.BrightUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['shutter_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Shutter\\n$(ptzoptics-visca:shutter_position)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SetShutter,
+						options: {
+							val: '02',
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.ShutterDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.ShutterUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['wb_mode_preset'] = {
 		type: 'button',
 		category: 'White balance',
-		name: 'Auto White Balance',
+		name: 'White Balance Mode',
+		style: {
+			text: 'WB\\nMODE',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'automatic',
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'indoor',
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'outdoor',
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'onepush',
+						},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'manual',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeAuto,
+				options: {},
+				style: {
+					text: 'WB\\nAUTO',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
+				options: {},
+				style: {
+					text: 'WB\\nINDOOR',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
+				options: {},
+				style: {
+					text: 'WB\\nOUTDOOR',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeOnePush,
+				options: {},
+				style: {
+					text: 'WB\\nONE PUSH',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeManual,
+				options: {},
+				style: {
+					text: 'WB\\nMANUAL',
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
+	}
+
+	presets['wb_mode_auto_preset'] = {
+		type: 'button',
+		category: 'White balance',
+		name: 'WB Auto',
 		style: {
 			text: 'WB\\nAUTO',
 			size: '14',
@@ -736,13 +1047,22 @@ export function getPresets(): CompanionPresetDefinitions {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeAuto,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
 	}
 
-	presets['indoor_white_balance_preset'] = {
+	presets['wb_mode_indoor_preset'] = {
 		type: 'button',
 		category: 'White balance',
-		name: 'Indoor White Balance',
+		name: 'WB Indoor',
 		style: {
 			text: 'WB\\nINDOOR',
 			size: '14',
@@ -762,15 +1082,24 @@ export function getPresets(): CompanionPresetDefinitions {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
 	}
 
-	presets['outdoor_white_balance_preset'] = {
+	presets['wb_mode_outdoor_preset'] = {
 		type: 'button',
 		category: 'White balance',
-		name: 'Outdoor White Balance',
+		name: 'WB Outdoor',
 		style: {
-			text: 'WB\\nOUT\\nDOOR',
+			text: 'WB\\nOUTDOOR',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -788,13 +1117,22 @@ export function getPresets(): CompanionPresetDefinitions {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
 	}
 
-	presets['one_push_white_balance_preset'] = {
+	presets['wb_mode_onepush_preset'] = {
 		type: 'button',
 		category: 'White balance',
-		name: 'One Push White Balance',
+		name: 'WB One Push',
 		style: {
 			text: 'WB\\nONE PUSH',
 			size: '14',
@@ -814,7 +1152,51 @@ export function getPresets(): CompanionPresetDefinitions {
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeOnePush,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
+	}
+
+	presets['wb_mode_manual_preset'] = {
+		type: 'button',
+		category: 'White balance',
+		name: 'WB Manual',
+		style: {
+			text: 'WB\\nMANUAL',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.SelectWhiteBalance,
+						options: {
+							[WhiteBalanceModeId]: 'manual',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.WhiteBalanceModeManual,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 255),
+				},
+			},
+		],
 	}
 
 	presets['trigger_one_push_white_balance_preset'] = {
@@ -836,6 +1218,84 @@ export function getPresets(): CompanionPresetDefinitions {
 					},
 				],
 				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['r_gain_preset'] = {
+		type: 'button',
+		category: 'White balance',
+		name: 'R Gain',
+		options: { rotaryActions: true },
+		style: {
+			text: 'R Gain\\n$(ptzoptics-visca:r_gain)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainDirect,
+						options: {
+							gain: 0x80,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: WhiteBalanceActionId.RGainDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: WhiteBalanceActionId.RGainUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['b_gain_preset'] = {
+		type: 'button',
+		category: 'White balance',
+		name: 'B Gain',
+		options: { rotaryActions: true },
+		style: {
+			text: 'B Gain\\n$(ptzoptics-visca:b_gain)',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.BGainDirect,
+						options: {
+							gain: 0x80,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: WhiteBalanceActionId.BGainDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: WhiteBalanceActionId.BGainUp,
+						options: {},
+					},
+				],
 			},
 		],
 		feedbacks: [],

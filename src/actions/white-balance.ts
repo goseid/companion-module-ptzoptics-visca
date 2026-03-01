@@ -3,6 +3,12 @@ import type { ActionDefinitions } from './actionid.js'
 import {
 	AutoWhiteBalanceSensitivity,
 	type AutoWhiteBalanceSensitivityLevel,
+	BGainDirect,
+	BGainDown,
+	BGainUp,
+	RGainDirect,
+	RGainDown,
+	RGainUp,
 	WhiteBalance,
 	type WhiteBalanceMode,
 	WhiteBalanceOnePushTrigger,
@@ -14,6 +20,12 @@ export enum WhiteBalanceActionId {
 	SelectWhiteBalance = 'wb',
 	WhiteBalanceOnePushTrigger = 'wbOPT',
 	SelectAutoWhiteBalanceSensitivity = 'awbS',
+	RGainUp = 'rGainUp',
+	RGainDown = 'rGainDown',
+	RGainDirect = 'rGainDirect',
+	BGainUp = 'bGainUp',
+	BGainDown = 'bGainDown',
+	BGainDirect = 'bGainDirect',
 }
 
 export const WhiteBalanceModeId = 'val'
@@ -39,6 +51,8 @@ const [getAutoWhiteBalanceSensitivityLevel] = optionConversions<
 	'normal',
 	1,
 )
+
+const GainValueId = 'gain'
 
 export function whiteBalanceActions(instance: PtzOpticsInstance): ActionDefinitions<WhiteBalanceActionId> {
 	return {
@@ -89,6 +103,68 @@ export function whiteBalanceActions(instance: PtzOpticsInstance): ActionDefiniti
 			callback: async ({ options }) => {
 				const level = getAutoWhiteBalanceSensitivityLevel(options)
 				instance.sendCommand(AutoWhiteBalanceSensitivity, { level })
+			},
+		},
+		[WhiteBalanceActionId.RGainUp]: {
+			name: 'R Gain Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(RGainUp)
+			},
+		},
+		[WhiteBalanceActionId.RGainDown]: {
+			name: 'R Gain Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(RGainDown)
+			},
+		},
+		[WhiteBalanceActionId.RGainDirect]: {
+			name: 'R Gain Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Value',
+					id: GainValueId,
+					min: 0x00,
+					max: 0xff,
+					default: 0x80,
+				},
+			],
+			callback: async ({ options }) => {
+				const gain = Number(options[GainValueId])
+				instance.sendCommand(RGainDirect, { gain })
+			},
+		},
+		[WhiteBalanceActionId.BGainUp]: {
+			name: 'B Gain Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BGainUp)
+			},
+		},
+		[WhiteBalanceActionId.BGainDown]: {
+			name: 'B Gain Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BGainDown)
+			},
+		},
+		[WhiteBalanceActionId.BGainDirect]: {
+			name: 'B Gain Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Value',
+					id: GainValueId,
+					min: 0x00,
+					max: 0xff,
+					default: 0x80,
+				},
+			],
+			callback: async ({ options }) => {
+				const gain = Number(options[GainValueId])
+				instance.sendCommand(BGainDirect, { gain })
 			},
 		},
 	}

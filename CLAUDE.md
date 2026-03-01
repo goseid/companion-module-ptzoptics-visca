@@ -47,11 +47,21 @@ The codebase has three distinct layers with a strict dependency direction:
 
 - **Module-defined vs user-defined commands**: Module-defined commands (`ModuleDefinedCommand`) are built-in with typed parameters. User-defined commands (`UserDefinedCommand`) are parsed from hex strings entered by users. Error handling differs: user-defined command errors are non-fatal.
 
+### Polling and Message Queue
+
+- **Continuous polling** (`src/variables.ts`): Camera state is polled continuously with 20ms delays between inquiries (not interval-based). Each poll step sends one inquiry, updates variables, and checks feedbacks. A 2-second per-step timeout prevents stalls from unresponsive cameras.
+
+- **Block inquiries** (`src/camera/block-inquiry.ts`): Where possible, block inquiries (e.g., `CAM_CameraBlockInq`) are used instead of individual inquiries to reduce the number of poll steps. The CameraBlockInq returns R/B gain, WB mode, aperture, AE mode, backlight, exposure comp, shutter/iris/bright/gain positions in a single 16-byte response.
+
+- **Serialized message queue** (`src/instance.ts`): All VISCA traffic flows through a single poll loop. User-triggered commands are enqueued and drained between poll steps. `sendPollInquiry()` is for the poll loop (bypasses queue); `sendInquiry()` is for actions (goes through queue).
+
+- **Watchdog** (`src/instance.ts`): A 5-second watchdog detects stalled poll loops. On stall, it aborts the loop, flushes stale pending VISCA messages, and launches a fresh loop.
+
 ### Variables and Feedbacks
 
-- **Variables** (`src/variables.ts`): Camera state is polled every 5 seconds via VISCA inquiries and exposed as Companion variables (`pan_position`, `tilt_position`, `focus_mode`, `exposure_mode`, `osd_state`). After each poll, `checkFeedbacks()` is called to re-evaluate feedback state.
+- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, focus mode, OSD state, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, aperture, shutter/iris/bright/gain positions, backlight, exposure comp).
 
-- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback.
+- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto, WB Mode: Auto/Indoor/Outdoor/OnePush/Manual). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback.
 
 ### Instance Lifecycle
 
@@ -60,6 +70,20 @@ The codebase has three distinct layers with a strict dependency direction:
 - `init()` — Registers actions, feedbacks, presets, and variables; opens VISCA connection
 - `configUpdated()` — Validates new config, reconnects and restarts polling if needed
 - `destroy()` — Stops polling, closes connection
+
+### VISCA Command Byte Patterns
+
+Commands and inquiries follow consistent byte patterns for related camera properties:
+
+| Property | Up/Down | Direct  | Inquiry |
+| -------- | ------- | ------- | ------- |
+| Shutter  | `04 0A` | `04 4A` | `04 4A` |
+| Iris     | `04 0B` | `04 4B` | `04 4B` |
+| Gain     | `04 0C` | `04 4C` | —       |
+| Bright   | `04 0D` | `04 4D` | `04 4D` |
+| Exp Comp | `04 0E` | `04 4E` | `04 4E` |
+
+Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 00 00 0p 0q FF` with position in nibbles [13, 15]. Note: `04 A1` is a separate "Brightness" (image quality) parameter, distinct from "Bright" (AE bright level) at `04 0D`/`04 4D`.
 
 ### Upgrade System
 

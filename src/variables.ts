@@ -1,45 +1,165 @@
-import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import { ExposureModeInquiry } from './camera/exposure.js'
+import type { CompanionVariableDefinition } from '@companion-module/base'
+import { CameraBlockInquiry } from './camera/block-inquiry.js'
 import { FocusModeInquiry } from './camera/focus.js'
 import { OnScreenDisplayInquiry } from './camera/osd.js'
 import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
 import { FeedbackId } from './feedbacks.js'
 import type { PtzOpticsInstance } from './instance.js'
+import { traceLog } from './utils/trace-log.js'
 
 export function getVariableDefinitions(): CompanionVariableDefinition[] {
 	return [
 		{ variableId: 'pan_position', name: 'Pan Position' },
 		{ variableId: 'tilt_position', name: 'Tilt Position' },
 		{ variableId: 'focus_mode', name: 'Focus Mode' },
-		{ variableId: 'exposure_mode', name: 'Exposure Mode' },
 		{ variableId: 'osd_state', name: 'OSD Menu State' },
+		// CAM_CameraBlockInq variables
+		{ variableId: 'r_gain', name: 'R Gain' },
+		{ variableId: 'b_gain', name: 'B Gain' },
+		{ variableId: 'wb_mode', name: 'White Balance Mode' },
+		{ variableId: 'aperture', name: 'Aperture' },
+		{ variableId: 'exposure_mode', name: 'Exposure Mode' },
+		{ variableId: 'backlight', name: 'Back Light' },
+		{ variableId: 'exposure_comp', name: 'Exposure Compensation' },
+		{ variableId: 'shutter_position', name: 'Shutter Position' },
+		{ variableId: 'iris_position', name: 'Iris Position' },
+		{ variableId: 'bright_position', name: 'Bright Position' },
+		{ variableId: 'exp_comp_position', name: 'Exposure Comp Position' },
+		{ variableId: 'gain_position', name: 'Gain Position' },
 	]
 }
 
-export async function pollVariables(instance: PtzOpticsInstance): Promise<void> {
-	const values: CompanionVariableValues = {}
+/** Delay between successive inquiry responses and the next inquiry. */
+const POLL_DELAY_MS = 20
 
-	const panTilt = await instance.sendInquiry(PanTiltPositionInquiry)
-	if (panTilt !== null) {
-		values['pan_position'] = panTilt.panPosition
-		values['tilt_position'] = panTilt.tiltPosition
+/**
+ * Maximum time a single poll step may take before being abandoned.  If the
+ * camera doesn't respond to an inquiry within this time, the stale pending
+ * entry is flushed so the loop can continue draining queued commands.
+ */
+const POLL_STEP_TIMEOUT_MS = 2_000
+
+async function delay(ms: number, signal: AbortSignal): Promise<void> {
+	if (signal.aborted) return Promise.resolve()
+	return new Promise((resolve) => {
+		function onDone() {
+			clearTimeout(timer)
+			signal.removeEventListener('abort', onDone)
+			resolve()
+		}
+		const timer = setTimeout(onDone, ms)
+		signal.addEventListener('abort', onDone)
+	})
+}
+
+/** Each poll step sends one inquiry, updates its variables, and checks its feedbacks. */
+const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
+	async (instance) => {
+		const panTilt = await instance.sendPollInquiry(PanTiltPositionInquiry)
+		if (panTilt !== null) {
+			instance.setVariableValues({
+				pan_position: panTilt.panPosition,
+				tilt_position: panTilt.tiltPosition,
+			})
+		}
+	},
+	async (instance) => {
+		const focus = await instance.sendPollInquiry(FocusModeInquiry)
+		if (focus !== null) {
+			instance.setVariableValues({ focus_mode: focus.mode })
+			instance.checkFeedbacks(FeedbackId.FocusModeAuto)
+		}
+	},
+	async (instance) => {
+		const osd = await instance.sendPollInquiry(OnScreenDisplayInquiry)
+		if (osd !== null) {
+			instance.setVariableValues({ osd_state: osd.state })
+		}
+	},
+	async (instance) => {
+		const cam = await instance.sendPollInquiry(CameraBlockInquiry)
+		if (cam !== null) {
+			const backlight = (cam.backlightExpComp & 0x4) !== 0
+			const exposureComp = (cam.backlightExpComp & 0x2) !== 0
+			instance.setVariableValues({
+				r_gain: cam.rGain,
+				b_gain: cam.bGain,
+				wb_mode: cam.wbMode,
+				aperture: cam.aperture,
+				exposure_mode: cam.aeMode,
+				backlight: backlight ? 'on' : 'off',
+				exposure_comp: exposureComp ? 'on' : 'off',
+				shutter_position: cam.shutterPosition,
+				iris_position: cam.irisPosition,
+				bright_position: cam.brightPosition,
+				exp_comp_position: cam.expCompPosition,
+				gain_position: cam.gainPosition,
+			})
+			instance.checkFeedbacks(
+				FeedbackId.ExposureModeText,
+				FeedbackId.WhiteBalanceModeAuto,
+				FeedbackId.WhiteBalanceModeIndoor,
+				FeedbackId.WhiteBalanceModeOutdoor,
+				FeedbackId.WhiteBalanceModeOnePush,
+				FeedbackId.WhiteBalanceModeManual,
+			)
+		}
+	},
+]
+
+/**
+ * Continuously poll camera variables, sending one inquiry at a time with a
+ * short delay between each response and the next request.  Individual
+ * inquiry failures are logged and skipped so the loop keeps running.
+ *
+ * Calls `onStepCompleted` after each step so the caller can track liveness.
+ */
+let nextLoopId = 0
+
+export async function pollVariablesContinuously(
+	instance: PtzOpticsInstance,
+	signal: AbortSignal,
+	onStepCompleted: () => void,
+): Promise<void> {
+	const loopId = nextLoopId++
+	const tag = `POLL-${loopId}`
+	traceLog(tag, 'loop started')
+	let step = 0
+	while (!signal.aborted) {
+		// Drain any queued commands/inquiries before the next poll step so
+		// that user-triggered operations execute as soon as possible.
+		while (!signal.aborted && instance.hasQueuedMessages()) {
+			traceLog(tag, 'draining queued message')
+			await instance.processNextQueuedMessage()
+			onStepCompleted()
+			await delay(POLL_DELAY_MS, signal)
+		}
+
+		if (signal.aborted) break
+
+		traceLog(tag, `step ${step} start`)
+		try {
+			const stepResult = await Promise.race([
+				pollSteps[step](instance).then(() => 'ok' as const),
+				delay(POLL_STEP_TIMEOUT_MS, signal).then(() => 'timeout' as const),
+			])
+			if (stepResult === 'timeout') {
+				traceLog(tag, `step ${step} timed out after ${POLL_STEP_TIMEOUT_MS}ms, flushing`)
+				instance.log('debug', `Poll step ${step} timed out, flushing stale messages`)
+				instance.flushVISCAQueue('Poll step timed out')
+			} else {
+				traceLog(tag, `step ${step} done`)
+			}
+		} catch (error: unknown) {
+			const message = error instanceof Error ? error.message : String(error)
+			traceLog(tag, `step ${step} error: ${message}`)
+			instance.log('debug', `Poll step ${step} error: ${message}`)
+		}
+		onStepCompleted()
+		traceLog(tag, `step ${step} post-complete, next delay`)
+		step = (step + 1) % pollSteps.length
+		await delay(POLL_DELAY_MS, signal)
+		traceLog(tag, `delay done, aborted=${String(signal.aborted)}`)
 	}
-
-	const focus = await instance.sendInquiry(FocusModeInquiry)
-	if (focus !== null) {
-		values['focus_mode'] = focus.mode
-	}
-
-	const exposure = await instance.sendInquiry(ExposureModeInquiry)
-	if (exposure !== null) {
-		values['exposure_mode'] = exposure.mode
-	}
-
-	const osd = await instance.sendInquiry(OnScreenDisplayInquiry)
-	if (osd !== null) {
-		values['osd_state'] = osd.state
-	}
-
-	instance.setVariableValues(values)
-	instance.checkFeedbacks(FeedbackId.FocusModeAuto, FeedbackId.ExposureModeText)
+	traceLog(tag, 'loop exited')
 }

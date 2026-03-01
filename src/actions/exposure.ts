@@ -1,8 +1,17 @@
 import type { CompanionActionEvent, CompanionOptionValues } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
 import {
+	BrightDirect,
+	BrightDown,
+	BrightUp,
+	ExpCompDirect,
+	ExpCompDown,
+	ExpCompUp,
 	ExposureMode,
 	ExposureModeInquiry,
+	GainDirect,
+	GainDown,
+	GainUp,
 	IrisDown,
 	IrisSet,
 	type IrisSetting,
@@ -24,6 +33,15 @@ export enum ExposureActionId {
 	ShutterUp = 'shutU',
 	ShutterDown = 'shutD',
 	SetShutter = 'shutS',
+	GainUp = 'gainU',
+	GainDown = 'gainD',
+	GainDirect = 'gainDirect',
+	ExpCompUp = 'expCompU',
+	ExpCompDown = 'expCompD',
+	ExpCompDirect = 'expCompDirect',
+	BrightUp = 'brightU',
+	BrightDown = 'brightD',
+	BrightDirect = 'brightDirect',
 }
 
 export const ExposureModeId = 'val'
@@ -240,6 +258,99 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 			callback: async ({ options }) => {
 				const setting = getShutterSetting(options)
 				instance.sendCommand(ShutterSet, { setting })
+			},
+		},
+		[ExposureActionId.GainUp]: {
+			name: 'Gain Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(GainUp)
+			},
+		},
+		[ExposureActionId.GainDown]: {
+			name: 'Gain Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(GainDown)
+			},
+		},
+		[ExposureActionId.GainDirect]: {
+			name: 'Gain Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Value',
+					id: 'gain',
+					min: 0x00,
+					max: 0x0f,
+					default: 0x00,
+				},
+			],
+			callback: async ({ options }) => {
+				const gain = Number(options['gain'])
+				instance.sendCommand(GainDirect, { gain })
+			},
+		},
+		[ExposureActionId.ExpCompUp]: {
+			name: 'Exposure Comp Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ExpCompUp)
+			},
+		},
+		[ExposureActionId.ExpCompDown]: {
+			name: 'Exposure Comp Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ExpCompDown)
+			},
+		},
+		[ExposureActionId.ExpCompDirect]: {
+			name: 'Exposure Comp Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Value',
+					id: 'position',
+					min: 0x00,
+					max: 0x0a,
+					default: 0x00,
+				},
+			],
+			callback: async ({ options }) => {
+				const position = Number(options['position'])
+				instance.sendCommand(ExpCompDirect, { position })
+			},
+		},
+		[ExposureActionId.BrightUp]: {
+			name: 'Bright Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BrightUp)
+			},
+		},
+		[ExposureActionId.BrightDown]: {
+			name: 'Bright Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BrightDown)
+			},
+		},
+		[ExposureActionId.BrightDirect]: {
+			name: 'Bright Direct',
+			options: [
+				{
+					type: 'number',
+					label: 'Value',
+					id: 'position',
+					min: 0x00,
+					max: 0xff,
+					default: 7,
+				},
+			],
+			callback: async ({ options }) => {
+				const position = Number(options['position'])
+				instance.sendCommand(BrightDirect, { position })
 			},
 		},
 	}

@@ -12,7 +12,8 @@ import {
 } from './config.js'
 import { getPresets } from './presets.js'
 import { repr } from './utils/repr.js'
-import { getVariableDefinitions, pollVariables } from './variables.js'
+import { traceLog } from './utils/trace-log.js'
+import { getVariableDefinitions, pollVariablesContinuously } from './variables.js'
 import type { Command, CommandParameters, CommandParamValues, NoCommandParameters } from './visca/command.js'
 import type { Answer, AnswerParameters, Inquiry } from './visca/inquiry.js'
 import { VISCAPort } from './visca/port.js'
@@ -29,20 +30,26 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 	/** A port to use to communicate with the represented camera. */
 	#visca = new VISCAPort(this)
 
-	/** Timer handle for periodic variable polling, or null if not polling. */
-	#pollTimer: ReturnType<typeof setInterval> | null = null
+	/** Abort controller for the continuous polling loop, or null if not polling. */
+	#pollAbort: AbortController | null = null
+
+	/** Watchdog timer that aborts and restarts the poll loop if it stalls. */
+	#pollWatchdog: ReturnType<typeof setInterval> | null = null
+
+	/** Timestamp of the last completed poll step, used by the watchdog. */
+	#pollLastStepTime = 0
 
 	/**
-	 * Send the given command to the camera, filling in any parameters from the
-	 * specified options.  The options must be compatible with the command's
-	 * parameters.
-	 *
-	 * @param command
-	 *    The command to send.
-	 * @param paramValues
-	 *    A parameter values object compatible with this command's parameters
-	 *    and their types.  (This can be omitted if the command lacks
-	 *    parameters.)
+	 * Queue of operations (commands and action-triggered inquiries) to be
+	 * processed by the poll loop.  New items are pushed to the front so that
+	 * user-triggered commands execute as soon as possible, before the next
+	 * background poll inquiry.
+	 */
+	#messageQueue: Array<() => Promise<void>> = []
+
+	/**
+	 * Enqueue a command to be sent by the poll loop.  The command will be
+	 * sent before the next background poll inquiry.
 	 */
 	sendCommand<CmdParameters extends CommandParameters>(
 		command: Command<CmdParameters>,
@@ -50,43 +57,48 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 			? [CommandParamValues<CmdParameters>?]
 			: [CommandParamValues<CmdParameters>]
 	): void {
-		// `sendCommand` implicitly waits for the connection to be fully
-		// established, so it's unnecessary to resolve `this.#visca.connect()`
-		// here.
-		this.#visca.sendCommand(command, ...paramValues).then(
-			(result: void | Error) => {
-				if (typeof result === 'undefined') {
-					return
+		traceLog('QUEUE', `enqueue command, queue length=${this.#messageQueue.length + 1}`)
+		this.#messageQueue.push(async () => {
+			try {
+				const result = await this.#visca.sendCommand(command, ...paramValues)
+				if (result instanceof Error) {
+					this.log('error', `Error processing command: ${result.message}`)
 				}
-
-				this.log('error', `Error processing command: ${result.message}`)
-			},
-			(reason: Error) => {
-				// Swallow the error so that execution gracefully unwinds.
-				this.log('error', `Unhandled command rejection was suppressed: ${reason}`)
-				return
-			},
-		)
+			} catch (reason: unknown) {
+				const message = reason instanceof Error ? reason.message : String(reason)
+				this.log('error', `Unhandled command rejection was suppressed: ${message}`)
+			}
+		})
 	}
 
 	/**
-	 * Send the given inquiry to the camera.
+	 * Enqueue an inquiry to be sent by the poll loop.  The returned promise
+	 * resolves when the inquiry has been sent and its response processed.
 	 *
-	 * @param inquiry
-	 *    The inquiry to send.
-	 * @returns
-	 *    A promise that resolves after the response to `inquiry` (which may be
-	 *    an error response) has been processed.  If `inquiry`'s response was an
-	 *    an error not implicating overall connection stability, the promise
-	 *    resolves null.  Otherwise it resolves an object whose properties are
-	 *    choices corresponding to the parameters in the response.
+	 * This is used by action callbacks that need to read camera state before
+	 * sending a follow-up command (e.g. focus toggle, gain increment).
 	 */
 	async sendInquiry<Parameters extends AnswerParameters>(
 		inquiry: Inquiry<Parameters>,
 	): Promise<Answer<Parameters> | null> {
-		// `sendInquiry` implicitly waits for the connection to be fully
-		// established, so it's unnecessary to resolve `this.#visca.connect()`
-		// here.
+		traceLog('QUEUE', `enqueue inquiry, queue length=${this.#messageQueue.length + 1}`)
+		return new Promise<Answer<Parameters> | null>((resolve) => {
+			this.#messageQueue.push(async () => {
+				resolve(await this.sendPollInquiry(inquiry))
+			})
+		})
+	}
+
+	/**
+	 * Send an inquiry directly to the VISCA port and return the result.
+	 *
+	 * This bypasses the message queue and is intended **only** for the poll
+	 * loop's own background inquiries, which are already serialised by the
+	 * loop itself.
+	 */
+	async sendPollInquiry<Parameters extends AnswerParameters>(
+		inquiry: Inquiry<Parameters>,
+	): Promise<Answer<Parameters> | null> {
 		return this.#visca.sendInquiry(inquiry).then(
 			(result: Answer<Parameters> | Error) => {
 				if (result instanceof Error) {
@@ -102,6 +114,33 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 				return null
 			},
 		)
+	}
+
+	/** Whether there are queued messages waiting to be processed. */
+	hasQueuedMessages(): boolean {
+		return this.#messageQueue.length > 0
+	}
+
+	/** Process the next queued message.  Errors are logged internally. */
+	async processNextQueuedMessage(): Promise<void> {
+		const op = this.#messageQueue.shift()
+		if (op !== undefined) {
+			traceLog('QUEUE', `dequeue message, remaining=${this.#messageQueue.length}`)
+			try {
+				await op()
+			} catch (error: unknown) {
+				const message = error instanceof Error ? error.message : String(error)
+				this.log('error', `Error processing queued message: ${message}`)
+			}
+		}
+	}
+
+	/**
+	 * Flush stale pending messages from the VISCA port so the poll loop
+	 * can recover from a timed-out inquiry.
+	 */
+	flushVISCAQueue(reason: string): void {
+		this.#visca.flushPendingMessages(reason)
 	}
 
 	/**
@@ -136,23 +175,53 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		if (this.#speed > 0x01) this.#speed--
 	}
 
-	/** The polling interval in milliseconds. */
-	static readonly #POLL_INTERVAL_MS = 5000
+	/**
+	 * Maximum time a poll step may take before the watchdog considers the loop
+	 * stalled and restarts it.
+	 */
+	static readonly #POLL_STALL_MS = 5_000
 
 	#startPolling(): void {
 		this.#stopPolling()
-		this.#pollTimer = setInterval(() => {
-			pollVariables(this).catch((reason: Error) => {
-				this.log('error', `Variable polling error: ${reason.message}`)
-			})
-		}, PtzOpticsInstance.#POLL_INTERVAL_MS)
+		this.#pollLastStepTime = Date.now()
+		this.#launchPollLoop()
+		this.#pollWatchdog = setInterval(() => {
+			if (Date.now() - this.#pollLastStepTime > PtzOpticsInstance.#POLL_STALL_MS) {
+				traceLog('WATCHDOG', `Poll loop stalled (${Date.now() - this.#pollLastStepTime}ms since last step), restarting`)
+				this.log('warn', 'Poll loop stalled, restarting')
+				// Abort the stuck loop, flush stale VISCA state, and launch
+				// a fresh loop.  Flushing is critical: without it, stale
+				// PendingInquiry entries from the old loop consume responses
+				// meant for the new loop's inquiries, causing an infinite
+				// stall cycle.
+				this.#pollAbort?.abort()
+				this.#visca.flushPendingMessages('Poll loop stalled, flushing stale messages')
+				this.#pollLastStepTime = Date.now()
+				this.#launchPollLoop()
+			}
+		}, PtzOpticsInstance.#POLL_STALL_MS)
+	}
+
+	#launchPollLoop(): void {
+		const abort = new AbortController()
+		this.#pollAbort = abort
+		void pollVariablesContinuously(this, abort.signal, () => {
+			this.#pollLastStepTime = Date.now()
+		}).catch((reason: Error) => {
+			this.log('error', `Variable polling error: ${reason.message}`)
+		})
 	}
 
 	#stopPolling(): void {
-		if (this.#pollTimer !== null) {
-			clearInterval(this.#pollTimer)
-			this.#pollTimer = null
+		if (this.#pollWatchdog !== null) {
+			clearInterval(this.#pollWatchdog)
+			this.#pollWatchdog = null
 		}
+		if (this.#pollAbort !== null) {
+			this.#pollAbort.abort()
+			this.#pollAbort = null
+		}
+		this.#messageQueue.length = 0
 	}
 
 	override getConfigFields(): SomeCompanionConfigField[] {

@@ -4,6 +4,11 @@ import type { PtzOpticsInstance } from './instance.js'
 export enum FeedbackId {
 	FocusModeAuto = 'focus_mode_auto',
 	ExposureModeText = 'exposure_mode_text',
+	WhiteBalanceModeAuto = 'wb_mode_auto',
+	WhiteBalanceModeIndoor = 'wb_mode_indoor',
+	WhiteBalanceModeOutdoor = 'wb_mode_outdoor',
+	WhiteBalanceModeOnePush = 'wb_mode_onepush',
+	WhiteBalanceModeManual = 'wb_mode_manual',
 }
 
 export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefinitions {
@@ -42,6 +47,71 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 					default:
 						return {}
 				}
+			},
+		},
+		[FeedbackId.WhiteBalanceModeAuto]: {
+			type: 'boolean',
+			name: 'White Balance Mode: Auto',
+			description: 'Change button style when white balance mode is Auto',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			callback: () => {
+				return instance.getVariableValue('wb_mode') === 'automatic'
+			},
+		},
+		[FeedbackId.WhiteBalanceModeIndoor]: {
+			type: 'boolean',
+			name: 'White Balance Mode: Indoor',
+			description: 'Change button style when white balance mode is Indoor',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			callback: () => {
+				return instance.getVariableValue('wb_mode') === 'indoor'
+			},
+		},
+		[FeedbackId.WhiteBalanceModeOutdoor]: {
+			type: 'boolean',
+			name: 'White Balance Mode: Outdoor',
+			description: 'Change button style when white balance mode is Outdoor',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			callback: () => {
+				return instance.getVariableValue('wb_mode') === 'outdoor'
+			},
+		},
+		[FeedbackId.WhiteBalanceModeOnePush]: {
+			type: 'boolean',
+			name: 'White Balance Mode: One Push',
+			description: 'Change button style when white balance mode is One Push',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			callback: () => {
+				return instance.getVariableValue('wb_mode') === 'onepush'
+			},
+		},
+		[FeedbackId.WhiteBalanceModeManual]: {
+			type: 'boolean',
+			name: 'White Balance Mode: Manual',
+			description: 'Change button style when white balance mode is Manual',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 255),
+			},
+			callback: () => {
+				return instance.getVariableValue('wb_mode') === 'manual'
 			},
 		},
 	}

@@ -6,6 +6,7 @@ import type { Answer, AnswerMessage, AnswerParameters, Inquiry } from './inquiry
 import type { Host } from '../config.js'
 import type { Bytes } from '../utils/byte.js'
 import { prettyBytes } from '../utils/pretty.js'
+import { traceLog } from '../utils/trace-log.js'
 
 const BLAME_MODULE =
 	'This is likely a bug in the ptzoptics-visca Companion module.  Please ' +
@@ -353,6 +354,14 @@ export class VISCAPort {
 	readonly #waitingForCompletion: Map<number, PendingCommand[]> = new Map()
 
 	/**
+	 * Number of orphaned VISCA responses to tolerate before treating
+	 * unexpected responses as fatal errors again.  Incremented by
+	 * `flushPendingMessages()` for each flushed entry, decremented as
+	 * orphaned responses arrive.
+	 */
+	#orphanedResponseBudget = 0
+
+	/**
 	 * Create an error to throw during message/response processing.  The error
 	 * will have `msg` as its message and will include a representation of
 	 * `bytes`.
@@ -438,6 +447,47 @@ export class VISCAPort {
 				pendingMessage.fatalError(reason)
 			}
 		}
+	}
+
+	/**
+	 * Resolve all pending messages (commands and inquiries) with nonfatal
+	 * errors and clear the pending queues, without closing the connection.
+	 *
+	 * This is used when the poll loop is restarted by the watchdog: stale
+	 * pending entries from a previous loop iteration would otherwise consume
+	 * responses meant for the new loop's inquiries.
+	 *
+	 * Commands that have already received an ACK and are waiting for
+	 * Completion are also cleared.  If the camera eventually sends
+	 * Completions for those sockets, they will be treated as errors, but
+	 * the connection will recover by reopening.
+	 */
+	flushPendingMessages(reason: string): void {
+		traceLog(
+			'PORT',
+			`flushPendingMessages: pending=${this.#waitingForInitialResponse.length} sockets=${this.#waitingForCompletion.size} reason="${reason}"`,
+		)
+
+		const waitingForCompletion = this.#waitingForCompletion.values().toArray()
+		this.#waitingForCompletion.clear()
+		const waitingForInitialResponse = this.#waitingForInitialResponse.splice(0)
+
+		// Count total flushed entries so we can tolerate that many orphaned
+		// responses from the camera before treating them as fatal again.
+		let flushed = waitingForInitialResponse.length
+		for (const pendingCommands of waitingForCompletion) {
+			// Each command in a socket may produce a Completion response.
+			flushed += pendingCommands.length
+			for (const pendingCommand of pendingCommands) {
+				pendingCommand.nonfatalError(reason)
+			}
+		}
+		for (const pendingMessage of waitingForInitialResponse) {
+			pendingMessage.nonfatalError(reason)
+		}
+
+		this.#orphanedResponseBudget += flushed
+		traceLog('PORT', `orphanedResponseBudget=${this.#orphanedResponseBudget}`)
 	}
 
 	/**
@@ -685,6 +735,7 @@ export class VISCAPort {
 			}
 
 			const returnMessage = receivedData.splice(0, terminatorOffset + 1)
+			traceLog('RECV', prettyBytes(returnMessage))
 			if (this.#instance.debugLogging) {
 				this.#instance.log('info', `RECV: ${prettyBytes(returnMessage)}`)
 			}
@@ -770,6 +821,15 @@ export class VISCAPort {
 
 				const result = this.#findFirstCommandWaitingForInitialResponse()
 				if (result === undefined) {
+					if (this.#orphanedResponseBudget > 0) {
+						this.#orphanedResponseBudget--
+						traceLog(
+							'MATCH',
+							`orphaned ACK for socket ${secondByte & 0xf}, ignoring (budget=${this.#orphanedResponseBudget})`,
+						)
+						this.#instance.log('debug', `Ignoring orphaned ACK for socket ${secondByte & 0xf}`)
+						continue
+					}
 					throw this.#errorWhileProcessingMessage(`Received ACK without a pending command`, returnMessage)
 				}
 				const { i, pendingCommand } = result
@@ -813,12 +873,25 @@ export class VISCAPort {
 					const commandsInSocket = this.#waitingForCompletion.get(socket)
 					const command = commandsInSocket && commandsInSocket.shift()
 					if (command === undefined) {
+						if (this.#orphanedResponseBudget > 0) {
+							this.#orphanedResponseBudget--
+							traceLog(
+								'MATCH',
+								`orphaned completion for socket ${socket}, ignoring (budget=${this.#orphanedResponseBudget})`,
+							)
+							this.#instance.log('debug', `Ignoring orphaned Completion for socket ${socket}`)
+							continue
+						}
 						throw this.#errorWhileProcessingMessage(
 							`Received Completion for socket ${socket}, but no command is executing in it`,
 							returnMessage,
 						)
 					}
 
+					traceLog(
+						'MATCH',
+						`completion socket=${socket} for ${prettyBytes(command.bytes)}, sockets remaining=${this.#waitingForCompletion.size}`,
+					)
 					command.succeeded()
 					continue
 				}
@@ -828,9 +901,23 @@ export class VISCAPort {
 
 				const result = this.#findFirstInquiryWaitingForInitialResponse()
 				if (result === undefined) {
+					if (this.#orphanedResponseBudget > 0) {
+						this.#orphanedResponseBudget--
+						traceLog(
+							'MATCH',
+							`orphaned inquiry response ${prettyBytes(returnMessage)}, ignoring (budget=${this.#orphanedResponseBudget})`,
+						)
+						this.#instance.log('debug', `Ignoring orphaned inquiry response`)
+						continue
+					}
 					throw this.#errorWhileProcessingMessage('Received inquiry response without a pending inquiry', returnMessage)
 				}
 				const { i, pendingInquiry } = result
+
+				traceLog(
+					'MATCH',
+					`inquiry response ${prettyBytes(returnMessage)} → pending[${i}] ${prettyBytes(pendingInquiry.bytes)} (total pending=${this.#waitingForInitialResponse.length})`,
+				)
 
 				const expectedReturn = pendingInquiry.expectedReturn
 				if (returnMatches(returnMessage, expectedReturn)) {
@@ -851,6 +938,7 @@ export class VISCAPort {
 						answer[id] = convert ? (convert(paramval) as any) : paramval
 					}
 
+					traceLog('MATCH', `matched OK → resolving ${prettyBytes(pendingInquiry.bytes)}`)
 					pendingInquiry.succeeded(answer)
 				} else {
 					const blame = pendingInquiry.userDefined ? 'Double-check the syntax of your inquiry.' : BLAME_MODULE
@@ -858,6 +946,7 @@ export class VISCAPort {
 						`Inquiry ${prettyBytes(pendingInquiry.bytes)} received the ` +
 						`response ${prettyBytes(returnMessage)} which isn't ` +
 						`compatible with the expected format.  (${blame})`
+					traceLog('MATCH', `MISMATCH → nonfatal error for ${prettyBytes(pendingInquiry.bytes)}`)
 					pendingInquiry.nonfatalError(reason)
 				}
 
@@ -894,6 +983,11 @@ export class VISCAPort {
 
 					const commandAwaitingInitialResponse = this.#findFirstCommandWaitingForInitialResponse()
 					if (commandAwaitingInitialResponse === undefined) {
+						if (this.#orphanedResponseBudget > 0) {
+							this.#orphanedResponseBudget--
+							traceLog('MATCH', `orphaned Command Not Executable, ignoring (budget=${this.#orphanedResponseBudget})`)
+							continue
+						}
 						throw this.#errorWhileProcessingMessage(
 							'Received Command Not Executable with no commands awaiting initial response',
 							returnMessage,
@@ -921,6 +1015,14 @@ export class VISCAPort {
 				}
 
 				if (this.#waitingForInitialResponse.length === 0) {
+					if (this.#orphanedResponseBudget > 0) {
+						this.#orphanedResponseBudget--
+						traceLog(
+							'MATCH',
+							`orphaned error response ${prettyBytes(returnMessage)}, ignoring (budget=${this.#orphanedResponseBudget})`,
+						)
+						continue
+					}
 					throw this.#errorWhileProcessingMessage(
 						'Unexpected error with no messages awaiting initial response',
 						returnMessage,
@@ -1061,6 +1163,10 @@ export class VISCAPort {
 	): Promise<void | Error> {
 		const messageBytes = command.toBytes(...paramValues)
 		const isUserDefined = command.isUserDefined()
+		traceLog(
+			'PORT',
+			`sendCommand ${prettyBytes(messageBytes)} pending=${this.#waitingForInitialResponse.length} sockets=${this.#waitingForCompletion.size}`,
+		)
 		return this.#sendMessage('command', isUserDefined, messageBytes).then(async (result: void | Error) => {
 			if (result !== undefined) {
 				return result
@@ -1098,6 +1204,10 @@ export class VISCAPort {
 	): Promise<Answer<Parameters> | Error> {
 		const messageBytes = inquiry.toBytes()
 		const isUserDefined = inquiry.isUserDefined()
+		traceLog(
+			'PORT',
+			`sendInquiry ${prettyBytes(messageBytes)} pending=${this.#waitingForInitialResponse.length} sockets=${this.#waitingForCompletion.size}`,
+		)
 		return this.#sendMessage('inquiry', isUserDefined, messageBytes).then(async (result: void | Error) => {
 			if (result !== undefined) {
 				return result
@@ -1145,6 +1255,7 @@ export class VISCAPort {
 
 	/** Write the supplied bytes to the socket. */
 	async #sendBytes(socket: TCPHelper, bytes: Bytes): Promise<void | Error> {
+		traceLog('SEND', prettyBytes(bytes))
 		if (this.#instance.debugLogging) {
 			this.#instance.log('info', `SEND: ${prettyBytes(bytes)}...`)
 		}

@@ -18,21 +18,21 @@ This document contains information about the VISCA Protocol for the following ca
 
 | Command             | Function           | Packet                               | Comments                                                                                                                |
 | ------------------- | ------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------- |
-| CAM_Zoom            | Stop               | 81 01 04 07 00 FF                    |
-| CAM_Zoom            | Tele (Standard)    | 81 01 04 07 02 FF                    |
-| CAM_Zoom            | Wide (Standard)    | 81 01 04 07 03 FF                    |
-| CAM_Zoom            | Tele (Variable)    | 81 01 04 07 2p FF                    | p = (low) – 7 (high)                                                                                                    |
+| CAM_Zoom            | Stop               | 81 01 04 07 00 FF                    |                                                                                                                         |
+| CAM_Zoom            | Tele (Standard)    | 81 01 04 07 02 FF                    |                                                                                                                         |
+| CAM_Zoom            | Wide (Standard)    | 81 01 04 07 03 FF                    |                                                                                                                         |
+| CAM_Zoom            | Tele (Variable)    | 81 01 04 07 2p FF                    | p = (low) – 7                                                                                                           | (high)   |
 | CAM_Zoom            | Wide (Variable)    | 81 01 04 07 3p FF                    | p = (low) – 7 (high)                                                                                                    |
 | CAM_Zoom            | Direct             | 81 01 04 47 p q r s FF               | pqrs: Zoom Position                                                                                                     |
-| CAM_Focus           | Stop               | 81 01 04 08 00 FF                    |
-| CAM_Focus           | Far (Standard)     | 81 01 04 08 02 FF                    |
-| CAM_Focus           | Near (Standard)    | 81 01 04 08 03 FF                    |
+| CAM_Focus           | Stop               | 81 01 04 08 00 FF                    |                                                                                                                         |
+| CAM_Focus           | Far (Standard)     | 81 01 04 08 02 FF                    |                                                                                                                         |
+| CAM_Focus           | Near (Standard)    | 81 01 04 08 03 FF                    |                                                                                                                         |
 | CAM_Focus           | Far (Variable)     | 81 01 04 08 2p FF                    | p = (low) – 7 (high)                                                                                                    |
 | CAM_Focus           | Near (Variable)    | 81 01 04 08 3p FF                    | p = (low) – 7 (high)                                                                                                    |
 | CAM_Focus           | Direct             | 81 01 04 48 p q r s FF               | pqrs: Focus Position                                                                                                    |
-| CAM_Focus           | Auto Focus         | 81 01 04 38 02 FF                    |
-| CAM_Focus           | Manual Focus       | 81 01 04 38 03 FF                    |
-| CAM_Focus           | Auto/Manual Toggle | 81 01 04 38 10 FF                    |
+| CAM_Focus           | Auto Focus         | 81 01 04 38 02 FF                    |                                                                                                                         |
+| CAM_Focus           | Manual Focus       | 81 01 04 38 03 FF                    |                                                                                                                         |
+| CAM_Focus           | Auto/Manual Toggle | 81 01 04 38 10 FF                    |                                                                                                                         |
 | CAM_Focus           | Focus Lock         | 81 0a 04 68 02 FF                    | Prevents any other operation or command from adjusting the current focus state                                          |
 | CAM_Focus           | Focus Unlock       | 81 0a 04 68 03 FF                    | Prevents any other operation or command from adjusting the current focus state                                          |
 | CAM_WB              | Auto               | 81 01 04 35 00 FF                    | Normal Auto                                                                                                             |
@@ -86,8 +86,8 @@ This document contains information about the VISCA Protocol for the following ca
 | Pan Tilt Drive      | Stop               | 81 01 06 01 VV WW 03 03 FF           | VV: Pan Speed 0x01 (Low) to 0x18 (high) WW: Tilt Speed 0x01 (Low) to 0x18 (high)                                        |
 | Pan Tilt Drive      | Absolute Position  | 81 01 06 02 VV WW Y Y Y Y Z Z Z Z FF | VV: Pan Speed 0x01 (Low) to 0x18 (high) WW: Tilt Speed 0x01 (Low) to 0x18 (high) YYYY: Pan Position WWWW: Tilt Position |
 | Pan Tilt Drive      | Relative Position  | 81 01 06 03 VV WW Y Y Y Y Z Z Z Z FF | VV: Pan Speed 0x01 (Low) to 0x18 (high) WW: Tilt Speed 0x01 (Low) to 0x18 (high) YYYY: Pan Position WWWW: Tilt Position |
-| Pan Tilt Drive      | Home               | 81 01 06 04 FF                       |
-| Pan Tilt Drive      | Reset              | 81 01 06 05 FF                       |
+| Pan Tilt Drive      | Home               | 81 01 06 04 FF                       |                                                                                                                         |
+| Pan Tilt Drive      | Reset              | 81 01 06 05 FF                       |                                                                                                                         |
 | CAM_Brightness      | Direct             | 81 01 04 A1 00 00 0p 0q FF           | pq: Brightness Position                                                                                                 |
 | CAM_Contrast        | Direct             | 81 01 04 A2 00 00 0p 0q FF           | pq: Contrast Position                                                                                                   |
 | CAM-Flip            | Off                | 81 01 04 A4 00 FF                    | Single Command For Video Flip - Off                                                                                     |
@@ -116,7 +116,7 @@ This document contains information about the VISCA Protocol for the following ca
 | CAM_FocusPosInq                 | 81 09 04 48 FF    | 90 50 0p 0q 0r 0s FF             | pqrs: Focus Position                                                                                                                                         |
 | CAM_WBModeInq                   | 81 09 04 35 FF    | 90 50 0p FF                      | p: 0=Auto, 1=Indoor, 2=Outdoor, 3=OnePush, 5=Manual                                                                                                          |
 | CAM_RGainInq                    | 81 09 04 43 FF    | 90 50 00 00 0p 0q FF             | pq: R Gain                                                                                                                                                   |
-| CAM_BGainInq                    | 81 09 04 43 FF    | 90 50 00 00 0p 0q FF             | pq: B Gain                                                                                                                                                   |
+| CAM_BGainInq                    | 81 09 04 44 FF    | 90 50 00 00 0p 0q FF             | pq: B Gain                                                                                                                                                   |
 | CAM_AEModeInq                   | 81 09 04 39 FF    | 90 50 0p FF                      | p: 0=Full Auto, 3=Manual, A=Shutter Priority, B=Iris Priority, D=Bright                                                                                      |
 | CAM_ShutterPosInq               | 81 09 04 4A FF    | 90 50 00 00 0p 0q FF             | pq: Shutter Position                                                                                                                                         |
 | CAM_IrisPosInq                  | 81 09 04 4B FF    | 90 50 00 00 0p 0q FF             | pq: Iris Position                                                                                                                                            |
@@ -152,16 +152,16 @@ This document contains information about the VISCA Protocol for the following ca
 | CAM_BrightnessInq               | 81 09 04 A1 FF    | 90 50 00 00 0p 0q FF             | pq: Brightness Position                                                                                                                                      |
 | CAM_ContrastInq                 | 81 09 04 A2 FF    | 90 50 00 00 0p 0q FF             | pq: Contrast Position                                                                                                                                        |
 | CAM_FlipInq                     | 81 09 04 A4 FF    | 90 50 0p FF                      | p: 0=Off, 1=Flip-H, 2=Flip-V, 3=Flip-HV                                                                                                                      |
-| CAM_IridixInq                   | 81 09 04 AA FF    | 90 50 00 00 0p 0q FF             | pq: Iridix Position                                                                                                                                          |
+| CAM_IridixInq                   | 81 09 04 A7 FF    | 90 50 00 00 0p 0q FF             | pq: Iridix Position                                                                                                                                          |
 | CAM_AFZone                      | 81 09 04 AA FF    | 90 50 0p FF                      | p: 0=Top, 1=Center, 2=Bottom                                                                                                                                 |
 | CAM_ColorHueInq                 | 81 09 04 4F FF    | 90 50 00 00 00 0p FF             | p: Color Hue setting 0h (−14 dgrees) to Eh (+14 degrees)                                                                                                     |
 | CAM_AWBSensitivityInq           | 81 09 04 A9 FF    | 90 50 0p FF                      | p: 0=High, 1=Normal, 2=Low                                                                                                                                   |
 
 #### Block Inquiries
 
-| Command                 | Command Packet    | Response Packet                                 | Comments                                                                                                                                                                                          |
-| ----------------------- | ----------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CAM_LensBlockInq        | 81 09 7E 7E 00 FF | 90 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF | uuuu: Zoom Position, vvvv: Focus Position, w.bit0: Focus Mode (1=Auto, 0=Manual)                                                                                                                  |
-| CAM_CameraBlockInq      | 81 09 7E 7E 01 FF | 90 50 0p 0p 0q 0q 0r 0s tt 0u vv ww 00 xx 0z FF | pp: R_Gain, qq: B_Gain, r: WB Mode, s: Aperture, tt: AE Mode, u.bit2: Back Light, u.bit1: Exposure Comp, vv: Shutter Position, ww: Iris Position, xx: Bright Position, z: Exposure Comp. Position |
-| CAM_OtherBlockInq       | 81 09 7E 7E 02 FF | 90 50 0p 0q 00 0r 00 00 00 00 00 00 00 00 00 FF | p.bit0: Power (1:On, 0:Off), q.bit2: LR Reverse (1:On, 0:Off), r.bit3~0: Picture Effect Mode                                                                                                      |
-| CAM_EnlargementBlockInq | 81 09 7E 7E 03 FF | 90 50 00 00 00 00 00 00 00 0p 0q rr 0s 0t 0u FF | p: AF sensitivity, q.bit0: Picture flip(1:On, 0:Off), rr.bit6~3: Color Gain(0h(60%) to Eh(200%)) s: Flip(0: Off, 1:Flip-H, 2:Flip-V, 3:Flip-HV), t.bit2~0: NR2D Level, u: Gain Limit              |
+| Command                 | Command Packet    | Response Packet                                 | Comments                                                                                                                                                                                                             |
+| ----------------------- | ----------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CAM_LensBlockInq        | 81 09 7E 7E 00 FF | 90 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF | uuuu: Zoom Position, vvvv: Focus Position, w.bit0: Focus Mode (1=Auto, 0=Manual)                                                                                                                                     |
+| CAM_CameraBlockInq      | 81 09 7E 7E 01 FF | 90 50 0p 0p 0q 0q 0r 0s tt 0u vv ww yy xx 0z FF | pp: R_Gain, qq: B_Gain, r: WB Mode, s: Aperture, tt: AE Mode, u.bit2: Back Light, u.bit1: Exposure Comp, vv: Shutter Position, ww: Iris Position, yy: Gain Position, xx: Bright Position, z: Exposure Comp. Position |
+| CAM_OtherBlockInq       | 81 09 7E 7E 02 FF | 90 50 0p 0q 00 0r 00 00 00 00 00 00 00 00 00 FF | p.bit0: Power (1:On, 0:Off), q.bit2: LR Reverse (1:On, 0:Off), r.bit3~0: Picture Effect Mode                                                                                                                         |
+| CAM_EnlargementBlockInq | 81 09 7E 7E 03 FF | 90 50 00 00 00 00 00 00 00 0p 0q rr 0s 0t 0u FF | p: AF sensitivity, q.bit0: Picture flip(1:On, 0:Off), rr.bit6~3: Color Gain(0h(60%) to Eh(200%)) s: Flip(0: Off, 1:Flip-H, 2:Flip-V, 3:Flip-HV), t.bit2~0: NR2D Level, u: Gain Limit                                 |
