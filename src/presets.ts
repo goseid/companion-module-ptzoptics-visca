@@ -1,6 +1,6 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
 import { ExposureActionId, ExposureModeId } from './actions/exposure.js'
-import { FeedbackId } from './feedbacks.js'
+import { FeedbackId, PanTiltPositionPanId, PanTiltPositionTiltId } from './feedbacks.js'
 import { FocusActionId, FocusModeId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
@@ -293,6 +293,51 @@ export function getPresets(): CompanionPresetDefinitions {
 			},
 		],
 		feedbacks: [],
+	}
+
+	presets['absolute_position_center'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Center (0, 0)',
+		style: {
+			text: 'Center\\n0, 0',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PanTiltActionId.AbsolutePosition,
+						options: {
+							panPosIsText: false,
+							panPosAsNumber: 0,
+							panPosAsText: '0',
+							tiltPosIsText: false,
+							tiltPosAsNumber: 0,
+							tiltPosAsText: '0',
+							panSpeed: 12,
+							tiltSpeed: 12,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.PanTiltPosition,
+				options: {
+					[PanTiltPositionPanId]: 0,
+					[PanTiltPositionTiltId]: 0,
+				},
+				style: {
+					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(0, 255, 0),
+				},
+			},
+		],
 	}
 
 	presets['speed_up_preset'] = {

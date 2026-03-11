@@ -1,4 +1,5 @@
 import { combineRgb, type CompanionFeedbackDefinitions } from '@companion-module/base'
+import { PanTiltBounds } from './actions/pan-tilt.js'
 import type { PtzOpticsInstance } from './instance.js'
 
 export enum FeedbackId {
@@ -9,7 +10,11 @@ export enum FeedbackId {
 	WhiteBalanceModeOutdoor = 'wb_mode_outdoor',
 	WhiteBalanceModeOnePush = 'wb_mode_onepush',
 	WhiteBalanceModeManual = 'wb_mode_manual',
+	PanTiltPosition = 'pan_tilt_position',
 }
+
+export const PanTiltPositionPanId = 'panPosition'
+export const PanTiltPositionTiltId = 'tiltPosition'
 
 export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefinitions {
 	return {
@@ -112,6 +117,41 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'manual'
+			},
+		},
+		[FeedbackId.PanTiltPosition]: {
+			type: 'boolean',
+			name: 'Pan/Tilt Position',
+			description: 'Change button style when camera is at the specified pan/tilt position',
+			options: [
+				{
+					type: 'number',
+					id: PanTiltPositionPanId,
+					label: 'Pan position',
+					tooltip: `Pan position (${PanTiltBounds.pan.min} through ${PanTiltBounds.pan.max})`,
+					default: 0,
+					min: PanTiltBounds.pan.min,
+					max: PanTiltBounds.pan.max,
+				},
+				{
+					type: 'number',
+					id: PanTiltPositionTiltId,
+					label: 'Tilt position',
+					tooltip: `Tilt position (${PanTiltBounds.tilt.min} through ${PanTiltBounds.tilt.max})`,
+					default: 0,
+					min: PanTiltBounds.tilt.min,
+					max: PanTiltBounds.tilt.max,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			callback: ({ options }) => {
+				return (
+					Number(instance.getVariableValue('pan_position')) === Number(options[PanTiltPositionPanId]) &&
+					Number(instance.getVariableValue('tilt_position')) === Number(options[PanTiltPositionTiltId])
+				)
 			},
 		},
 	}

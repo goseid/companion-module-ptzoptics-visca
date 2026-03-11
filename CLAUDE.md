@@ -59,9 +59,9 @@ The codebase has three distinct layers with a strict dependency direction:
 
 ### Variables and Feedbacks
 
-- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, focus mode, OSD state, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, aperture, shutter/iris/bright/gain positions, backlight, exposure comp). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters.
+- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, focus mode, OSD state, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, aperture, shutter/iris/bright/gain positions, backlight, exposure comp). Pan/tilt positions are signed 16-bit integers (center=0, negative=left/down, positive=right/up). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters.
 
-- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto, WB Mode: Auto/Indoor/Outdoor/OnePush/Manual). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback.
+- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto, WB Mode: Auto/Indoor/Outdoor/OnePush/Manual, Pan/Tilt Position). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion because `getVariableValue()` always returns strings.
 
 ### Instance Lifecycle
 

@@ -2,14 +2,21 @@ import type { PtzOpticsInstance } from '../instance.js'
 import { ModuleDefinedCommand } from '../visca/command.js'
 import { ModuleDefinedInquiry } from '../visca/inquiry.js'
 
+/** Convert a 16-bit unsigned VISCA position to a signed integer. */
+function toSigned16(value: number): number {
+	return value >= 0x8000 ? value - 0x10000 : value
+}
+
 export const PanTiltPositionInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x06, 0x12, 0xff], {
 	bytes: [0x90, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff],
 	params: {
 		panPosition: {
 			nibbles: [5, 7, 9, 11],
+			convert: toSigned16,
 		},
 		tiltPosition: {
 			nibbles: [13, 15, 17, 19],
+			convert: toSigned16,
 		},
 	},
 })

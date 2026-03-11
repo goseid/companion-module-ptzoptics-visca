@@ -46,8 +46,14 @@ export enum PanTiltActionId {
 	AbsolutePosition = 'moveAbsolutePosition',
 }
 
-const PanTiltPosMin = 0x0000
-const PanTiltPosMax = 0xffff
+/**
+ * Pan/tilt position bounds.  Full signed 16-bit range is the VISCA default;
+ * narrow these when camera-specific limits are known.
+ */
+export const PanTiltBounds = {
+	pan: { min: -0x8000, max: 0x7fff },
+	tilt: { min: -0x8000, max: 0x7fff },
+}
 
 type PanOrTilt = 'pan' | 'tilt'
 
@@ -61,16 +67,17 @@ const speed = (type: PanOrTilt) => `${type}Speed`
 
 async function getPosition(
 	options: CompanionOptionValues,
-	type: 'pan' | 'tilt',
+	type: PanOrTilt,
 	context: CompanionActionContext,
 ): Promise<number | string> {
 	const isText = Boolean(options[`${type}PosIsText`])
 	const pos = isText
 		? Number(await context.parseVariablesInString(String(options[`${type}PosAsText`])))
 		: Number(options[`${type}PosAsNumber`])
-	return PanTiltPosMin <= pos && pos <= PanTiltPosMax
+	const { min, max } = PanTiltBounds[type]
+	return min <= pos && pos <= max
 		? pos
-		: `${type[0].toUpperCase()}${type.slice(1)} position ${pos} not in range ${PanTiltPosMin} through ${PanTiltPosMax}`
+		: `${type[0].toUpperCase()}${type.slice(1)} position ${pos} not in range ${min} through ${max}`
 }
 
 function getSpeed(options: CompanionOptionValues, type: PanOrTilt): number | string {
@@ -100,7 +107,8 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 
 	function positionTypeOptions(type: PanOrTilt): SomeCompanionActionInputField[] {
 		const uppercased = `${type[0].toUpperCase()}${type.slice(1)}`
-		const positionTooltip = `${uppercased} position (${PanTiltPosMin} through ${PanTiltPosMax})`
+		const { min, max } = PanTiltBounds[type]
+		const positionTooltip = `${uppercased} position (${min} through ${max})`
 		return [
 			{
 				type: 'checkbox',
@@ -113,9 +121,9 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 				id: posAsNumber(type),
 				label: `${uppercased} position`,
 				tooltip: positionTooltip,
-				default: PanTiltPosMin,
-				min: PanTiltPosMin,
-				max: PanTiltPosMax,
+				default: 0,
+				min,
+				max,
 				isVisibleExpression: `!$(options:${posIsText(type)})`,
 			},
 			{
@@ -124,7 +132,7 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 				label: `${uppercased} position`,
 				tooltip: positionTooltip,
 				useVariables: { local: true },
-				default: `${PanTiltPosMin}`,
+				default: '0',
 				isVisibleExpression: `!!$(options:${posIsText(type)})`,
 			},
 		]

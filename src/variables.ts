@@ -61,6 +61,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 				pan_position: panTilt.panPosition,
 				tilt_position: panTilt.tiltPosition,
 			})
+			instance.checkFeedbacks(FeedbackId.PanTiltPosition)
 		}
 	},
 	async (instance) => {
