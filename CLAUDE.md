@@ -103,3 +103,19 @@ Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 
 ## Testing
 
 Tests use Vitest with `describe`/`test` syntax. Test files live alongside source as `*.test.ts`. A mock `CompanionActionContext` helper is in `src/__tests__/mock-context.ts`.
+
+### Camera Interaction Tests
+
+The `RunCameraInteractionTest` framework in `src/visca/__tests__/camera-interactions/` spins up a real TCP server as a mock camera, then replays a scripted sequence of sends, receives, and assertions. This is used to test:
+
+- **VISCA port behavior** (`src/visca/__tests__/`): Connection management, ACK/completion handling, error recovery, message queuing, reconnection.
+- **Command parameter encoding** (`src/visca/__tests__/command-convert.test.ts`, `src/camera/exposure.test.ts`, `src/camera/osd.test.ts`, `src/camera/pan-tilt.test.ts`): Verifies that typed parameter values are correctly encoded into VISCA byte sequences via nibble mappings and convert functions.
+- **Inquiry response parsing** (`src/visca/__tests__/inquiry-convert.test.ts`, `src/camera/block-inquiry.test.ts`, `src/camera/pan-tilt.test.ts`, `src/camera/osd.test.ts`): Verifies that raw VISCA response bytes are correctly parsed into typed answer objects, including convert functions for iris/shutter labels, WB/AE mode enums, signed 16-bit pan/tilt positions, and OSD state.
+
+### Upgrade Migration Tests
+
+Migration functions (`tryUpdate*` in `src/actions/`) are tested directly with mock `CompanionMigrationAction` objects. See `src/actions/exposure.test.ts`, `src/actions/presets.test.ts`, `src/actions/pan-tilt.test.ts`.
+
+### Unit Tests
+
+Pure logic tests for option conversions (`src/actions/option-conversion.test.ts`), feedback evaluation logic (`src/feedbacks.test.ts`), and config validation (`src/config.test.ts`).
