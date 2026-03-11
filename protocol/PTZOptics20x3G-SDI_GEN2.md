@@ -17,11 +17,11 @@ This document contains information about the VISCA Protocol for the following ca
 ### Part 2: Camera Control Commands
 
 | Command             | Function           | Packet                               | Comments                                                                                                                |
-| ------------------- | ------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- | -------- |
+| ------------------- | ------------------ | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | CAM_Zoom            | Stop               | 81 01 04 07 00 FF                    |                                                                                                                         |
 | CAM_Zoom            | Tele (Standard)    | 81 01 04 07 02 FF                    |                                                                                                                         |
 | CAM_Zoom            | Wide (Standard)    | 81 01 04 07 03 FF                    |                                                                                                                         |
-| CAM_Zoom            | Tele (Variable)    | 81 01 04 07 2p FF                    | p = (low) – 7                                                                                                           | (high)   |
+| CAM_Zoom            | Tele (Variable)    | 81 01 04 07 2p FF                    | p = (low) – 7 (high)                                                                                                    |
 | CAM_Zoom            | Wide (Variable)    | 81 01 04 07 3p FF                    | p = (low) – 7 (high)                                                                                                    |
 | CAM_Zoom            | Direct             | 81 01 04 47 p q r s FF               | pqrs: Zoom Position                                                                                                     |
 | CAM_Focus           | Stop               | 81 01 04 08 00 FF                    |                                                                                                                         |
@@ -101,8 +101,8 @@ This document contains information about the VISCA Protocol for the following ca
 | CAM_AFZone          | Top                | 81 01 04 AA 00 FF                    | AF Zone priority Top                                                                                                    |
 | CAM_AFZone          | Center             | 81 01 04 AA 01 FF                    | AF Zone priority Center                                                                                                 |
 | CAM_AFZone          | Bottom             | 81 01 04 AA 02 FF                    | AF Zone priority Bottom                                                                                                 |
-| CAM_ColorHue        | Direct             | 81 01 04 4F 00 00 00 0p FF           | p: Color Hue 0h (−14 degrees) to Eh (+14                                                                                | degrees) |
-| OSD_Control         | Open/Close         | 81 01 04 3F 02 5F FF                 | Open or Close the On Screen Display                                                                                     |
+| CAM_ColorHue        | Direct             | 81 01 04 4F 00 00 00 0p FF           | p: Color Hue 0h (−14 degrees) to Eh (+14 degrees)                                                                       |
+| OSD_Control         | Open/Close         | 81 01 06 06 10 FF                    | Open or Close the On Screen Display                                                                                     |
 
 ### Part 3: Query Commands
 

@@ -22,7 +22,7 @@ export const OnScreenDisplayInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x06
 	},
 })
 
-export const OnScreenDisplayToggle = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x3f, 0x02, 0x5f, 0xff])
+export const OnScreenDisplayToggle = new ModuleDefinedCommand([0x81, 0x01, 0x06, 0x06, 0x10, 0xff])
 export const OnScreenDisplayClose = new ModuleDefinedCommand([0x81, 0x01, 0x06, 0x06, 0x03, 0xff])
 
 export type OSDNavigateDirection = 'up' | 'right' | 'down' | 'left'
