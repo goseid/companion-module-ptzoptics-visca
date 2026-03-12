@@ -17,6 +17,7 @@ import {
 	IMAGE_UP_LEFT,
 	IMAGE_DOWN_LEFT,
 	IMAGE_DOWN_RIGHT,
+	IMAGE_ROTARY_BG,
 } from './assets/assets.js'
 import { isValidPreset } from './camera/presets.js'
 
@@ -766,6 +767,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'Iris\\n$(ptzoptics-visca:iris_position)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -805,6 +808,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'Gain\\n$(ptzoptics-visca:gain_position)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -844,6 +849,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'Exp Comp\\n$(ptzoptics-visca:exp_comp_position)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -883,6 +890,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'Bright\\n$(ptzoptics-visca:bright_position)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -922,6 +931,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'Shutter\\n$(ptzoptics-visca:shutter_position)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -1276,6 +1287,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'R Gain\\n$(ptzoptics-visca:r_gain)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0x66, 0x00, 0x00),
 		},
@@ -1315,6 +1328,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		style: {
 			text: 'B Gain\\n$(ptzoptics-visca:b_gain)',
 			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0x00, 0x00, 0x66),
 		},

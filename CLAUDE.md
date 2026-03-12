@@ -63,6 +63,12 @@ The codebase has three distinct layers with a strict dependency direction:
 
 - **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode: Auto, WB Mode: Auto/Indoor/Outdoor/OnePush/Manual, Pan/Tilt Position). Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion because `getVariableValue()` always returns strings.
 
+### Presets and Assets
+
+- **Presets** (`src/presets.ts`): Button presets provide pre-configured buttons for Companion's UI. Rotary action presets (those with `options: { rotaryActions: true }`) support encoder rotation for incremental adjustments and use a shared `IMAGE_ROTARY_BG` background image.
+
+- **Assets** (`src/assets/assets.ts`): Base64-encoded PNG images used in preset button styles. Includes directional arrows (`IMAGE_UP`, `IMAGE_DOWN`, etc.) and the rotary encoder background (`IMAGE_ROTARY_BG`).
+
 ### Instance Lifecycle
 
 `PtzOpticsInstance` (extends `InstanceBase<RawConfig>`) implements three Companion lifecycle methods:
