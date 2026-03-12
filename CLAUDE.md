@@ -77,6 +77,8 @@ Commands and inquiries follow consistent byte patterns for related camera proper
 
 | Property | Up/Down | Direct  | Inquiry |
 | -------- | ------- | ------- | ------- |
+| R Gain   | `04 03` | `04 43` | —       |
+| B Gain   | `04 04` | `04 44` | —       |
 | Shutter  | `04 0A` | `04 4A` | `04 4A` |
 | Iris     | `04 0B` | `04 4B` | `04 4B` |
 | Gain     | `04 0C` | `04 4C` | —       |

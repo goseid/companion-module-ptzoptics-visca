@@ -5,9 +5,11 @@ import {
 	type AutoWhiteBalanceSensitivityLevel,
 	BGainDirect,
 	BGainDown,
+	BGainReset,
 	BGainUp,
 	RGainDirect,
 	RGainDown,
+	RGainReset,
 	RGainUp,
 	WhiteBalance,
 	type WhiteBalanceMode,
@@ -20,9 +22,11 @@ export enum WhiteBalanceActionId {
 	SelectWhiteBalance = 'wb',
 	WhiteBalanceOnePushTrigger = 'wbOPT',
 	SelectAutoWhiteBalanceSensitivity = 'awbS',
+	RGainReset = 'rGainReset',
 	RGainUp = 'rGainUp',
 	RGainDown = 'rGainDown',
 	RGainDirect = 'rGainDirect',
+	BGainReset = 'bGainReset',
 	BGainUp = 'bGainUp',
 	BGainDown = 'bGainDown',
 	BGainDirect = 'bGainDirect',
@@ -105,6 +109,13 @@ export function whiteBalanceActions(instance: PtzOpticsInstance): ActionDefiniti
 				instance.sendCommand(AutoWhiteBalanceSensitivity, { level })
 			},
 		},
+		[WhiteBalanceActionId.RGainReset]: {
+			name: 'R Gain Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(RGainReset)
+			},
+		},
 		[WhiteBalanceActionId.RGainUp]: {
 			name: 'R Gain Up',
 			options: [],
@@ -128,12 +139,19 @@ export function whiteBalanceActions(instance: PtzOpticsInstance): ActionDefiniti
 					id: GainValueId,
 					min: 0x00,
 					max: 0xff,
-					default: 0x80,
+					default: 226,
 				},
 			],
 			callback: async ({ options }) => {
 				const gain = Number(options[GainValueId])
 				instance.sendCommand(RGainDirect, { gain })
+			},
+		},
+		[WhiteBalanceActionId.BGainReset]: {
+			name: 'B Gain Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BGainReset)
 			},
 		},
 		[WhiteBalanceActionId.BGainUp]: {
@@ -159,7 +177,7 @@ export function whiteBalanceActions(instance: PtzOpticsInstance): ActionDefiniti
 					id: GainValueId,
 					min: 0x00,
 					max: 0xff,
-					default: 0x80,
+					default: 188,
 				},
 			],
 			callback: async ({ options }) => {

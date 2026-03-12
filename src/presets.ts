@@ -955,7 +955,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'White Balance Mode',
 		style: {
 			text: 'WB\\nMODE',
@@ -1071,7 +1071,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_auto_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'WB Auto',
 		style: {
 			text: 'WB\\nAUTO',
@@ -1106,7 +1106,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_indoor_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'WB Indoor',
 		style: {
 			text: 'WB\\nINDOOR',
@@ -1141,7 +1141,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_outdoor_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'WB Outdoor',
 		style: {
 			text: 'WB\\nOUTDOOR',
@@ -1176,7 +1176,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_onepush_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'WB One Push',
 		style: {
 			text: 'WB\\nONE PUSH',
@@ -1211,7 +1211,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['wb_mode_manual_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'WB Manual',
 		style: {
 			text: 'WB\\nMANUAL',
@@ -1246,7 +1246,7 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['trigger_one_push_white_balance_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'Trigger One Push White Balance',
 		style: {
 			text: 'WB\\nTRIGGER\\nONE PUSH',
@@ -1270,14 +1270,14 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['r_gain_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'R Gain',
 		options: { rotaryActions: true },
 		style: {
 			text: 'R Gain\\n$(ptzoptics-visca:r_gain)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0x66, 0x00, 0x00),
 		},
 		steps: [
 			{
@@ -1285,7 +1285,7 @@ export function getPresets(): CompanionPresetDefinitions {
 					{
 						actionId: WhiteBalanceActionId.RGainDirect,
 						options: {
-							gain: 0x80,
+							gain: 226,
 						},
 					},
 				],
@@ -1309,14 +1309,14 @@ export function getPresets(): CompanionPresetDefinitions {
 
 	presets['b_gain_preset'] = {
 		type: 'button',
-		category: 'White balance',
+		category: 'Color',
 		name: 'B Gain',
 		options: { rotaryActions: true },
 		style: {
 			text: 'B Gain\\n$(ptzoptics-visca:b_gain)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0x00, 0x00, 0x66),
 		},
 		steps: [
 			{
@@ -1324,7 +1324,7 @@ export function getPresets(): CompanionPresetDefinitions {
 					{
 						actionId: WhiteBalanceActionId.BGainDirect,
 						options: {
-							gain: 0x80,
+							gain: 188,
 						},
 					},
 				],
@@ -1341,6 +1341,234 @@ export function getPresets(): CompanionPresetDefinitions {
 						options: {},
 					},
 				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['r_gain_up_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'R Gain Up',
+		style: {
+			text: 'R Gain\\nUp',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x66, 0x00, 0x00),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['r_gain_down_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'R Gain Down',
+		style: {
+			text: 'R Gain\\nDown',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x66, 0x00, 0x00),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['r_gain_reset_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'R Gain Reset',
+		style: {
+			text: 'R Gain\\nReset',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x66, 0x00, 0x00),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['r_gain_direct_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'R Gain Direct',
+		style: {
+			text: 'R Gain\\nDirect',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x66, 0x00, 0x00),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainDirect,
+						options: {
+							gain: 226,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['b_gain_up_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'B Gain Up',
+		style: {
+			text: 'B Gain\\nUp',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x00, 0x00, 0x66),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.BGainUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['b_gain_down_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'B Gain Down',
+		style: {
+			text: 'B Gain\\nDown',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x00, 0x00, 0x66),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.BGainDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['b_gain_reset_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'B Gain Reset',
+		style: {
+			text: 'B Gain\\nReset',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x00, 0x00, 0x66),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.BGainReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['b_gain_direct_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'B Gain Direct',
+		style: {
+			text: 'B Gain\\nDirect',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x00, 0x00, 0x66),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.BGainDirect,
+						options: {
+							gain: 188,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['rb_gain_direct_preset'] = {
+		type: 'button',
+		category: 'Color',
+		name: 'RB Gain Direct',
+		style: {
+			text: 'RB Gain\\nDirect',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0x33, 0x00, 0x33),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: WhiteBalanceActionId.RGainDirect,
+						options: {
+							gain: 226,
+						},
+					},
+					{
+						actionId: WhiteBalanceActionId.BGainDirect,
+						options: {
+							gain: 188,
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [],
