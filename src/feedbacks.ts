@@ -3,7 +3,7 @@ import { PanTiltBounds } from './actions/pan-tilt.js'
 import type { PtzOpticsInstance } from './instance.js'
 
 export enum FeedbackId {
-	FocusModeAuto = 'focus_mode_auto',
+	FocusMode = 'focus_mode',
 	ExposureModeText = 'exposure_mode_text',
 	WhiteBalanceMode = 'wb_mode',
 	SharpnessMode = 'sharpness_mode',
@@ -15,17 +15,28 @@ export const PanTiltPositionTiltId = 'tiltPosition'
 
 export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefinitions {
 	return {
-		[FeedbackId.FocusModeAuto]: {
+		[FeedbackId.FocusMode]: {
 			type: 'boolean',
-			name: 'Focus Mode: Auto',
-			description: 'Change button style when focus mode is Auto',
-			options: [],
+			name: 'Focus Mode',
+			description: 'Change button style when focus mode matches',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'auto', label: 'Auto' },
+						{ id: 'manual', label: 'Manual' },
+					],
+					default: 'auto',
+				},
+			],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
 			},
-			callback: () => {
-				return instance.getVariableValue('focus_mode') === 'auto'
+			callback: ({ options }) => {
+				return instance.getVariableValue('focus_mode') === options['mode']
 			},
 		},
 		[FeedbackId.ExposureModeText]: {

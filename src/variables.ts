@@ -70,7 +70,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 		const focus = await instance.sendPollInquiry(FocusModeInquiry)
 		if (focus !== null) {
 			instance.setVariableValues({ focus_mode: focus.mode })
-			instance.checkFeedbacks(FeedbackId.FocusModeAuto)
+			instance.checkFeedbacks(FeedbackId.FocusMode)
 		}
 	},
 	async (instance) => {

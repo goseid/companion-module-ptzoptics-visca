@@ -531,8 +531,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.FocusModeAuto,
-				options: {},
+				feedbackId: FeedbackId.FocusMode,
+				options: { mode: 'auto' },
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(255, 0, 0),

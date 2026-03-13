@@ -53,6 +53,13 @@ const oldWbFeedbackToMode: Record<string, string> = {
 	wb_mode_manual: 'manual',
 }
 
+function tryUpdateFocusModeFeedback(feedback: CompanionMigrationFeedback): boolean {
+	if (feedback.feedbackId !== 'focus_mode_auto') return false
+	feedback.feedbackId = 'focus_mode'
+	feedback.options['mode'] = 'auto'
+	return true
+}
+
 function tryUpdateWhiteBalanceFeedbacks(feedback: CompanionMigrationFeedback): boolean {
 	const mode = oldWbFeedbackToMode[feedback.feedbackId]
 	if (mode === undefined) return false
@@ -67,5 +74,6 @@ export const UpgradeScripts = [
 	ActionUpdater(tryUpdateRecallSetPresetActions),
 	ActionUpdater(tryUpdatePresetAndSpeedEncodingsInActions),
 	ActionUpdater(tryUpdateIrisHexValues),
+	FeedbackUpdater(tryUpdateFocusModeFeedback),
 	FeedbackUpdater(tryUpdateWhiteBalanceFeedbacks),
 ] satisfies CompanionStaticUpgradeScript<RawConfig>[]
