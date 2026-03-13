@@ -105,14 +105,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 				exp_comp_position: cam.expCompPosition,
 				gain_position: cam.gainPosition,
 			})
-			instance.checkFeedbacks(
-				FeedbackId.ExposureModeText,
-				FeedbackId.WhiteBalanceModeAuto,
-				FeedbackId.WhiteBalanceModeIndoor,
-				FeedbackId.WhiteBalanceModeOutdoor,
-				FeedbackId.WhiteBalanceModeOnePush,
-				FeedbackId.WhiteBalanceModeManual,
-			)
+			instance.checkFeedbacks(FeedbackId.ExposureModeText, FeedbackId.WhiteBalanceMode)
 		}
 	},
 ]

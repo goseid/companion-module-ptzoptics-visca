@@ -1,5 +1,6 @@
 import type {
 	CompanionMigrationAction,
+	CompanionMigrationFeedback,
 	CompanionStaticUpgradeProps,
 	CompanionStaticUpgradeScript,
 	CompanionUpgradeContext,
@@ -21,6 +22,18 @@ function ActionUpdater(
 	}
 }
 
+function FeedbackUpdater(
+	tryUpdate: (feedback: CompanionMigrationFeedback) => boolean,
+): CompanionStaticUpgradeScript<RawConfig> {
+	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig>) => {
+		return {
+			updatedActions: [],
+			updatedConfig: null,
+			updatedFeedbacks: props.feedbacks.filter(tryUpdate),
+		}
+	}
+}
+
 function ConfigUpdater(tryUpdate: (config: RawConfig) => boolean): CompanionStaticUpgradeScript<RawConfig> {
 	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig>) => {
 		return {
@@ -31,10 +44,28 @@ function ConfigUpdater(tryUpdate: (config: RawConfig) => boolean): CompanionStat
 	}
 }
 
+/** Old individual WB feedback IDs → mode value for the unified feedback. */
+const oldWbFeedbackToMode: Record<string, string> = {
+	wb_mode_auto: 'automatic',
+	wb_mode_indoor: 'indoor',
+	wb_mode_outdoor: 'outdoor',
+	wb_mode_onepush: 'onepush',
+	wb_mode_manual: 'manual',
+}
+
+function tryUpdateWhiteBalanceFeedbacks(feedback: CompanionMigrationFeedback): boolean {
+	const mode = oldWbFeedbackToMode[feedback.feedbackId]
+	if (mode === undefined) return false
+	feedback.feedbackId = 'wb_mode'
+	feedback.options['mode'] = mode
+	return true
+}
+
 export const UpgradeScripts = [
 	ActionUpdater(tryUpdateCustomCommandsWithCommandParamOptions),
 	ConfigUpdater(tryUpdateConfigWithDebugLogging),
 	ActionUpdater(tryUpdateRecallSetPresetActions),
 	ActionUpdater(tryUpdatePresetAndSpeedEncodingsInActions),
 	ActionUpdater(tryUpdateIrisHexValues),
+	FeedbackUpdater(tryUpdateWhiteBalanceFeedbacks),
 ] satisfies CompanionStaticUpgradeScript<RawConfig>[]

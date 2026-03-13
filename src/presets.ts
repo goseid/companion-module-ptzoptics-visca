@@ -1034,8 +1034,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeAuto,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'automatic' },
 				style: {
 					text: 'WB\\nAUTO',
 					color: combineRgb(255, 255, 255),
@@ -1043,8 +1043,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				},
 			},
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'indoor' },
 				style: {
 					text: 'WB\\nIndoor',
 					color: combineRgb(0, 0, 0),
@@ -1052,8 +1052,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				},
 			},
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'outdoor' },
 				style: {
 					text: 'WB\\nOutdoor',
 					color: combineRgb(0, 0, 0),
@@ -1061,8 +1061,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				},
 			},
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeOnePush,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'onepush' },
 				style: {
 					text: 'WB\\nONE PUSH',
 					color: combineRgb(255, 255, 255),
@@ -1070,8 +1070,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				},
 			},
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeManual,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'manual' },
 				style: {
 					text: 'WB\\nMANUAL',
 					color: combineRgb(255, 255, 255),
@@ -1106,8 +1106,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeAuto,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'automatic' },
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),
@@ -1141,8 +1141,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'indoor' },
 				style: {
 					color: combineRgb(0, 0, 0),
 					bgcolor: combineRgb(223, 85, 0),
@@ -1176,8 +1176,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'outdoor' },
 				style: {
 					color: combineRgb(0, 0, 0),
 					bgcolor: combineRgb(223, 85, 0),
@@ -1211,8 +1211,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeOnePush,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'onepush' },
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),
@@ -1246,8 +1246,8 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.WhiteBalanceModeManual,
-				options: {},
+				feedbackId: FeedbackId.WhiteBalanceMode,
+				options: { mode: 'manual' },
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),
