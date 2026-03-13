@@ -154,6 +154,7 @@ export const CameraBlockInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x7e, 0x
 		},
 		expCompPosition: {
 			nibbles: [29],
+			convert: (param: number): number => param - 7,
 		},
 	},
 })

@@ -7,6 +7,9 @@ import {
 	BrightUp,
 	ExpCompDirect,
 	ExpCompDown,
+	ExpCompOff,
+	ExpCompOn,
+	ExpCompReset,
 	ExpCompUp,
 	ExposureMode,
 	ExposureModeInquiry,
@@ -43,8 +46,11 @@ export enum ExposureActionId {
 	GainDown = 'gainD',
 	GainReset = 'gainR',
 	GainDirect = 'gainDirect',
+	ExpCompOn = 'expCompOn',
+	ExpCompOff = 'expCompOff',
 	ExpCompUp = 'expCompU',
 	ExpCompDown = 'expCompD',
+	ExpCompReset = 'expCompR',
 	ExpCompDirect = 'expCompDirect',
 	BrightUp = 'brightU',
 	BrightDown = 'brightD',
@@ -320,6 +326,20 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 				instance.sendCommand(GainDirect, { gain })
 			},
 		},
+		[ExposureActionId.ExpCompOn]: {
+			name: 'Exposure Comp On',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ExpCompOn)
+			},
+		},
+		[ExposureActionId.ExpCompOff]: {
+			name: 'Exposure Comp Off',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ExpCompOff)
+			},
+		},
 		[ExposureActionId.ExpCompUp]: {
 			name: 'Exposure Comp Up',
 			options: [],
@@ -334,6 +354,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 				instance.sendCommand(ExpCompDown)
 			},
 		},
+		[ExposureActionId.ExpCompReset]: {
+			name: 'Exposure Comp Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ExpCompReset)
+			},
+		},
 		[ExposureActionId.ExpCompDirect]: {
 			name: 'Exposure Comp Direct',
 			options: [
@@ -341,13 +368,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 					type: 'number',
 					label: 'Value',
 					id: 'position',
-					min: 0x00,
-					max: 0x0a,
-					default: 0x00,
+					min: -7,
+					max: 7,
+					default: 0,
 				},
 			],
 			callback: async ({ options }) => {
-				const position = Number(options['position'])
+				const position = Number(options['position']) + 7
 				instance.sendCommand(ExpCompDirect, { position })
 			},
 		},
