@@ -934,7 +934,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Iris Up',
 		style: {
-			text: 'IRIS\\nUP',
+			text: 'Iris\\nUP',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -958,7 +958,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Iris Down',
 		style: {
-			text: 'IRIS\\nDOWN',
+			text: 'Iris\\nDOWN',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -982,7 +982,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Iris Reset',
 		style: {
-			text: 'IRIS\\nRESET',
+			text: 'Iris\\nRESET',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1006,7 +1006,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Iris Set',
 		style: {
-			text: 'IRIS\\nSet\\nƒ 2.0',
+			text: 'Iris\\nSet\\nƒ 2.0',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1084,7 +1084,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Gain Up',
 		style: {
-			text: 'GAIN\\nUP',
+			text: 'Gain\\nUP',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1108,7 +1108,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Gain Down',
 		style: {
-			text: 'GAIN\\nDOWN',
+			text: 'Gain\\nDOWN',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1132,7 +1132,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Gain Reset',
 		style: {
-			text: 'GAIN\\nRESET',
+			text: 'Gain\\nRESET',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1156,7 +1156,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Gain Set',
 		style: {
-			text: 'GAIN\\nSet\\n2',
+			text: 'Gain\\nSet\\n2',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1234,7 +1234,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Shutter Up',
 		style: {
-			text: 'Shut\\nUP',
+			text: 'Shutter\\nUP',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1258,7 +1258,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Shutter Down',
 		style: {
-			text: 'Shut\\nDOWN',
+			text: 'Shutter\\nDOWN',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1282,7 +1282,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Shutter Reset',
 		style: {
-			text: 'Shut\\nRESET',
+			text: 'Shutter\\nRESET',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1306,7 +1306,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Exposure',
 		name: 'Shutter Set',
 		style: {
-			text: 'Shut\\nSet\\n1/60',
+			text: 'Shutter\\nSet\\n1/60',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
