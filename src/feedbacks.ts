@@ -74,7 +74,7 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			options: [],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 255),
+				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'indoor'
@@ -87,7 +87,7 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			options: [],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 255),
+				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'outdoor'
@@ -100,7 +100,7 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			options: [],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 255),
+				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'onepush'
@@ -113,7 +113,7 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			options: [],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 255),
+				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'manual'
@@ -145,7 +145,7 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: ({ options }) => {
 				return (

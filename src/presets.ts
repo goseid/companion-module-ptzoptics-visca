@@ -65,7 +65,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -96,7 +96,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -127,7 +127,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -158,7 +158,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -189,7 +189,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -220,7 +220,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -251,7 +251,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			pngalignment: 'center:center',
 			size: '18',
 			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(0, 0, 255),
 		},
 		steps: [
 			{
@@ -335,7 +335,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				},
 				style: {
 					color: combineRgb(0, 0, 0),
-					bgcolor: combineRgb(0, 255, 0),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1038,25 +1038,25 @@ export function getPresets(): CompanionPresetDefinitions {
 				style: {
 					text: 'WB\\nAUTO',
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 			{
 				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
 				options: {},
 				style: {
-					text: 'WB\\nINDOOR',
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					text: 'WB\\nIndoor',
+					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 			{
 				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
 				options: {},
 				style: {
-					text: 'WB\\nOUTDOOR',
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					text: 'WB\\nOutdoor',
+					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 			{
@@ -1065,7 +1065,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				style: {
 					text: 'WB\\nONE PUSH',
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 			{
@@ -1074,7 +1074,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				style: {
 					text: 'WB\\nMANUAL',
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1109,7 +1109,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				options: {},
 				style: {
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1120,10 +1120,10 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Color',
 		name: 'WB Indoor',
 		style: {
-			text: 'WB\\nINDOOR',
+			text: 'WB\\nIndoor',
 			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(255, 192, 192),
 		},
 		steps: [
 			{
@@ -1143,8 +1143,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				feedbackId: FeedbackId.WhiteBalanceModeIndoor,
 				options: {},
 				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1155,10 +1155,10 @@ export function getPresets(): CompanionPresetDefinitions {
 		category: 'Color',
 		name: 'WB Outdoor',
 		style: {
-			text: 'WB\\nOUTDOOR',
+			text: 'WB\\nOutdoor',
 			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: combineRgb(0, 0, 0),
+			bgcolor: combineRgb(192, 192, 255),
 		},
 		steps: [
 			{
@@ -1178,8 +1178,8 @@ export function getPresets(): CompanionPresetDefinitions {
 				feedbackId: FeedbackId.WhiteBalanceModeOutdoor,
 				options: {},
 				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					color: combineRgb(0, 0, 0),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1214,7 +1214,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				options: {},
 				style: {
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
@@ -1249,7 +1249,7 @@ export function getPresets(): CompanionPresetDefinitions {
 				options: {},
 				style: {
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 255),
+					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
 		],
