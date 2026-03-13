@@ -335,7 +335,7 @@ export function getPresets(): CompanionPresetDefinitions {
 					[PanTiltPositionTiltId]: 0,
 				},
 				style: {
-					color: combineRgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),
 				},
 			},
