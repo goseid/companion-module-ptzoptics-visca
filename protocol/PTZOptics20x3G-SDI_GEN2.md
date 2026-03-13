@@ -67,6 +67,10 @@ This document contains information about the VISCA Protocol for the following ca
 | CAM_Shutter         | Up                 | 81 01 04 0A 02 FF                    | Increase Shutter                                                                                                        |
 | CAM_Shutter         | Down               | 81 01 04 0A 03 FF                    | Decrease Shutter                                                                                                        |
 | CAM_Shutter         | Direct             | 81 01 04 4A 00 00 p q FF             | pq: Shutter Position                                                                                                    |
+| Exp_Bright          | Reset              | 81 01 04 0D 00 FF                    | Resets to 0x7 (7) value                                                                                                 |
+| Exp_Bright          | Up                 | 81 01 04 0D 02 FF                    | Exposure Bright Setting Up                                                                                              |
+| Exp_Bright          | Down               | 81 01 04 0D 03 FF                    | Exposure Bright Setting Down                                                                                            |
+| Exp_Bright          | Direct             | 81 01 04 0D 00 00 0p 0q FF           | pq: Exposure Bright Position (0x00=0 ~ 0x11=17)                                                                         |
 | CAM_Backlight       | On                 | 81 01 04 33 02 FF                    | Back Light Compensation Off                                                                                             |
 | CAM_Backlight       | Off                | 81 01 04 33 03 FF                    | Back Light Compensation Off                                                                                             |
 | CAM_Flicker         | -                  | 81 01 04 23 0p FF                    | p: Flicker Settings – (0: Off, 1: 50Hz, 2: 60Hz)                                                                        |

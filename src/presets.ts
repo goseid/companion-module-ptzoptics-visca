@@ -2,6 +2,7 @@ import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/b
 import { ExposureActionId, ExposureModeId, IrisSettingId, ShutterSettingId } from './actions/exposure.js'
 import {
 	FeedbackId,
+	BrightPositionValueId,
 	GainPositionValueId,
 	IrisPositionSettingId,
 	ShutterPositionSettingId,
@@ -1416,6 +1417,115 @@ export function getPresets(): CompanionPresetDefinitions {
 			},
 		],
 		feedbacks: [],
+	}
+
+	presets['bright_up_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright Up',
+		style: {
+			text: 'Bright\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BrightUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['bright_down_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright Down',
+		style: {
+			text: 'Bright\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BrightDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['bright_reset_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright Reset',
+		style: {
+			text: 'Bright\\nRESET',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BrightReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['bright_set_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Bright Set',
+		style: {
+			text: 'Bright\\nSet\\n7',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BrightDirect,
+						options: {
+							position: 7,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.BrightPosition,
+				options: {
+					[BrightPositionValueId]: 7,
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
 	presets['wb_mode_preset'] = {

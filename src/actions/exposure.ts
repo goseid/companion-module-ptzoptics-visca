@@ -3,6 +3,7 @@ import type { ActionDefinitions } from './actionid.js'
 import {
 	BrightDirect,
 	BrightDown,
+	BrightReset,
 	BrightUp,
 	ExpCompDirect,
 	ExpCompDown,
@@ -47,6 +48,7 @@ export enum ExposureActionId {
 	ExpCompDirect = 'expCompDirect',
 	BrightUp = 'brightU',
 	BrightDown = 'brightD',
+	BrightReset = 'brightR',
 	BrightDirect = 'brightDirect',
 }
 
@@ -347,6 +349,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 			callback: async ({ options }) => {
 				const position = Number(options['position'])
 				instance.sendCommand(ExpCompDirect, { position })
+			},
+		},
+		[ExposureActionId.BrightReset]: {
+			name: 'Bright Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BrightReset)
 			},
 		},
 		[ExposureActionId.BrightUp]: {

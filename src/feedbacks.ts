@@ -10,12 +10,14 @@ export enum FeedbackId {
 	SharpnessMode = 'sharpness_mode',
 	IrisPosition = 'iris_position',
 	ShutterPosition = 'shutter_position',
+	BrightPosition = 'bright_position',
 	GainPosition = 'gain_position',
 	PanTiltPosition = 'pan_tilt_position',
 }
 
 export const IrisPositionSettingId = 'irisSetting'
 export const ShutterPositionSettingId = 'shutterSetting'
+export const BrightPositionValueId = 'brightValue'
 export const GainPositionValueId = 'gainValue'
 export const PanTiltPositionPanId = 'panPosition'
 export const PanTiltPositionTiltId = 'tiltPosition'
@@ -219,6 +221,28 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: ({ options }) => {
 				return instance.getVariableValue('shutter_position') === options[ShutterPositionSettingId]
+			},
+		},
+		[FeedbackId.BrightPosition]: {
+			type: 'boolean',
+			name: 'Bright Position',
+			description: 'Change button style when bright position matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Position',
+					id: BrightPositionValueId,
+					default: 7,
+					min: 0x00,
+					max: 0xff,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('bright_position')) === Number(options[BrightPositionValueId])
 			},
 		},
 		[FeedbackId.GainPosition]: {
