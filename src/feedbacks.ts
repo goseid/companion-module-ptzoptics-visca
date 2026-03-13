@@ -4,6 +4,7 @@ import type { PtzOpticsInstance } from './instance.js'
 
 export enum FeedbackId {
 	FocusMode = 'focus_mode',
+	ExposureMode = 'exposure_mode',
 	ExposureModeText = 'exposure_mode_text',
 	WhiteBalanceMode = 'wb_mode',
 	SharpnessMode = 'sharpness_mode',
@@ -39,6 +40,33 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 				return instance.getVariableValue('focus_mode') === options['mode']
 			},
 		},
+		[FeedbackId.ExposureMode]: {
+			type: 'boolean',
+			name: 'Exposure Mode',
+			description: 'Change button style when exposure mode matches',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'full-auto', label: 'Full Auto' },
+						{ id: 'manual', label: 'Manual' },
+						{ id: 'shutter-priority', label: 'Shutter Priority' },
+						{ id: 'iris-priority', label: 'Iris Priority' },
+						{ id: 'bright-mode-manual', label: 'Bright Mode' },
+					],
+					default: 'full-auto',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return instance.getVariableValue('exposure_mode') === options['mode']
+			},
+		},
 		[FeedbackId.ExposureModeText]: {
 			type: 'advanced',
 			name: 'Exposure Mode Text',
@@ -48,15 +76,15 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 				const mode = instance.getVariableValue('exposure_mode')
 				switch (mode) {
 					case 'full-auto':
-						return { text: 'Auto\nExpose' }
+						return { text: 'EXP Mode\nAuto' }
 					case 'manual':
-						return { text: 'Manual\nExpose' }
+						return { text: 'EXP Mode\nManual' }
 					case 'shutter-priority':
-						return { text: 'Shutter\nPriority' }
+						return { text: 'EXP Mode\nShutter' }
 					case 'iris-priority':
-						return { text: 'Iris\nPriority' }
+						return { text: 'EXP Mode\nIris' }
 					case 'bright-mode-manual':
-						return { text: 'Bright\nExpose' }
+						return { text: 'EXP Mode\nBright' }
 					default:
 						return {}
 				}

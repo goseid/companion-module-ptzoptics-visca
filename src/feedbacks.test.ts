@@ -55,38 +55,38 @@ describe('exposure mode text feedback', () => {
 	function exposureModeText(mode: string | undefined): { text: string } | Record<string, never> {
 		switch (mode) {
 			case 'full-auto':
-				return { text: 'Auto\nExpose' }
+				return { text: 'EXP Mode\nAuto' }
 			case 'manual':
-				return { text: 'Manual\nExpose' }
+				return { text: 'EXP Mode\nManual' }
 			case 'shutter-priority':
-				return { text: 'Shutter\nPriority' }
+				return { text: 'EXP Mode\nShutter' }
 			case 'iris-priority':
-				return { text: 'Iris\nPriority' }
+				return { text: 'EXP Mode\nIris' }
 			case 'bright-mode-manual':
-				return { text: 'Bright\nExpose' }
+				return { text: 'EXP Mode\nBright' }
 			default:
 				return {}
 		}
 	}
 
-	test('full-auto returns Auto Expose text', () => {
-		expect(exposureModeText('full-auto')).toEqual({ text: 'Auto\nExpose' })
+	test('full-auto returns EXP Mode Auto text', () => {
+		expect(exposureModeText('full-auto')).toEqual({ text: 'EXP Mode\nAuto' })
 	})
 
-	test('manual returns Manual Expose text', () => {
-		expect(exposureModeText('manual')).toEqual({ text: 'Manual\nExpose' })
+	test('manual returns EXP Mode Manual text', () => {
+		expect(exposureModeText('manual')).toEqual({ text: 'EXP Mode\nManual' })
 	})
 
-	test('shutter-priority returns Shutter Priority text', () => {
-		expect(exposureModeText('shutter-priority')).toEqual({ text: 'Shutter\nPriority' })
+	test('shutter-priority returns EXP Mode Shutter text', () => {
+		expect(exposureModeText('shutter-priority')).toEqual({ text: 'EXP Mode\nShutter' })
 	})
 
-	test('iris-priority returns Iris Priority text', () => {
-		expect(exposureModeText('iris-priority')).toEqual({ text: 'Iris\nPriority' })
+	test('iris-priority returns EXP Mode Iris text', () => {
+		expect(exposureModeText('iris-priority')).toEqual({ text: 'EXP Mode\nIris' })
 	})
 
-	test('bright-mode-manual returns Bright Expose text', () => {
-		expect(exposureModeText('bright-mode-manual')).toEqual({ text: 'Bright\nExpose' })
+	test('bright-mode-manual returns EXP Mode Bright text', () => {
+		expect(exposureModeText('bright-mode-manual')).toEqual({ text: 'EXP Mode\nBright' })
 	})
 
 	test('unknown mode returns empty object', () => {

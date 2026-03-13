@@ -348,7 +348,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Speed Up',
 		style: {
 			text: 'SPEED\\nUP',
-			size: '18',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -372,7 +372,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Speed Down',
 		style: {
 			text: 'SPEED\\nDOWN',
-			size: '18',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -595,7 +595,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Exposure Mode',
 		style: {
 			text: 'EXP\\nMODE',
-			size: '18',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -661,16 +661,56 @@ export function getPresets(): CompanionPresetDefinitions {
 				feedbackId: FeedbackId.ExposureModeText,
 				options: {},
 			},
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'full-auto' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'manual' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'shutter-priority' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'iris-priority' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'bright-mode-manual' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
 		],
 	}
 
-	presets['iris_up_preset'] = {
+	presets['exposure_mode_full_auto_preset'] = {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Iris Up',
+		name: 'Exposure Full Auto',
 		style: {
-			text: 'IRIS\\nUP',
-			size: '18',
+			text: 'EXP Mode\\nAuto',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -678,23 +718,34 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ExposureActionId.IrisUp,
-						options: {},
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: '0',
+						},
 					},
 				],
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'full-auto' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
-	presets['iris_down_preset'] = {
+	presets['exposure_mode_manual_preset'] = {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Iris Down',
+		name: 'Exposure Manual',
 		style: {
-			text: 'IRIS\\nDOWN',
-			size: '18',
+			text: 'EXP Mode\\nManual',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -702,23 +753,34 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ExposureActionId.IrisDown,
-						options: {},
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: '1',
+						},
 					},
 				],
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'manual' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
-	presets['shutter_up_preset'] = {
+	presets['exposure_mode_shutter_priority_preset'] = {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Shutter Up',
+		name: 'Exposure Shutter Priority',
 		style: {
-			text: 'Shut\\nUP',
-			size: '18',
+			text: 'EXP Mode\\nShutter',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -726,23 +788,34 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ExposureActionId.ShutterUp,
-						options: {},
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: '2',
+						},
 					},
 				],
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'shutter-priority' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
-	presets['shutter_down_preset'] = {
+	presets['exposure_mode_iris_priority_preset'] = {
 		type: 'button',
 		category: 'Exposure',
-		name: 'Shutter Down',
+		name: 'Exposure Iris Priority',
 		style: {
-			text: 'Shut\\nDOWN',
-			size: '18',
+			text: 'EXP Mode\\nIris',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -750,14 +823,60 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ExposureActionId.ShutterDown,
-						options: {},
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: '3',
+						},
 					},
 				],
 				up: [],
 			},
 		],
-		feedbacks: [],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'iris-priority' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['exposure_mode_bright_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exposure Bright Mode',
+		style: {
+			text: 'EXP Mode\\nBright',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SelectExposureMode,
+						options: {
+							[ExposureModeId]: '4',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExposureMode,
+				options: { mode: 'bright-mode-manual' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
 	presets['iris_preset'] = {
@@ -796,6 +915,143 @@ export function getPresets(): CompanionPresetDefinitions {
 						options: {},
 					},
 				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['iris_up_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris Up',
+		style: {
+			text: 'IRIS\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.IrisUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['iris_down_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris Down',
+		style: {
+			text: 'IRIS\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.IrisDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['shutter_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Shutter\\n$(ptzoptics-visca:shutter_position)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SetShutter,
+						options: {
+							val: '02',
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.ShutterDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.ShutterUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['shutter_up_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter Up',
+		style: {
+			text: 'Shut\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ShutterUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['shutter_down_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter Down',
+		style: {
+			text: 'Shut\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ShutterDown,
+						options: {},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [],
@@ -916,47 +1172,6 @@ export function getPresets(): CompanionPresetDefinitions {
 				rotate_right: [
 					{
 						actionId: ExposureActionId.BrightUp,
-						options: {},
-					},
-				],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['shutter_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Shutter',
-		options: { rotaryActions: true },
-		style: {
-			text: 'Shutter\\n$(ptzoptics-visca:shutter_position)',
-			size: '14',
-			png64: IMAGE_ROTARY_BG,
-			pngalignment: 'center:center',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.SetShutter,
-						options: {
-							val: '02',
-						},
-					},
-				],
-				up: [],
-				rotate_left: [
-					{
-						actionId: ExposureActionId.ShutterDown,
-						options: {},
-					},
-				],
-				rotate_right: [
-					{
-						actionId: ExposureActionId.ShutterUp,
 						options: {},
 					},
 				],
