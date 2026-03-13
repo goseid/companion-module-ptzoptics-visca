@@ -1,6 +1,8 @@
 import type { CompanionActionEvent, CompanionMigrationAction, CompanionOptionValues } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
 import {
+	BacklightOff,
+	BacklightOn,
 	BrightDirect,
 	BrightDown,
 	BrightReset,
@@ -33,6 +35,8 @@ import { optionConversions } from './option-conversion.js'
 import { twoDigitHex } from '../utils/two-digit-hex.js'
 
 export enum ExposureActionId {
+	BacklightOn = 'backlightOn',
+	BacklightOff = 'backlightOff',
 	SelectExposureMode = 'expM',
 	IrisUp = 'irisU',
 	IrisDown = 'irisD',
@@ -153,6 +157,20 @@ function getShutterSetting(options: CompanionOptionValues): ShutterSetting {
 
 export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<ExposureActionId> {
 	return {
+		[ExposureActionId.BacklightOn]: {
+			name: 'Backlight On',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BacklightOn)
+			},
+		},
+		[ExposureActionId.BacklightOff]: {
+			name: 'Backlight Off',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(BacklightOff)
+			},
+		},
 		[ExposureActionId.SelectExposureMode]: {
 			name: 'Exposure Mode',
 			options: [

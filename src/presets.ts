@@ -888,6 +888,198 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 	}
 
+	presets['exp_comp_on_off_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp On/Off',
+		style: {
+			text: 'EXP Comp\\nON/OFF',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompOn,
+						options: {},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompOff,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExpCompOn,
+				options: {},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['exp_comp_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp',
+		options: { rotaryActions: true },
+		style: {
+			text: 'EXP Comp\\n$(ptzoptics-visca:exp_comp_position)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompDirect,
+						options: {
+							position: 0,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.ExpCompDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.ExpCompUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exp_comp_up_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp Up',
+		style: {
+			text: 'EXP Comp\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exp_comp_down_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp Down',
+		style: {
+			text: 'EXP Comp\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exp_comp_reset_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp Reset',
+		style: {
+			text: 'EXP Comp\\nRESET',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['exp_comp_set_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Exp Comp Set',
+		style: {
+			text: 'EXP Comp\\nSet\\n0',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ExpCompDirect,
+						options: {
+							position: 0,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ExpCompPosition,
+				options: {
+					[ExpCompPositionValueId]: 0,
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
 	presets['iris_preset'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -1338,198 +1530,6 @@ export function getPresets(): CompanionPresetDefinitions {
 		],
 	}
 
-	presets['exp_comp_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp',
-		options: { rotaryActions: true },
-		style: {
-			text: 'Exp Comp\\n$(ptzoptics-visca:exp_comp_position)',
-			size: '14',
-			png64: IMAGE_ROTARY_BG,
-			pngalignment: 'center:center',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompDirect,
-						options: {
-							position: 0,
-						},
-					},
-				],
-				up: [],
-				rotate_left: [
-					{
-						actionId: ExposureActionId.ExpCompDown,
-						options: {},
-					},
-				],
-				rotate_right: [
-					{
-						actionId: ExposureActionId.ExpCompUp,
-						options: {},
-					},
-				],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['exp_comp_on_off_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp On/Off',
-		style: {
-			text: 'EXP Comp\\nON/OFF',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompOn,
-						options: {},
-					},
-				],
-				up: [],
-			},
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompOff,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.ExpCompOn,
-				options: {},
-				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(223, 85, 0),
-				},
-			},
-		],
-	}
-
-	presets['exp_comp_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp Up',
-		style: {
-			text: 'EXP Comp\\nUP',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompUp,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['exp_comp_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp Down',
-		style: {
-			text: 'EXP Comp\\nDOWN',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompDown,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['exp_comp_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp Reset',
-		style: {
-			text: 'EXP Comp\\nRESET',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompReset,
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['exp_comp_set_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Exp Comp Set',
-		style: {
-			text: 'EXP Comp\\nSet\\n0',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.ExpCompDirect,
-						options: {
-							position: 0,
-						},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.ExpCompPosition,
-				options: {
-					[ExpCompPositionValueId]: 0,
-				},
-				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(223, 85, 0),
-				},
-			},
-		],
-	}
-
 	presets['bright_preset'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -1672,6 +1672,48 @@ export function getPresets(): CompanionPresetDefinitions {
 				options: {
 					[BrightPositionValueId]: 7,
 				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['backlight_on_off_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Backlight On/Off',
+		style: {
+			text: 'Backlight\\nON/OFF',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BacklightOn,
+						options: {},
+					},
+				],
+				up: [],
+			},
+			{
+				down: [
+					{
+						actionId: ExposureActionId.BacklightOff,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.BacklightOn,
+				options: {},
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),

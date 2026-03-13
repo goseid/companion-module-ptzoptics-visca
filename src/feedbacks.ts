@@ -10,6 +10,7 @@ export enum FeedbackId {
 	SharpnessMode = 'sharpness_mode',
 	IrisPosition = 'iris_position',
 	ShutterPosition = 'shutter_position',
+	BacklightOn = 'backlight_on',
 	ExpCompOn = 'exp_comp_on',
 	ExpCompPosition = 'exp_comp_position',
 	BrightPosition = 'bright_position',
@@ -224,6 +225,19 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: ({ options }) => {
 				return instance.getVariableValue('shutter_position') === options[ShutterPositionSettingId]
+			},
+		},
+		[FeedbackId.BacklightOn]: {
+			type: 'boolean',
+			name: 'Backlight On',
+			description: 'Change button style when backlight compensation is on',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: () => {
+				return instance.getVariableValue('backlight') === 'on'
 			},
 		},
 		[FeedbackId.ExpCompOn]: {

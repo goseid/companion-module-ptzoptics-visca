@@ -111,6 +111,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 				FeedbackId.WhiteBalanceMode,
 				FeedbackId.IrisPosition,
 				FeedbackId.ShutterPosition,
+				FeedbackId.BacklightOn,
 				FeedbackId.ExpCompOn,
 				FeedbackId.ExpCompPosition,
 				FeedbackId.BrightPosition,
