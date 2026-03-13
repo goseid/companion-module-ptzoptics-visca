@@ -8,9 +8,13 @@ export enum FeedbackId {
 	ExposureModeText = 'exposure_mode_text',
 	WhiteBalanceMode = 'wb_mode',
 	SharpnessMode = 'sharpness_mode',
+	IrisPosition = 'iris_position',
+	GainPosition = 'gain_position',
 	PanTiltPosition = 'pan_tilt_position',
 }
 
+export const IrisPositionSettingId = 'irisSetting'
+export const GainPositionValueId = 'gainValue'
 export const PanTiltPositionPanId = 'panPosition'
 export const PanTiltPositionTiltId = 'tiltPosition'
 
@@ -139,6 +143,63 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: ({ options }) => {
 				return instance.getVariableValue('sharpness_mode') === options['mode']
+			},
+		},
+		[FeedbackId.IrisPosition]: {
+			type: 'boolean',
+			name: 'Iris Position',
+			description: 'Change button style when iris position matches',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Position',
+					id: IrisPositionSettingId,
+					choices: [
+						{ id: 'ƒ 1.8', label: 'ƒ 1.8' },
+						{ id: 'ƒ 2.0', label: 'ƒ 2.0' },
+						{ id: 'ƒ 2.4', label: 'ƒ 2.4' },
+						{ id: 'ƒ 2.8', label: 'ƒ 2.8' },
+						{ id: 'ƒ 3.4', label: 'ƒ 3.4' },
+						{ id: 'ƒ 4.0', label: 'ƒ 4.0' },
+						{ id: 'ƒ 4.8', label: 'ƒ 4.8' },
+						{ id: 'ƒ 5.6', label: 'ƒ 5.6' },
+						{ id: 'ƒ 6.8', label: 'ƒ 6.8' },
+						{ id: 'ƒ 8.0', label: 'ƒ 8.0' },
+						{ id: 'ƒ 9.6', label: 'ƒ 9.6' },
+						{ id: 'ƒ 11.0', label: 'ƒ 11.0' },
+						{ id: 'CLOSED', label: 'CLOSED' },
+					],
+					default: 'ƒ 2.0',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return instance.getVariableValue('iris_position') === options[IrisPositionSettingId]
+			},
+		},
+		[FeedbackId.GainPosition]: {
+			type: 'boolean',
+			name: 'Gain Position',
+			description: 'Change button style when gain position matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Position',
+					id: GainPositionValueId,
+					default: 2,
+					min: 0x00,
+					max: 0x0f,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('gain_position')) === Number(options[GainPositionValueId])
 			},
 		},
 		[FeedbackId.PanTiltPosition]: {

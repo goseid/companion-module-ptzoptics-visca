@@ -1,6 +1,12 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
-import { ExposureActionId, ExposureModeId } from './actions/exposure.js'
-import { FeedbackId, PanTiltPositionPanId, PanTiltPositionTiltId } from './feedbacks.js'
+import { ExposureActionId, ExposureModeId, IrisSettingId } from './actions/exposure.js'
+import {
+	FeedbackId,
+	GainPositionValueId,
+	IrisPositionSettingId,
+	PanTiltPositionPanId,
+	PanTiltPositionTiltId,
+} from './feedbacks.js'
 import { FocusActionId, FocusModeId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
@@ -968,6 +974,217 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
+	presets['iris_reset_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris Reset',
+		style: {
+			text: 'IRIS\\nRESET',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.IrisReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['iris_direct_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Iris Set',
+		style: {
+			text: 'IRIS\\nSet\\nƒ 2.0',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SetIris,
+						options: {
+							[IrisSettingId]: '0B',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.IrisPosition,
+				options: {
+					[IrisPositionSettingId]: 'ƒ 2.0',
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['gain_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Gain\\n$(ptzoptics-visca:gain_position)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainDirect,
+						options: {
+							gain: 2,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ExposureActionId.GainDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ExposureActionId.GainUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['gain_up_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Up',
+		style: {
+			text: 'GAIN\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['gain_down_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Down',
+		style: {
+			text: 'GAIN\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['gain_reset_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Reset',
+		style: {
+			text: 'GAIN\\nRESET',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['gain_set_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Gain Set',
+		style: {
+			text: 'GAIN\\nSet\\n2',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.GainDirect,
+						options: {
+							gain: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.GainPosition,
+				options: {
+					[GainPositionValueId]: 2,
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
 	presets['shutter_preset'] = {
 		type: 'button',
 		category: 'Exposure',
@@ -1052,47 +1269,6 @@ export function getPresets(): CompanionPresetDefinitions {
 					},
 				],
 				up: [],
-			},
-		],
-		feedbacks: [],
-	}
-
-	presets['gain_preset'] = {
-		type: 'button',
-		category: 'Exposure',
-		name: 'Gain',
-		options: { rotaryActions: true },
-		style: {
-			text: 'Gain\\n$(ptzoptics-visca:gain_position)',
-			size: '14',
-			png64: IMAGE_ROTARY_BG,
-			pngalignment: 'center:center',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: ExposureActionId.GainDirect,
-						options: {
-							gain: 0x00,
-						},
-					},
-				],
-				up: [],
-				rotate_left: [
-					{
-						actionId: ExposureActionId.GainDown,
-						options: {},
-					},
-				],
-				rotate_right: [
-					{
-						actionId: ExposureActionId.GainUp,
-						options: {},
-					},
-				],
 			},
 		],
 		feedbacks: [],

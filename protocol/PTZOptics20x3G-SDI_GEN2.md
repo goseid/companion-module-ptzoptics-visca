@@ -58,6 +58,11 @@ This document contains information about the VISCA Protocol for the following ca
 | CAM_Iris            | Up                 | 81 01 04 0B 02 FF                    | Increase Iris                                                                                                           |
 | CAM_Iris            | Down               | 81 01 04 0B 03 FF                    | Decrease Iris                                                                                                           |
 | CAM_Iris            | Direct             | 81 01 04 4B 00 00 p q FF             | pq: Iris Position                                                                                                       |
+| Gain                | Reset              | 81 01 04 0C 00 FF                    | Resets to 0x2 (2) value                                                                                                 |
+| Gain                | Up                 | 81 01 04 0C 02 FF                    | Gain Setting                                                                                                            |
+| Gain                | Down               | 81 01 04 0C 03 FF                    | Gain Setting                                                                                                            |
+| Gain                | Direct             | 81 01 04 0C 00 00 0p 0q FF           | pq: Gain Position (0x00=0 ~ 0x07=7)                                                                                     |
+| Gain                | Limit              | 81 01 04 2C 0p FF                    | p: Gain Limit Position (0x0=0 ~ 0xF=15)                                                                                 |
 | CAM_Shutter         | Reset              | 81 01 04 0A 00 FF                    | Default Shutter Setting                                                                                                 |
 | CAM_Shutter         | Up                 | 81 01 04 0A 02 FF                    | Increase Shutter                                                                                                        |
 | CAM_Shutter         | Down               | 81 01 04 0A 03 FF                    | Decrease Shutter                                                                                                        |

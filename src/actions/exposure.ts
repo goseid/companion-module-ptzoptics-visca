@@ -11,8 +11,10 @@ import {
 	ExposureModeInquiry,
 	GainDirect,
 	GainDown,
+	GainReset,
 	GainUp,
 	IrisDown,
+	IrisReset,
 	IrisSet,
 	type IrisSetting,
 	IrisUp,
@@ -29,12 +31,14 @@ export enum ExposureActionId {
 	SelectExposureMode = 'expM',
 	IrisUp = 'irisU',
 	IrisDown = 'irisD',
+	IrisReset = 'irisR',
 	SetIris = 'irisS',
 	ShutterUp = 'shutU',
 	ShutterDown = 'shutD',
 	SetShutter = 'shutS',
 	GainUp = 'gainU',
 	GainDown = 'gainD',
+	GainReset = 'gainR',
 	GainDirect = 'gainDirect',
 	ExpCompUp = 'expCompU',
 	ExpCompDown = 'expCompD',
@@ -60,7 +64,7 @@ const [getExposureMode, exposureModeToOption] = optionConversions<ExposureMode, 
 	String,
 )
 
-const IrisSettingId = 'val'
+export const IrisSettingId = 'val'
 
 const [getIrisSetting] = optionConversions<IrisSetting, typeof IrisSettingId>(
 	IrisSettingId,
@@ -182,6 +186,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 				instance.sendCommand(IrisDown)
 			},
 		},
+		[ExposureActionId.IrisReset]: {
+			name: 'Iris Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(IrisReset)
+			},
+		},
 		[ExposureActionId.SetIris]: {
 			name: 'Set Iris',
 			options: [
@@ -274,6 +285,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 				instance.sendCommand(GainDown)
 			},
 		},
+		[ExposureActionId.GainReset]: {
+			name: 'Gain Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(GainReset)
+			},
+		},
 		[ExposureActionId.GainDirect]: {
 			name: 'Gain Direct',
 			options: [
@@ -283,7 +301,7 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 					id: 'gain',
 					min: 0x00,
 					max: 0x0f,
-					default: 0x00,
+					default: 2,
 				},
 			],
 			callback: async ({ options }) => {
