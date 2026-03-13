@@ -1,9 +1,10 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
-import { ExposureActionId, ExposureModeId, IrisSettingId } from './actions/exposure.js'
+import { ExposureActionId, ExposureModeId, IrisSettingId, ShutterSettingId } from './actions/exposure.js'
 import {
 	FeedbackId,
 	GainPositionValueId,
 	IrisPositionSettingId,
+	ShutterPositionSettingId,
 	PanTiltPositionPanId,
 	PanTiltPositionTiltId,
 } from './feedbacks.js'
@@ -1272,6 +1273,67 @@ export function getPresets(): CompanionPresetDefinitions {
 			},
 		],
 		feedbacks: [],
+	}
+
+	presets['shutter_reset_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter Reset',
+		style: {
+			text: 'Shut\\nRESET',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.ShutterReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['shutter_set_preset'] = {
+		type: 'button',
+		category: 'Exposure',
+		name: 'Shutter Set',
+		style: {
+			text: 'Shut\\nSet\\n1/60',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ExposureActionId.SetShutter,
+						options: {
+							[ShutterSettingId]: '02',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ShutterPosition,
+				options: {
+					[ShutterPositionSettingId]: '1/60',
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
 	presets['exp_comp_preset'] = {

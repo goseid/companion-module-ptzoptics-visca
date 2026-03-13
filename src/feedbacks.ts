@@ -9,11 +9,13 @@ export enum FeedbackId {
 	WhiteBalanceMode = 'wb_mode',
 	SharpnessMode = 'sharpness_mode',
 	IrisPosition = 'iris_position',
+	ShutterPosition = 'shutter_position',
 	GainPosition = 'gain_position',
 	PanTiltPosition = 'pan_tilt_position',
 }
 
 export const IrisPositionSettingId = 'irisSetting'
+export const ShutterPositionSettingId = 'shutterSetting'
 export const GainPositionValueId = 'gainValue'
 export const PanTiltPositionPanId = 'panPosition'
 export const PanTiltPositionTiltId = 'tiltPosition'
@@ -178,6 +180,45 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: ({ options }) => {
 				return instance.getVariableValue('iris_position') === options[IrisPositionSettingId]
+			},
+		},
+		[FeedbackId.ShutterPosition]: {
+			type: 'boolean',
+			name: 'Shutter Position',
+			description: 'Change button style when shutter position matches',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Position',
+					id: ShutterPositionSettingId,
+					choices: [
+						{ id: '1/1000000', label: '1/1000000' },
+						{ id: '1/6000', label: '1/6000' },
+						{ id: '1/4000', label: '1/4000' },
+						{ id: '1/3000', label: '1/3000' },
+						{ id: '1/2000', label: '1/2000' },
+						{ id: '1/1500', label: '1/1500' },
+						{ id: '1/1000', label: '1/1000' },
+						{ id: '1/725', label: '1/725' },
+						{ id: '1/500', label: '1/500' },
+						{ id: '1/350', label: '1/350' },
+						{ id: '1/250', label: '1/250' },
+						{ id: '1/180', label: '1/180' },
+						{ id: '1/125', label: '1/125' },
+						{ id: '1/100', label: '1/100' },
+						{ id: '1/90', label: '1/90' },
+						{ id: '1/60', label: '1/60' },
+						{ id: '1/30', label: '1/30' },
+					],
+					default: '1/60',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return instance.getVariableValue('shutter_position') === options[ShutterPositionSettingId]
 			},
 		},
 		[FeedbackId.GainPosition]: {

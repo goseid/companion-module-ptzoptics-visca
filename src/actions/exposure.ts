@@ -19,6 +19,7 @@ import {
 	type IrisSetting,
 	IrisUp,
 	ShutterDown,
+	ShutterReset,
 	ShutterSet,
 	type ShutterSetting,
 	ShutterUp,
@@ -35,6 +36,7 @@ export enum ExposureActionId {
 	SetIris = 'irisS',
 	ShutterUp = 'shutU',
 	ShutterDown = 'shutD',
+	ShutterReset = 'shutR',
 	SetShutter = 'shutS',
 	GainUp = 'gainU',
 	GainDown = 'gainD',
@@ -88,7 +90,7 @@ const [getIrisSetting] = optionConversions<IrisSetting, typeof IrisSettingId>(
 	String,
 )
 
-const ShutterSettingId = 'val'
+export const ShutterSettingId = 'val'
 
 const DefaultShutterSetting = 4
 
@@ -235,6 +237,13 @@ export function exposureActions(instance: PtzOpticsInstance): ActionDefinitions<
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
 				instance.sendCommand(ShutterDown)
+			},
+		},
+		[ExposureActionId.ShutterReset]: {
+			name: 'Shutter Reset',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				instance.sendCommand(ShutterReset)
 			},
 		},
 		[ExposureActionId.SetShutter]: {
