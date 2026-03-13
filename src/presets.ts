@@ -6,6 +6,7 @@ import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
 import { PanTiltActionId } from './actions/pan-tilt.js'
 import { PresetAsNumberId, PresetAsTextId, PresetIsTextId, RecallPresetId, SetPresetId } from './actions/presets.js'
+import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
 import { ZoomActionId } from './actions/zoom.js'
 import {
@@ -1580,6 +1581,221 @@ export function getPresets(): CompanionPresetDefinitions {
 						actionId: WhiteBalanceActionId.BGainDirect,
 						options: {
 							gain: 188,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	// Sharpness presets
+
+	presets['sharpness_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Sharp\\n$(ptzoptics-visca:sharpness)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessDirect,
+						options: {
+							[SharpnessPositionId]: 3,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: SharpnessActionId.SharpnessDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: SharpnessActionId.SharpnessUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['sharpness_mode_auto_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Auto',
+		style: {
+			text: 'Sharp\\nAuto',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessMode,
+						options: {
+							[SharpnessModeId]: 'auto',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.SharpnessMode,
+				options: {
+					mode: 'auto',
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['sharpness_mode_manual_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Manual',
+		style: {
+			text: 'Sharp\\nManual',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessMode,
+						options: {
+							[SharpnessModeId]: 'manual',
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.SharpnessMode,
+				options: {
+					mode: 'manual',
+				},
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['sharpness_reset_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Reset',
+		style: {
+			text: 'Sharp\\nReset',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessReset,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['sharpness_up_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Up',
+		style: {
+			text: 'Sharp\\nUp',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['sharpness_down_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Down',
+		style: {
+			text: 'Sharp\\nDown',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['sharpness_direct_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: 'Sharpness Direct',
+		style: {
+			text: 'Sharp\\nDirect',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: SharpnessActionId.SharpnessDirect,
+						options: {
+							[SharpnessPositionId]: 3,
 						},
 					},
 				],

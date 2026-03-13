@@ -10,6 +10,7 @@ export enum FeedbackId {
 	WhiteBalanceModeOutdoor = 'wb_mode_outdoor',
 	WhiteBalanceModeOnePush = 'wb_mode_onepush',
 	WhiteBalanceModeManual = 'wb_mode_manual',
+	SharpnessMode = 'sharpness_mode',
 	PanTiltPosition = 'pan_tilt_position',
 }
 
@@ -117,6 +118,30 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: () => {
 				return instance.getVariableValue('wb_mode') === 'manual'
+			},
+		},
+		[FeedbackId.SharpnessMode]: {
+			type: 'boolean',
+			name: 'Sharpness Mode',
+			description: 'Change button style when sharpness mode matches',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Mode',
+					id: 'mode',
+					choices: [
+						{ id: 'auto', label: 'Auto' },
+						{ id: 'manual', label: 'Manual' },
+					],
+					default: 'auto',
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return instance.getVariableValue('sharpness_mode') === options['mode']
 			},
 		},
 		[FeedbackId.PanTiltPosition]: {

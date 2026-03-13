@@ -9,7 +9,7 @@ import { ModuleDefinedInquiry } from '../visca/inquiry.js'
  * Command:  81 09 7E 7E 01 FF
  * Response: 90 50 0p 0p 0q 0q 0r 0s tt 0u vv ww rr xx 0z FF
  *
- * pp: R Gain, qq: B Gain, r: WB Mode, s: Aperture, tt: AE Mode,
+ * pp: R Gain, qq: B Gain, r: WB Mode, s: Sharpness, tt: AE Mode,
  * u.bit2: Back Light, u.bit1: Exposure Comp,
  * vv: Shutter Position, ww: Iris Position, rr: reserved (not always 00),
  * xx: Bright Position, z: Exposure Comp Position
@@ -43,7 +43,7 @@ export const CameraBlockInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x7e, 0x
 				}
 			},
 		},
-		aperture: {
+		sharpness: {
 			nibbles: [15],
 		},
 		aeMode: {

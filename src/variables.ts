@@ -3,6 +3,7 @@ import { CameraBlockInquiry } from './camera/block-inquiry.js'
 import { FocusModeInquiry } from './camera/focus.js'
 import { OnScreenDisplayInquiry } from './camera/osd.js'
 import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
+import { SharpnessModeInquiry } from './camera/sharpness.js'
 import { FeedbackId } from './feedbacks.js'
 import type { PtzOpticsInstance } from './instance.js'
 import { traceLog } from './utils/trace-log.js'
@@ -17,7 +18,8 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'r_gain', name: 'R Gain' },
 		{ variableId: 'b_gain', name: 'B Gain' },
 		{ variableId: 'wb_mode', name: 'White Balance Mode' },
-		{ variableId: 'aperture', name: 'Aperture' },
+		{ variableId: 'sharpness', name: 'Sharpness' },
+		{ variableId: 'sharpness_mode', name: 'Sharpness Mode' },
 		{ variableId: 'exposure_mode', name: 'Exposure Mode' },
 		{ variableId: 'backlight', name: 'Back Light' },
 		{ variableId: 'exposure_comp', name: 'Exposure Compensation' },
@@ -78,6 +80,13 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 		}
 	},
 	async (instance) => {
+		const sharpnessMode = await instance.sendPollInquiry(SharpnessModeInquiry)
+		if (sharpnessMode !== null) {
+			instance.setVariableValues({ sharpness_mode: sharpnessMode.mode })
+			instance.checkFeedbacks(FeedbackId.SharpnessMode)
+		}
+	},
+	async (instance) => {
 		const cam = await instance.sendPollInquiry(CameraBlockInquiry)
 		if (cam !== null) {
 			const backlight = (cam.backlightExpComp & 0x4) !== 0
@@ -86,7 +95,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 				r_gain: cam.rGain,
 				b_gain: cam.bGain,
 				wb_mode: cam.wbMode,
-				aperture: cam.aperture,
+				sharpness: cam.sharpness,
 				exposure_mode: cam.aeMode,
 				backlight: backlight ? 'on' : 'off',
 				exposure_comp: exposureComp ? 'on' : 'off',
