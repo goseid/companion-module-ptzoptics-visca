@@ -1,6 +1,35 @@
 import type { ExposureMode, IrisSetting, ShutterSetting } from './exposure.js'
+import type { FocusMode } from './focus.js'
 import type { WhiteBalanceMode } from './white-balance.js'
 import { ModuleDefinedInquiry } from '../visca/inquiry.js'
+
+/**
+ * CAM_LensBlockInq — returns zoom position, focus position, and focus mode
+ * in a single response.
+ *
+ * Command:  81 09 7E 7E 00 FF
+ * Response: 90 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF
+ *
+ * uuuu: Zoom Position, vvvv: Focus Position, w.bit0: Focus Mode (1=Auto, 0=Manual)
+ */
+export const LensBlockInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x7e, 0x7e, 0x00, 0xff], {
+	//       90   50   0u   0u   0u   0u   00   00   0v   0v   0v   0v   00   0w   00   FF
+	bytes: [0x90, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff],
+	params: {
+		zoomPosition: {
+			nibbles: [5, 7, 9, 11],
+		},
+		focusPosition: {
+			nibbles: [17, 19, 21, 23],
+		},
+		focusMode: {
+			nibbles: [27],
+			convert: (param: number): FocusMode => {
+				return (param & 0x1) === 1 ? 'auto' : 'manual'
+			},
+		},
+	},
+})
 
 /**
  * CAM_CameraBlockInq — returns camera exposure, white balance, and gain

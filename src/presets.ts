@@ -9,15 +9,19 @@ import {
 	ShutterPositionSettingId,
 	PanTiltPositionPanId,
 	PanTiltPositionTiltId,
+	ZoomPositionValueId,
+	ZoomSpeedValueId,
+	FocusPositionValueId,
+	FocusSpeedValueId,
 } from './feedbacks.js'
-import { FocusActionId, FocusModeId } from './actions/focus.js'
+import { FocusActionId, FocusModeId, FocusPositionId, FocusSpeedId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
 import { PanTiltActionId } from './actions/pan-tilt.js'
 import { PresetAsNumberId, PresetAsTextId, PresetIsTextId, RecallPresetId, SetPresetId } from './actions/presets.js'
 import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
-import { ZoomActionId } from './actions/zoom.js'
+import { ZoomActionId, ZoomPositionId, ZoomSpeedId } from './actions/zoom.js'
 import {
 	IMAGE_UP,
 	IMAGE_DOWN,
@@ -399,7 +403,41 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
-	presets['zoom_in_preset'] = {
+	presets['zoom_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom',
+		options: { rotaryActions: true },
+		style: {
+			text: 'ZOOM\\n$(ptzoptics-visca:zoom_position)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ZoomActionId.ZoomPositionOut,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ZoomActionId.ZoomPositionIn,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_in_variable_preset'] = {
 		type: 'button',
 		category: 'Lens',
 		name: 'Zoom In',
@@ -413,7 +451,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ZoomActionId.StartZoomIn,
+						actionId: ZoomActionId.StartZoomInVariable,
 						options: {},
 					},
 				],
@@ -428,7 +466,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
-	presets['zoom_out_preset'] = {
+	presets['zoom_out_variable_preset'] = {
 		type: 'button',
 		category: 'Lens',
 		name: 'Zoom Out',
@@ -442,7 +480,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: ZoomActionId.StartZoomOut,
+						actionId: ZoomActionId.StartZoomOutVariable,
 						options: {},
 					},
 				],
@@ -457,7 +495,326 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
-	presets['focus_near_preset'] = {
+	presets['zoom_speed_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Zoom Speed\\n$(ptzoptics-visca:zoom_speed)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.SetZoomSpeed,
+						options: {
+							[ZoomSpeedId]: 4,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: ZoomActionId.ZoomSpeedDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: ZoomActionId.ZoomSpeedUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_speed_up_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Up',
+		style: {
+			text: 'Zoom Speed\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.ZoomSpeedUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_speed_down_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Down',
+		style: {
+			text: 'Zoom Speed\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.ZoomSpeedDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_speed_direct_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Speed Set',
+		style: {
+			text: 'Zoom Speed\\nSet\\n4',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.SetZoomSpeed,
+						options: { [ZoomSpeedId]: 4 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ZoomSpeed,
+				options: { [ZoomSpeedValueId]: 4 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['zoom_step_in_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Step In',
+		style: {
+			text: 'Zoom\\nStep\\nIN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.ZoomPositionIn,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_step_out_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Step Out',
+		style: {
+			text: 'Zoom\\nStep\\nOUT',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.ZoomPositionOut,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['zoom_direct_wide_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Wide',
+		style: {
+			text: 'Zoom\\nWide\\n0',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.SetZoomPosition,
+						options: { [ZoomPositionId]: 0 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ZoomPosition,
+				options: { [ZoomPositionValueId]: 0 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['zoom_direct_mid_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Mid',
+		style: {
+			text: 'Zoom\\nMid\\n2570',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.SetZoomPosition,
+						options: { [ZoomPositionId]: 2570 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ZoomPosition,
+				options: { [ZoomPositionValueId]: 2570 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['zoom_direct_tele_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Zoom Tele',
+		style: {
+			text: 'Zoom\\nTele\\n5140',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: ZoomActionId.SetZoomPosition,
+						options: { [ZoomPositionId]: 5140 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ZoomPosition,
+				options: { [ZoomPositionValueId]: 5140 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['focus_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus',
+		options: { rotaryActions: true },
+		style: {
+			text: 'FOCUS\\n$(ptzoptics-visca:focus_position)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.SelectFocusMode,
+						options: {
+							[FocusModeId]: '2',
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: FocusActionId.FocusPositionNear,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: FocusActionId.FocusPositionFar,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.FocusMode,
+				options: { mode: 'auto' },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(255, 0, 0),
+				},
+			},
+		],
+	}
+
+	presets['focus_near_variable_preset'] = {
 		type: 'button',
 		category: 'Lens',
 		name: 'Focus Near',
@@ -471,7 +828,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: FocusActionId.StartFocusNearer,
+						actionId: FocusActionId.StartFocusNearerVariable,
 						options: {},
 					},
 				],
@@ -486,7 +843,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		feedbacks: [],
 	}
 
-	presets['focus_far_preset'] = {
+	presets['focus_far_variable_preset'] = {
 		type: 'button',
 		category: 'Lens',
 		name: 'Focus Far',
@@ -500,7 +857,7 @@ export function getPresets(): CompanionPresetDefinitions {
 			{
 				down: [
 					{
-						actionId: FocusActionId.StartFocusFarther,
+						actionId: FocusActionId.StartFocusFartherVariable,
 						options: {},
 					},
 				],
@@ -513,6 +870,209 @@ export function getPresets(): CompanionPresetDefinitions {
 			},
 		],
 		feedbacks: [],
+	}
+
+	presets['focus_speed_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Focus Speed\\n$(ptzoptics-visca:focus_speed)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.SetFocusSpeed,
+						options: {
+							[FocusSpeedId]: 4,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: FocusActionId.FocusSpeedDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: FocusActionId.FocusSpeedUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['focus_speed_up_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Up',
+		style: {
+			text: 'Focus Speed\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.FocusSpeedUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['focus_speed_down_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Down',
+		style: {
+			text: 'Focus Speed\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.FocusSpeedDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['focus_speed_direct_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Speed Set',
+		style: {
+			text: 'Focus Speed\\nSet\\n4',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.SetFocusSpeed,
+						options: { [FocusSpeedId]: 4 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.FocusSpeed,
+				options: { [FocusSpeedValueId]: 4 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
+	}
+
+	presets['focus_step_far_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Step Far',
+		style: {
+			text: 'Focus\\nStep\\nFAR',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.FocusPositionFar,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['focus_step_near_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Step Near',
+		style: {
+			text: 'Focus\\nStep\\nNEAR',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.FocusPositionNear,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['focus_direct_preset'] = {
+		type: 'button',
+		category: 'Lens',
+		name: 'Focus Direct',
+		style: {
+			text: 'Focus\\nDirect\\n1500',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: FocusActionId.SetFocusPosition,
+						options: { [FocusPositionId]: 1500 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.FocusPosition,
+				options: { [FocusPositionValueId]: 1500 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
 	presets['auto_focus_preset'] = {
@@ -556,7 +1116,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Focus Lock',
 		style: {
 			text: 'FOCUS\\nLOCK',
-			size: '18',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},
@@ -580,7 +1140,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Focus Unlock',
 		style: {
 			text: 'FOCUS\\nUNLOCK',
-			size: '18',
+			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
 		},

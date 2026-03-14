@@ -13,7 +13,7 @@ import {
 import { getPresets } from './presets.js'
 import { repr } from './utils/repr.js'
 import { traceLog } from './utils/trace-log.js'
-import { getVariableDefinitions, pollVariablesContinuously } from './variables.js'
+import { DEFAULT_SPEED, getVariableDefinitions, pollVariablesContinuously } from './variables.js'
 import type { Command, CommandParameters, CommandParamValues, NoCommandParameters } from './visca/command.js'
 import type { Answer, AnswerParameters, Inquiry } from './visca/inquiry.js'
 import { VISCAPort } from './visca/port.js'
@@ -241,6 +241,7 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		this.setFeedbackDefinitions(getFeedbacks(this))
 		this.setPresetDefinitions(getPresets())
 		this.setVariableDefinitions(getVariableDefinitions())
+		this.setVariableValues({ zoom_speed: DEFAULT_SPEED, focus_speed: DEFAULT_SPEED })
 
 		return this.configUpdated(config)
 	}

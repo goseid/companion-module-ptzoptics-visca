@@ -7,9 +7,78 @@ import {
 	SendInquiry,
 } from '../visca/__tests__/camera-interactions/interactions.js'
 import { RunCameraInteractionTest } from '../visca/__tests__/camera-interactions/run-test.js'
-import { CameraBlockInquiry } from './block-inquiry.js'
+import { CameraBlockInquiry, LensBlockInquiry } from './block-inquiry.js'
 
+const LensBlockInquiryBytes = [0x81, 0x09, 0x7e, 0x7e, 0x00, 0xff]
 const CameraBlockInquiryBytes = [0x81, 0x09, 0x7e, 0x7e, 0x01, 0xff]
+
+describe('LensBlockInquiry response parsing', () => {
+	test('parses zoom, focus position, and focus mode', async () => {
+		// Response: 90 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF
+		// uuuu=0x1234 (zoom), vvvv=0x5678 (focus), w.bit0=1 (auto focus)
+		return RunCameraInteractionTest(
+			[
+				SendInquiry(LensBlockInquiry, 'lens-1'),
+				CameraExpectIncomingBytes(LensBlockInquiryBytes),
+				CameraReplyBytes([
+					0x90, 0x50, 0x01, 0x02, 0x03, 0x04, 0x00, 0x00, 0x05, 0x06, 0x07, 0x08, 0x00, 0x01, 0x00, 0xff,
+				]),
+				InquirySucceeded(
+					{
+						zoomPosition: 0x1234,
+						focusPosition: 0x5678,
+						focusMode: 'auto',
+					},
+					'lens-1',
+				),
+			],
+			InstanceStatus.Ok,
+		)
+	})
+
+	test('parses manual focus mode (bit0=0)', async () => {
+		return RunCameraInteractionTest(
+			[
+				SendInquiry(LensBlockInquiry, 'lens-2'),
+				CameraExpectIncomingBytes(LensBlockInquiryBytes),
+				CameraReplyBytes([
+					0x90, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff,
+				]),
+				InquirySucceeded(
+					{
+						zoomPosition: 0x0000,
+						focusPosition: 0x0000,
+						focusMode: 'manual',
+					},
+					'lens-2',
+				),
+			],
+			InstanceStatus.Ok,
+		)
+	})
+
+	test('extracts focus mode bit0 when other bits are set', async () => {
+		// w=0x03 (bits 1 and 0 set), bit0=1 → auto
+		return RunCameraInteractionTest(
+			[
+				SendInquiry(LensBlockInquiry, 'lens-3'),
+				CameraExpectIncomingBytes(LensBlockInquiryBytes),
+				CameraReplyBytes([
+					0x90, 0x50, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0xff,
+				]),
+				InquirySucceeded(
+					{
+						zoomPosition: 0x4000,
+						focusPosition: 0xa000,
+						focusMode: 'auto',
+					},
+					'lens-3',
+				),
+			],
+			InstanceStatus.Ok,
+		)
+	})
+})
 
 describe('CameraBlockInquiry response parsing', () => {
 	test('parses all parameters from a typical response', async () => {

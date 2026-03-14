@@ -16,6 +16,10 @@ export enum FeedbackId {
 	BrightPosition = 'bright_position',
 	GainPosition = 'gain_position',
 	PanTiltPosition = 'pan_tilt_position',
+	FocusPosition = 'focus_position',
+	ZoomPosition = 'zoom_position',
+	ZoomSpeed = 'zoom_speed',
+	FocusSpeed = 'focus_speed',
 }
 
 export const IrisPositionSettingId = 'irisSetting'
@@ -25,6 +29,10 @@ export const BrightPositionValueId = 'brightValue'
 export const GainPositionValueId = 'gainValue'
 export const PanTiltPositionPanId = 'panPosition'
 export const PanTiltPositionTiltId = 'tiltPosition'
+export const FocusPositionValueId = 'focusPositionValue'
+export const ZoomPositionValueId = 'zoomPositionValue'
+export const ZoomSpeedValueId = 'zoomSpeedValue'
+export const FocusSpeedValueId = 'focusSpeedValue'
 
 export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefinitions {
 	return {
@@ -352,6 +360,94 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 					Number(instance.getVariableValue('pan_position')) === Number(options[PanTiltPositionPanId]) &&
 					Number(instance.getVariableValue('tilt_position')) === Number(options[PanTiltPositionTiltId])
 				)
+			},
+		},
+		[FeedbackId.FocusPosition]: {
+			type: 'boolean',
+			name: 'Focus Position',
+			description: 'Change button style when focus position matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Position',
+					id: FocusPositionValueId,
+					default: 1500,
+					min: 0,
+					max: 0xffff,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('focus_position')) === Number(options[FocusPositionValueId])
+			},
+		},
+		[FeedbackId.ZoomPosition]: {
+			type: 'boolean',
+			name: 'Zoom Position',
+			description: 'Change button style when zoom position matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Position',
+					id: ZoomPositionValueId,
+					default: 0,
+					min: 0,
+					max: 5140,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('zoom_position')) === Number(options[ZoomPositionValueId])
+			},
+		},
+		[FeedbackId.ZoomSpeed]: {
+			type: 'boolean',
+			name: 'Zoom Speed',
+			description: 'Change button style when zoom speed matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed',
+					id: ZoomSpeedValueId,
+					default: 4,
+					min: 0,
+					max: 7,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('zoom_speed')) === Number(options[ZoomSpeedValueId])
+			},
+		},
+		[FeedbackId.FocusSpeed]: {
+			type: 'boolean',
+			name: 'Focus Speed',
+			description: 'Change button style when focus speed matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed',
+					id: FocusSpeedValueId,
+					default: 4,
+					min: 0,
+					max: 7,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('focus_speed')) === Number(options[FocusSpeedValueId])
 			},
 		},
 	}

@@ -1,6 +1,5 @@
 import type { CompanionVariableDefinition } from '@companion-module/base'
-import { CameraBlockInquiry } from './camera/block-inquiry.js'
-import { FocusModeInquiry } from './camera/focus.js'
+import { CameraBlockInquiry, LensBlockInquiry } from './camera/block-inquiry.js'
 import { OnScreenDisplayInquiry } from './camera/osd.js'
 import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
 import { SharpnessModeInquiry } from './camera/sharpness.js'
@@ -12,6 +11,10 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 	return [
 		{ variableId: 'pan_position', name: 'Pan Position' },
 		{ variableId: 'tilt_position', name: 'Tilt Position' },
+		{ variableId: 'zoom_position', name: 'Zoom Position' },
+		{ variableId: 'zoom_speed', name: 'Zoom Speed' },
+		{ variableId: 'focus_position', name: 'Focus Position' },
+		{ variableId: 'focus_speed', name: 'Focus Speed' },
 		{ variableId: 'focus_mode', name: 'Focus Mode' },
 		{ variableId: 'osd_state', name: 'OSD Menu State' },
 		// CAM_CameraBlockInq variables
@@ -30,6 +33,9 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'gain_position', name: 'Gain Position' },
 	]
 }
+
+/** Default speed for variable-speed zoom and focus commands. */
+export const DEFAULT_SPEED = 4
 
 /** Delay between successive inquiry responses and the next inquiry. */
 const POLL_DELAY_MS = 20
@@ -67,10 +73,14 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 		}
 	},
 	async (instance) => {
-		const focus = await instance.sendPollInquiry(FocusModeInquiry)
-		if (focus !== null) {
-			instance.setVariableValues({ focus_mode: focus.mode })
-			instance.checkFeedbacks(FeedbackId.FocusMode)
+		const lens = await instance.sendPollInquiry(LensBlockInquiry)
+		if (lens !== null) {
+			instance.setVariableValues({
+				zoom_position: lens.zoomPosition,
+				focus_position: lens.focusPosition,
+				focus_mode: lens.focusMode,
+			})
+			instance.checkFeedbacks(FeedbackId.FocusMode, FeedbackId.FocusPosition, FeedbackId.ZoomPosition)
 		}
 	},
 	async (instance) => {
