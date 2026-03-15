@@ -5,6 +5,7 @@ import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
 import { SharpnessModeInquiry } from './camera/sharpness.js'
 import { FeedbackId } from './feedbacks.js'
 import type { PtzOpticsInstance } from './instance.js'
+import { irisLabelToPercent, normalizePercent, progressBar } from './utils/progress-bar.js'
 import { traceLog } from './utils/trace-log.js'
 
 export function getVariableDefinitions(): CompanionVariableDefinition[] {
@@ -31,6 +32,10 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'bright_position', name: 'Bright Position' },
 		{ variableId: 'exp_comp_position', name: 'Exposure Comp Position' },
 		{ variableId: 'gain_position', name: 'Gain Position' },
+		// Position bar variables
+		{ variableId: 'zoom_position_bar', name: 'Zoom Position Bar' },
+		{ variableId: 'focus_position_bar', name: 'Focus Position Bar' },
+		{ variableId: 'iris_position_bar', name: 'Iris Position Bar' },
 	]
 }
 
@@ -77,7 +82,9 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 		if (lens !== null) {
 			instance.setVariableValues({
 				zoom_position: lens.zoomPosition,
+				zoom_position_bar: progressBar(normalizePercent(lens.zoomPosition, 0, 5140), 10, 'W', 'T'),
 				focus_position: lens.focusPosition,
+				focus_position_bar: progressBar(normalizePercent(lens.focusPosition, 0, 1770), 10, 'N', 'F'),
 				focus_mode: lens.focusMode,
 			})
 			instance.checkFeedbacks(FeedbackId.FocusMode, FeedbackId.FocusPosition, FeedbackId.ZoomPosition)
@@ -111,6 +118,7 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 				exposure_comp: exposureComp ? 'on' : 'off',
 				shutter_position: cam.shutterPosition,
 				iris_position: cam.irisPosition,
+				iris_position_bar: progressBar(irisLabelToPercent(cam.irisPosition), 10, 'C', 'O'),
 				bright_position: cam.brightPosition,
 				exp_comp_position: cam.expCompPosition,
 				gain_position: cam.gainPosition,

@@ -409,7 +409,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Zoom',
 		options: { rotaryActions: true },
 		style: {
-			text: 'ZOOM\\n$(ptzoptics-visca:zoom_position)',
+			text: 'ZOOM\\n$(ptzoptics-visca:zoom_position)\\n$(ptzoptics-visca:zoom_position_bar)',
 			size: '14',
 			png64: IMAGE_ROTARY_BG,
 			pngalignment: 'center:center',
@@ -770,7 +770,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Focus',
 		options: { rotaryActions: true },
 		style: {
-			text: 'FOCUS\\n$(ptzoptics-visca:focus_position)',
+			text: 'FOCUS\\n$(ptzoptics-visca:focus_position)\\n$(ptzoptics-visca:focus_position_bar)',
 			size: '14',
 			png64: IMAGE_ROTARY_BG,
 			pngalignment: 'center:center',
@@ -1646,7 +1646,7 @@ export function getPresets(): CompanionPresetDefinitions {
 		name: 'Iris',
 		options: { rotaryActions: true },
 		style: {
-			text: 'Iris\\n$(ptzoptics-visca:iris_position)',
+			text: 'Iris\\n$(ptzoptics-visca:iris_position)\\n$(ptzoptics-visca:iris_position_bar)',
 			size: '14',
 			png64: IMAGE_ROTARY_BG,
 			pngalignment: 'center:center',
