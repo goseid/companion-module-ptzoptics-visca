@@ -411,6 +411,170 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 		feedbacks: [],
 	}
 
+	presets['pan_position_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan',
+		options: { rotaryActions: true },
+		style: {
+			text: 'PAN\\n$(ptzoptics-visca:pan_position)\\n$(ptzoptics-visca:pan_position_bar)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+				rotate_left: [
+					{
+						actionId: PanTiltActionId.PanPositionLeft,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: PanTiltActionId.PanPositionRight,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['tilt_position_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Tilt',
+		options: { rotaryActions: true },
+		style: {
+			text: 'TILT\\n$(ptzoptics-visca:tilt_position)\\n$(ptzoptics-visca:tilt_position_bar)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [],
+				up: [],
+				rotate_left: [
+					{
+						actionId: PanTiltActionId.TiltPositionDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: PanTiltActionId.TiltPositionUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['pan_step_left_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan Step Left',
+		style: {
+			text: 'Pan\\nStep\\nLEFT',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PanTiltActionId.PanPositionLeft,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['pan_step_right_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Pan Step Right',
+		style: {
+			text: 'Pan\\nStep\\nRIGHT',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PanTiltActionId.PanPositionRight,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['tilt_step_up_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Tilt Step Up',
+		style: {
+			text: 'Tilt\\nStep\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PanTiltActionId.TiltPositionUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['tilt_step_down_preset'] = {
+		type: 'button',
+		category: 'Pan/Tilt',
+		name: 'Tilt Step Down',
+		style: {
+			text: 'Tilt\\nStep\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PanTiltActionId.TiltPositionDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
 	presets['zoom_preset'] = {
 		type: 'button',
 		category: 'Lens',

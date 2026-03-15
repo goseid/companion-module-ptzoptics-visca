@@ -44,6 +44,10 @@ export enum PanTiltActionId {
 	SpeedUpMovement = 'ptSpeedU',
 	SlowDownMovement = 'ptSpeedD',
 	AbsolutePosition = 'moveAbsolutePosition',
+	PanPositionLeft = 'panPosL',
+	PanPositionRight = 'panPosR',
+	TiltPositionUp = 'tiltPosU',
+	TiltPositionDown = 'tiltPosD',
 }
 
 /**
@@ -54,6 +58,12 @@ export const PanTiltBounds = {
 	pan: { min: -0x8000, max: 0x7fff },
 	tilt: { min: -0x8000, max: 0x7fff },
 }
+
+/** Step size for relative pan/tilt position actions. */
+const PAN_TILT_POSITION_STEP = 1
+
+/** Default speed for relative pan/tilt position movements. */
+const PAN_TILT_POSITION_SPEED = 12
 
 type PanOrTilt = 'pan' | 'tilt'
 
@@ -301,6 +311,66 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
 				instance.decreasePanTiltSpeed()
+			},
+		},
+		[PanTiltActionId.PanPositionLeft]: {
+			name: 'Pan Position Left',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const pan = Number(instance.getVariableValue('pan_position')) || 0
+				const tilt = Number(instance.getVariableValue('tilt_position')) || 0
+				const panPosition = Math.max(pan - PAN_TILT_POSITION_STEP, PanTiltBounds.pan.min)
+				instance.sendCommand(MoveToAbsolutePanTilt, {
+					panPosition,
+					tiltPosition: tilt,
+					panSpeed: PAN_TILT_POSITION_SPEED,
+					tiltSpeed: PAN_TILT_POSITION_SPEED,
+				})
+			},
+		},
+		[PanTiltActionId.PanPositionRight]: {
+			name: 'Pan Position Right',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const pan = Number(instance.getVariableValue('pan_position')) || 0
+				const tilt = Number(instance.getVariableValue('tilt_position')) || 0
+				const panPosition = Math.min(pan + PAN_TILT_POSITION_STEP, PanTiltBounds.pan.max)
+				instance.sendCommand(MoveToAbsolutePanTilt, {
+					panPosition,
+					tiltPosition: tilt,
+					panSpeed: PAN_TILT_POSITION_SPEED,
+					tiltSpeed: PAN_TILT_POSITION_SPEED,
+				})
+			},
+		},
+		[PanTiltActionId.TiltPositionUp]: {
+			name: 'Tilt Position Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const pan = Number(instance.getVariableValue('pan_position')) || 0
+				const tilt = Number(instance.getVariableValue('tilt_position')) || 0
+				const tiltPosition = Math.min(tilt + PAN_TILT_POSITION_STEP, PanTiltBounds.tilt.max)
+				instance.sendCommand(MoveToAbsolutePanTilt, {
+					panPosition: pan,
+					tiltPosition,
+					panSpeed: PAN_TILT_POSITION_SPEED,
+					tiltSpeed: PAN_TILT_POSITION_SPEED,
+				})
+			},
+		},
+		[PanTiltActionId.TiltPositionDown]: {
+			name: 'Tilt Position Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const pan = Number(instance.getVariableValue('pan_position')) || 0
+				const tilt = Number(instance.getVariableValue('tilt_position')) || 0
+				const tiltPosition = Math.max(tilt - PAN_TILT_POSITION_STEP, PanTiltBounds.tilt.min)
+				instance.sendCommand(MoveToAbsolutePanTilt, {
+					panPosition: pan,
+					tiltPosition,
+					panSpeed: PAN_TILT_POSITION_SPEED,
+					tiltSpeed: PAN_TILT_POSITION_SPEED,
+				})
 			},
 		},
 	}

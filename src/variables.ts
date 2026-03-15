@@ -5,6 +5,7 @@ import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
 import { SharpnessModeInquiry } from './camera/sharpness.js'
 import { FeedbackId } from './feedbacks.js'
 import type { PtzOpticsInstance } from './instance.js'
+import { PanTiltBounds } from './actions/pan-tilt.js'
 import { irisLabelToPercent, normalizePercent, progressBar } from './utils/progress-bar.js'
 import { traceLog } from './utils/trace-log.js'
 
@@ -33,6 +34,8 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'exp_comp_position', name: 'Exposure Comp Position' },
 		{ variableId: 'gain_position', name: 'Gain Position' },
 		// Position bar variables
+		{ variableId: 'pan_position_bar', name: 'Pan Position Bar' },
+		{ variableId: 'tilt_position_bar', name: 'Tilt Position Bar' },
 		{ variableId: 'zoom_position_bar', name: 'Zoom Position Bar' },
 		{ variableId: 'focus_position_bar', name: 'Focus Position Bar' },
 		{ variableId: 'iris_position_bar', name: 'Iris Position Bar' },
@@ -80,6 +83,18 @@ const pollSteps: Array<(instance: PtzOpticsInstance) => Promise<void>> = [
 			instance.setVariableValues({
 				pan_position: panTilt.panPosition,
 				tilt_position: panTilt.tiltPosition,
+				pan_position_bar: progressBar(
+					normalizePercent(panTilt.panPosition, PanTiltBounds.pan.min, PanTiltBounds.pan.max),
+					10,
+					'L',
+					'R',
+				),
+				tilt_position_bar: progressBar(
+					normalizePercent(panTilt.tiltPosition, PanTiltBounds.tilt.min, PanTiltBounds.tilt.max),
+					10,
+					'D',
+					'U',
+				),
 			})
 			instance.checkFeedbacks(FeedbackId.PanTiltPosition)
 		}
