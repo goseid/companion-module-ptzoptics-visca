@@ -26,8 +26,6 @@ import {
 	PresetAsTextId,
 	PresetIsTextId,
 	PresetSpeedOptionId,
-	RecallPresetId,
-	SetPresetId,
 } from './actions/presets.js'
 import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
@@ -3291,72 +3289,6 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 			},
 		],
 		feedbacks: [],
-	}
-
-	// generates presets for saving camera presets
-	for (let save = 0; save < 255; save++) {
-		if (isValidPreset(save)) {
-			presets['save_preset_' + save + '_preset'] = {
-				type: 'button',
-				category: 'Save Preset',
-				name: `Save Preset ${save}`,
-				style: {
-					text: `SAVE\\nPSET\\n${save}`,
-					size: '14',
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				steps: [
-					{
-						down: [
-							{
-								actionId: SetPresetId,
-								options: {
-									[PresetIsTextId]: false,
-									[PresetAsNumberId]: save,
-									[PresetAsTextId]: `${save}`,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-				feedbacks: [],
-			}
-		}
-	}
-
-	// generates presets for recalling camera presets
-	for (let recall = 0; recall < 255; recall++) {
-		if (isValidPreset(recall)) {
-			presets['recall_preset_' + recall + '_preset'] = {
-				type: 'button',
-				category: 'Recall Preset',
-				name: `Recall Preset ${recall}`,
-				style: {
-					text: `Recall\\nPSET\\n${recall}`,
-					size: '14',
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
-				},
-				steps: [
-					{
-						down: [
-							{
-								actionId: RecallPresetId,
-								options: {
-									[PresetIsTextId]: false,
-									[PresetAsNumberId]: recall,
-									[PresetAsTextId]: `${recall}`,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-				feedbacks: [],
-			}
-		}
 	}
 
 	// Smart preset buttons: short press = recall, hold > 1s = save
