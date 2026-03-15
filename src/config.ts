@@ -1,4 +1,4 @@
-import { type InputValue, Regex, type SomeCompanionConfigField } from '@companion-module/base'
+import { combineRgb, type InputValue, Regex, type SomeCompanionConfigField } from '@companion-module/base'
 import type { Branded } from './utils/brand.js'
 
 /**
@@ -29,6 +29,32 @@ export function tryUpdateConfigWithDebugLogging(config: RawConfig): boolean {
 	}
 
 	return false
+}
+
+/** The id of the preset text color config option. */
+export const PresetColorTextOptionId = 'presetColorText'
+
+/** The id of the preset background color config option. */
+export const PresetColorBGOptionId = 'presetColorBG'
+
+/**
+ * Preset color options were added after the initial release.  Add default
+ * values for older configs that don't have them.
+ */
+const DefaultPresetColorText = combineRgb(255, 255, 255)
+const DefaultPresetColorBG = combineRgb(51, 68, 68)
+
+export function tryUpdateConfigWithPresetColors(config: RawConfig): boolean {
+	let updated = false
+	if (!(PresetColorTextOptionId in config)) {
+		config[PresetColorTextOptionId] = DefaultPresetColorText
+		updated = true
+	}
+	if (!(PresetColorBGOptionId in config)) {
+		config[PresetColorBGOptionId] = DefaultPresetColorBG
+		updated = true
+	}
+	return updated
 }
 
 /** Compute the config fields list for this module. */
@@ -66,6 +92,27 @@ export function getConfigFields(): SomeCompanionConfigField[] {
 			default: false,
 			width: 6,
 		},
+		{
+			type: 'static-text',
+			id: 'presetColorInfo',
+			width: 12,
+			label: 'Color for Presets',
+			value: 'Default color for new camera presets',
+		},
+		{
+			type: 'colorpicker',
+			id: PresetColorTextOptionId,
+			label: 'Text',
+			default: DefaultPresetColorText,
+			width: 1,
+		},
+		{
+			type: 'colorpicker',
+			id: PresetColorBGOptionId,
+			label: 'Background',
+			default: DefaultPresetColorBG,
+			width: 2,
+		},
 	]
 }
 
@@ -83,6 +130,12 @@ export type PtzOpticsConfig = {
 	 * handling state, etc.
 	 */
 	[DebugLoggingOptionId]: boolean
+
+	/** Text color for camera preset buttons (combined RGB number). */
+	[PresetColorTextOptionId]: number
+
+	/** Background color for camera preset buttons (combined RGB number). */
+	[PresetColorBGOptionId]: number
 }
 
 /**
@@ -95,6 +148,8 @@ export function noCameraConfig(): PtzOpticsConfig {
 		host: '',
 		port: DefaultPort,
 		debugLogging: false,
+		presetColorText: DefaultPresetColorText,
+		presetColorBG: DefaultPresetColorBG,
 	}
 }
 
@@ -106,6 +161,8 @@ export function validateConfig(config: RawConfig): asserts config is PtzOpticsCo
 	config.host = toHost(config.host)
 	config.port = toPort(config.port)
 	config[DebugLoggingOptionId] = toDebugLogging(config[DebugLoggingOptionId])
+	config[PresetColorTextOptionId] = toColor(config[PresetColorTextOptionId], DefaultPresetColorText)
+	config[PresetColorBGOptionId] = toColor(config[PresetColorBGOptionId], DefaultPresetColorBG)
 }
 
 const ipRegExp = new RegExp(Regex.IP.slice(1, -1))
@@ -145,6 +202,13 @@ function toPort(port: RawConfig['port']): number {
 }
 
 const toDebugLogging = Boolean
+
+function toColor(value: RawConfig[string], fallback: number): number {
+	if (typeof value === 'number' && Number.isFinite(value)) {
+		return value
+	}
+	return fallback
+}
 
 /**
  * For an already-started instance/connection using the given old config,

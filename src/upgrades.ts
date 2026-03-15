@@ -8,7 +8,7 @@ import type {
 import { tryUpdateCustomCommandsWithCommandParamOptions } from './actions/custom-command.js'
 import { tryUpdateIrisHexValues } from './actions/exposure.js'
 import { tryUpdatePresetAndSpeedEncodingsInActions, tryUpdateRecallSetPresetActions } from './actions/presets.js'
-import { type RawConfig, tryUpdateConfigWithDebugLogging } from './config.js'
+import { type RawConfig, tryUpdateConfigWithDebugLogging, tryUpdateConfigWithPresetColors } from './config.js'
 
 function ActionUpdater(
 	tryUpdate: (action: CompanionMigrationAction) => boolean,
@@ -76,4 +76,5 @@ export const UpgradeScripts = [
 	ActionUpdater(tryUpdateIrisHexValues),
 	FeedbackUpdater(tryUpdateFocusModeFeedback),
 	FeedbackUpdater(tryUpdateWhiteBalanceFeedbacks),
+	ConfigUpdater(tryUpdateConfigWithPresetColors),
 ] satisfies CompanionStaticUpgradeScript<RawConfig>[]

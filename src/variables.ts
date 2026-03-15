@@ -36,11 +36,18 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'zoom_position_bar', name: 'Zoom Position Bar' },
 		{ variableId: 'focus_position_bar', name: 'Focus Position Bar' },
 		{ variableId: 'iris_position_bar', name: 'Iris Position Bar' },
+		// Camera preset variables
+		{ variableId: 'preset_speed', name: 'Preset Speed' },
+		{ variableId: 'last_preset_selected', name: 'Last Preset Selected' },
+		{ variableId: 'preset_save_active', name: 'Preset Save Active' },
 	]
 }
 
 /** Default speed for variable-speed zoom and focus commands. */
 export const DEFAULT_SPEED = 4
+
+/** Default speed for preset recall drive movements. */
+export const DEFAULT_PRESET_SPEED = 12
 
 /** Delay between successive inquiry responses and the next inquiry. */
 const POLL_DELAY_MS = 20

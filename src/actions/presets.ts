@@ -1,12 +1,14 @@
 import type {
 	CompanionActionContext,
+	CompanionActionEvent,
 	CompanionMigrationAction,
 	CompanionOptionValues,
 	DropdownChoice,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
-import { isValidPreset, PresetDriveSpeed, PresetRecall, PresetSave } from '../camera/presets.js'
+import { isValidPreset, PresetDriveSpeed, PresetRecall, PresetRecallSpeed, PresetSave } from '../camera/presets.js'
+import { FeedbackId } from '../feedbacks.js'
 import type { PtzOpticsInstance } from '../instance.js'
 import { speedChoices } from './speeds.js'
 import { repr } from '../utils/repr.js'
@@ -22,10 +24,33 @@ export const SetPresetId = 'setPreset'
 /** The id of the set-a-preset's-drive-speed action. */
 const SetPresetDriveSpeedId = 'speedPreset'
 
+/** The id of the smart-preset-down action. */
+const SmartPresetDownId = 'smartPresetDown'
+
+/** The id of the smart-preset-up action. */
+const SmartPresetUpId = 'smartPresetUp'
+
+/** The id of the preset-speed-up action. */
+const PresetSpeedUpId = 'presetSpeedUp'
+
+/** The id of the preset-speed-down action. */
+const PresetSpeedDownId = 'presetSpeedDown'
+
+/** The id of the set-preset-speed action. */
+const SetPresetSpeedId = 'setPresetSpeed'
+
+/** The id of the preset speed option. */
+export const PresetSpeedOptionId = 'presetSpeed'
+
 export enum PresetActionId {
 	RecallPreset = RecallPresetId,
 	SetPreset = SetPresetId,
 	SetPresetDriveSpeed = SetPresetDriveSpeedId,
+	SmartPresetDown = SmartPresetDownId,
+	SmartPresetUp = SmartPresetUpId,
+	PresetSpeedUp = PresetSpeedUpId,
+	PresetSpeedDown = PresetSpeedDownId,
+	SetPresetSpeed = SetPresetSpeedId,
 }
 
 /**
@@ -402,6 +427,73 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 				const preset = Number(options[SetPresetDriveSpeedPresetId])
 				const speed = Number(options[SetPresetDriveSpeedSpeedId])
 				instance.sendCommand(PresetDriveSpeed, { preset, speed })
+			},
+		},
+		[PresetActionId.SmartPresetDown]: {
+			name: 'Smart Preset (Press)',
+			options: presetNumberOptions(PresetRecallDefault),
+			callback: async ({ options }, context) => {
+				const preset = await getPresetNumber(options, context)
+				if (typeof preset === 'string') {
+					instance.log('error', preset)
+					return
+				}
+
+				instance.smartPresetDown(preset)
+			},
+		},
+		[PresetActionId.SmartPresetUp]: {
+			name: 'Smart Preset (Release)',
+			options: presetNumberOptions(PresetRecallDefault),
+			callback: async ({ options }, context) => {
+				const preset = await getPresetNumber(options, context)
+				if (typeof preset === 'string') {
+					instance.log('error', preset)
+					return
+				}
+
+				instance.smartPresetUp(preset)
+			},
+		},
+		[PresetActionId.PresetSpeedUp]: {
+			name: 'Preset Speed Up',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const current = Number(instance.getVariableValue('preset_speed')) || 1
+				const speed = Math.min(current + 1, 24)
+				instance.setVariableValues({ preset_speed: speed })
+				instance.sendCommand(PresetRecallSpeed, { speed })
+				instance.checkFeedbacks(FeedbackId.PresetSpeed)
+			},
+		},
+		[PresetActionId.PresetSpeedDown]: {
+			name: 'Preset Speed Down',
+			options: [],
+			callback: async (_event: CompanionActionEvent) => {
+				const current = Number(instance.getVariableValue('preset_speed')) || 1
+				const speed = Math.max(current - 1, 1)
+				instance.setVariableValues({ preset_speed: speed })
+				instance.sendCommand(PresetRecallSpeed, { speed })
+				instance.checkFeedbacks(FeedbackId.PresetSpeed)
+			},
+		},
+		[PresetActionId.SetPresetSpeed]: {
+			name: 'Set Preset Speed',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed',
+					id: PresetSpeedOptionId,
+					min: 1,
+					max: 24,
+					default: 12,
+				},
+			],
+			callback: async ({ options }) => {
+				const speed = Number(options[PresetSpeedOptionId])
+				instance.setVariableValues({ preset_speed: speed })
+				instance.sendCommand(PresetRecallSpeed, { speed })
+				instance.checkFeedbacks(FeedbackId.PresetSpeed)
 			},
 		},
 	}

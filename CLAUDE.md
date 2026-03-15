@@ -59,13 +59,13 @@ The codebase has three distinct layers with a strict dependency direction:
 
 ### Variables and Feedbacks
 
-- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, lens block (zoom/focus position, focus mode), OSD state, sharpness mode, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, sharpness, shutter/iris/bright/gain positions, backlight, exposure comp). Pan/tilt positions are signed 16-bit integers (center=0, negative=left/down, positive=right/up). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters.
+- **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, lens block (zoom/focus position, focus mode), OSD state, sharpness mode, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, sharpness, shutter/iris/bright/gain positions, backlight, exposure comp). Pan/tilt positions are signed 16-bit integers (center=0, negative=left/down, positive=right/up). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters. Position bar variables (`zoom_position_bar`, `focus_position_bar`, `iris_position_bar`) provide text-based progress bars (e.g., `W.....|.....T`) computed via `src/utils/progress-bar.ts`. Non-polled variables include `preset_speed` (1-24, default 12), `last_preset_selected`, and `preset_save_active`.
 
-- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode, Focus Position, Exposure Mode, WB Mode, Sharpness Mode, Iris Position, Shutter Position, Backlight On, Exp Comp On, Exp Comp Position, Bright Position, Gain Position, Zoom Position, Zoom Speed, Focus Speed, Pan/Tilt Position). Exposure comp position uses display values (-7 to +7) in feedbacks and actions, converted from/to camera values (0x0-0xE) internally. Selectable feedbacks use a dropdown option for the mode/position value rather than separate feedbacks per value. Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion because `getVariableValue()` always returns strings.
+- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode, Focus Position, Exposure Mode, WB Mode, Sharpness Mode, Iris Position, Shutter Position, Backlight On, Exp Comp On, Exp Comp Position, Bright Position, Gain Position, Zoom Position, Zoom Speed, Focus Speed, Pan/Tilt Position, Preset Speed, Preset Selected, Preset Save Active). Exposure comp position uses display values (-7 to +7) in feedbacks and actions, converted from/to camera values (0x0-0xE) internally. Selectable feedbacks use a dropdown option for the mode/position value rather than separate feedbacks per value. Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion because `getVariableValue()` always returns strings.
 
 ### Presets and Assets
 
-- **Presets** (`src/presets.ts`): Button presets provide pre-configured buttons for Companion's UI. Rotary action presets (those with `options: { rotaryActions: true }`) support encoder rotation for incremental adjustments and use a shared `IMAGE_ROTARY_BG` background image.
+- **Presets** (`src/presets.ts`): Button presets provide pre-configured buttons for Companion's UI. `getPresets(presetColorText, presetColorBG)` accepts config-driven colors for camera preset buttons. Rotary action presets (those with `options: { rotaryActions: true }`) support encoder rotation for incremental adjustments and use a shared `IMAGE_ROTARY_BG` background image. Smart preset buttons (category "Presets") support hold-to-save: short press (<1s) recalls, long press (>1s) saves. They use `PresetSaveActive` feedback (yellow) and `PresetSelected` feedback (orange) — save-active is listed last so it takes visual priority. Presets are re-registered in `configUpdated()` to pick up color changes.
 
 - **Assets** (`src/assets/assets.ts`): Base64-encoded PNG images used in preset button styles. Includes directional arrows (`IMAGE_UP`, `IMAGE_DOWN`, etc.) and the rotary encoder background (`IMAGE_ROTARY_BG`).
 
@@ -74,8 +74,8 @@ The codebase has three distinct layers with a strict dependency direction:
 `PtzOpticsInstance` (extends `InstanceBase<RawConfig>`) implements three Companion lifecycle methods:
 
 - `init()` — Registers actions, feedbacks, presets, and variables; opens VISCA connection
-- `configUpdated()` — Validates new config, reconnects and restarts polling if needed
-- `destroy()` — Stops polling, closes connection
+- `configUpdated()` — Validates new config, re-registers presets (for color changes), reconnects and restarts polling if needed
+- `destroy()` — Clears smart preset timer, stops polling, closes connection
 
 ### VISCA Command Byte Patterns
 
@@ -96,6 +96,8 @@ Commands and inquiries follow consistent byte patterns for related camera proper
 Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 00 00 0p 0q FF` with position in nibbles [13, 15]. Note: `04 A1` is a separate "Brightness" (image quality) parameter, distinct from "Bright" (AE bright level) at `04 0D`/`04 4D`. Sharpness mode uses `04 05 0p FF` (p: 2=Auto, 3=Manual). The CameraBlockInq field previously called "Aperture" is actually Sharpness.
 
 **Iris hex values** (verified against camera): `00` = CLOSED, `01` = ƒ 11.0, `02` = ƒ 9.6, `03` = ƒ 8.0, `04` = ƒ 6.8, `05` = ƒ 5.6, `06` = ƒ 4.8, `07` = ƒ 4.0, `08` = ƒ 3.4, `09` = ƒ 2.8, `0A` = ƒ 2.4, `0B` = ƒ 2.0, `0C` = ƒ 1.8. These differ from the PTZOptics API documentation, which lists incorrect/reversed mappings.
+
+**Preset Recall Speed**: `81 01 06 01 ss FF` (speed 0x01-0x18, i.e., 1-24). This is a global speed setting — not per-preset. The legacy per-preset `PresetDriveSpeed` command (`81 01 06 01 pp ss FF`) exists in the codebase but does not work on this camera model.
 
 **Zoom coordinate systems**: `CAM_LensBlockInq` returns zoom position in stepper motor steps (~0–5140 range), while `CAM_ZoomDirect` and `CAM_ZoomPosInq` use a different coordinate system (~0–16384 range, ratio ≈3.1875). The `zoom_position` variable uses stepper units from LensBlockInq. For incremental zoom steps, an on-demand `ZoomPositionInquiry` fetches the current ZoomDirect value and steps ±4 in that coordinate system (avoids getting stuck due to rounding). For absolute positioning (e.g., Wide/Mid/Tele), stepper values are converted using the 3.1875 ratio. Focus position does not have this dual-coordinate issue — `FocusDirect` uses the same units as `LensBlockInq`.
 

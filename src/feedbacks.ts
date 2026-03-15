@@ -20,6 +20,9 @@ export enum FeedbackId {
 	ZoomPosition = 'zoom_position',
 	ZoomSpeed = 'zoom_speed',
 	FocusSpeed = 'focus_speed',
+	PresetSpeed = 'preset_speed',
+	PresetSelected = 'preset_selected',
+	PresetSaveActive = 'preset_save_active',
 }
 
 export const IrisPositionSettingId = 'irisSetting'
@@ -33,6 +36,8 @@ export const FocusPositionValueId = 'focusPositionValue'
 export const ZoomPositionValueId = 'zoomPositionValue'
 export const ZoomSpeedValueId = 'zoomSpeedValue'
 export const FocusSpeedValueId = 'focusSpeedValue'
+export const PresetSpeedValueId = 'presetSpeedValue'
+export const PresetSelectedValueId = 'presetValue'
 
 export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefinitions {
 	return {
@@ -448,6 +453,63 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 			},
 			callback: ({ options }) => {
 				return Number(instance.getVariableValue('focus_speed')) === Number(options[FocusSpeedValueId])
+			},
+		},
+		[FeedbackId.PresetSpeed]: {
+			type: 'boolean',
+			name: 'Preset Speed',
+			description: 'Change button style when preset speed matches',
+			options: [
+				{
+					type: 'number',
+					label: 'Speed',
+					id: PresetSpeedValueId,
+					default: 12,
+					min: 1,
+					max: 24,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return Number(instance.getVariableValue('preset_speed')) === Number(options[PresetSpeedValueId])
+			},
+		},
+		[FeedbackId.PresetSelected]: {
+			type: 'boolean',
+			name: 'Preset Selected',
+			description: 'Change button style when this preset is the last selected preset',
+			options: [
+				{
+					type: 'number',
+					label: 'Preset number',
+					id: PresetSelectedValueId,
+					default: 0,
+					min: 0,
+					max: 254,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(223, 85, 0),
+			},
+			callback: ({ options }) => {
+				return String(instance.getVariableValue('last_preset_selected')) === String(options[PresetSelectedValueId])
+			},
+		},
+		[FeedbackId.PresetSaveActive]: {
+			type: 'boolean',
+			name: 'Preset Save Active',
+			description: 'Change button style when preset save mode is active (held > 1 second)',
+			options: [],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: () => {
+				return instance.getVariableValue('preset_save_active') === 'true'
 			},
 		},
 	}

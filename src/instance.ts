@@ -1,6 +1,7 @@
 import { InstanceBase, InstanceStatus, type SomeCompanionConfigField } from '@companion-module/base'
 import { getActions } from './actions/actions.js'
-import { getFeedbacks } from './feedbacks.js'
+import { PresetRecallSpeed, PresetSave, PresetRecall } from './camera/presets.js'
+import { FeedbackId, getFeedbacks } from './feedbacks.js'
 import {
 	canUpdateConfigWithoutRestarting,
 	type RawConfig,
@@ -13,7 +14,7 @@ import {
 import { getPresets } from './presets.js'
 import { repr } from './utils/repr.js'
 import { traceLog } from './utils/trace-log.js'
-import { DEFAULT_SPEED, getVariableDefinitions, pollVariablesContinuously } from './variables.js'
+import { DEFAULT_PRESET_SPEED, DEFAULT_SPEED, getVariableDefinitions, pollVariablesContinuously } from './variables.js'
 import type { Command, CommandParameters, CommandParamValues, NoCommandParameters } from './visca/command.js'
 import type { Answer, AnswerParameters, Inquiry } from './visca/inquiry.js'
 import { VISCAPort } from './visca/port.js'
@@ -175,6 +176,64 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		if (this.#speed > 0x01) this.#speed--
 	}
 
+	// -- Smart preset hold-to-save state --
+
+	/** Timer handle for the smart-preset hold detection. */
+	#smartPresetTimer: ReturnType<typeof setTimeout> | null = null
+
+	/** Whether a save was executed during the current hold. */
+	#smartPresetSaved = false
+
+	/** Hold duration before a save is triggered. */
+	static readonly #SMART_PRESET_HOLD_MS = 1_000
+
+	/**
+	 * Called when a smart preset button is pressed.  Starts a 1-second timer;
+	 * if the timer fires, the preset is saved immediately and all preset
+	 * buttons are highlighted.
+	 */
+	smartPresetDown(preset: number): void {
+		this.#clearSmartPresetTimer()
+		this.#smartPresetTimer = setTimeout(() => {
+			this.#smartPresetTimer = null
+			this.#smartPresetSaved = true
+			this.sendCommand(PresetSave, { preset })
+			this.setVariableValues({
+				last_preset_selected: String(preset),
+				preset_save_active: 'true',
+			})
+			this.checkFeedbacks(FeedbackId.PresetSelected, FeedbackId.PresetSaveActive)
+		}, PtzOpticsInstance.#SMART_PRESET_HOLD_MS)
+	}
+
+	/**
+	 * Called when a smart preset button is released.  If the hold was shorter
+	 * than 1 second, the preset is recalled.  In either case, save-active
+	 * state is cleared and the last selected preset is updated.
+	 */
+	smartPresetUp(preset: number): void {
+		const wasSaved = this.#smartPresetSaved
+		this.#clearSmartPresetTimer()
+
+		if (!wasSaved) {
+			const speed = Number(this.getVariableValue('preset_speed')) || 12
+			this.sendCommand(PresetRecallSpeed, { speed })
+			this.sendCommand(PresetRecall, { preset })
+			this.setVariableValues({ last_preset_selected: String(preset) })
+		}
+
+		this.setVariableValues({ preset_save_active: 'false' })
+		this.checkFeedbacks(FeedbackId.PresetSelected, FeedbackId.PresetSaveActive)
+	}
+
+	#clearSmartPresetTimer(): void {
+		if (this.#smartPresetTimer !== null) {
+			clearTimeout(this.#smartPresetTimer)
+			this.#smartPresetTimer = null
+		}
+		this.#smartPresetSaved = false
+	}
+
 	/**
 	 * Maximum time a poll step may take before the watchdog considers the loop
 	 * stalled and restarts it.
@@ -230,6 +289,7 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 
 	override async destroy(): Promise<void> {
 		this.log('info', `destroying module: ${this.id}`)
+		this.#clearSmartPresetTimer()
 		this.#stopPolling()
 		this.#visca.close('Instance is being destroyed', InstanceStatus.Disconnected)
 	}
@@ -239,9 +299,14 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 
 		this.setActionDefinitions(getActions(this))
 		this.setFeedbackDefinitions(getFeedbacks(this))
-		this.setPresetDefinitions(getPresets())
 		this.setVariableDefinitions(getVariableDefinitions())
-		this.setVariableValues({ zoom_speed: DEFAULT_SPEED, focus_speed: DEFAULT_SPEED })
+		this.setVariableValues({
+			zoom_speed: DEFAULT_SPEED,
+			focus_speed: DEFAULT_SPEED,
+			preset_speed: DEFAULT_PRESET_SPEED,
+			last_preset_selected: '',
+			preset_save_active: 'false',
+		})
 
 		return this.configUpdated(config)
 	}
@@ -253,6 +318,9 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 
 		validateConfig(config)
 		this.#config = config
+
+		// Re-register presets so they pick up any color changes.
+		this.setPresetDefinitions(getPresets(config.presetColorText, config.presetColorBG))
 
 		if (canUpdateConfigWithoutRestarting(oldConfig, config)) {
 			return

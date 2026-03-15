@@ -31,3 +31,10 @@ export const PresetDriveSpeed = new ModuleDefinedCommand([0x81, 0x01, 0x06, 0x01
 		nibbles: [10, 11],
 	},
 })
+
+/** Global preset recall speed: 81 01 06 01 ss FF, speed 0x01-0x18 (1-24). */
+export const PresetRecallSpeed = new ModuleDefinedCommand([0x81, 0x01, 0x06, 0x01, 0x00, 0xff], {
+	speed: {
+		nibbles: [8, 9],
+	},
+})

@@ -13,12 +13,22 @@ import {
 	ZoomSpeedValueId,
 	FocusPositionValueId,
 	FocusSpeedValueId,
+	PresetSpeedValueId,
+	PresetSelectedValueId,
 } from './feedbacks.js'
 import { FocusActionId, FocusModeId, FocusPositionId, FocusSpeedId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
 import { PanTiltActionId } from './actions/pan-tilt.js'
-import { PresetAsNumberId, PresetAsTextId, PresetIsTextId, RecallPresetId, SetPresetId } from './actions/presets.js'
+import {
+	PresetActionId,
+	PresetAsNumberId,
+	PresetAsTextId,
+	PresetIsTextId,
+	PresetSpeedOptionId,
+	RecallPresetId,
+	SetPresetId,
+} from './actions/presets.js'
 import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
 import { ZoomActionId, ZoomPositionId, ZoomSpeedId } from './actions/zoom.js'
@@ -35,7 +45,7 @@ import {
 } from './assets/assets.js'
 import { isValidPreset } from './camera/presets.js'
 
-export function getPresets(): CompanionPresetDefinitions {
+export function getPresets(presetColorText: number, presetColorBG: number): CompanionPresetDefinitions {
 	const presets: CompanionPresetDefinitions = {}
 
 	presets['tilt_up_preset'] = {
@@ -3347,6 +3357,187 @@ export function getPresets(): CompanionPresetDefinitions {
 				feedbacks: [],
 			}
 		}
+	}
+
+	// Smart preset buttons: short press = recall, hold > 1s = save
+	for (let n = 0; n < 255; n++) {
+		if (!isValidPreset(n)) continue
+
+		presets[`smart_preset_${n}`] = {
+			type: 'button',
+			category: 'Presets',
+			name: `Preset ${n}`,
+			style: {
+				text: `Preset\\n${n}`,
+				size: '18',
+				color: presetColorText,
+				bgcolor: presetColorBG,
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: PresetActionId.SmartPresetDown,
+							options: {
+								[PresetIsTextId]: false,
+								[PresetAsNumberId]: n,
+								[PresetAsTextId]: `${n}`,
+							},
+						},
+					],
+					up: [
+						{
+							actionId: PresetActionId.SmartPresetUp,
+							options: {
+								[PresetIsTextId]: false,
+								[PresetAsNumberId]: n,
+								[PresetAsTextId]: `${n}`,
+							},
+						},
+					],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.PresetSelected,
+					options: { [PresetSelectedValueId]: n },
+					style: {
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(223, 85, 0),
+					},
+				},
+				{
+					feedbackId: FeedbackId.PresetSaveActive,
+					options: {},
+					style: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+					},
+				},
+			],
+		}
+	}
+
+	presets['preset_speed_preset'] = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Preset Speed',
+		options: { rotaryActions: true },
+		style: {
+			text: 'Preset Speed\\n$(ptzoptics-visca:preset_speed)',
+			size: '14',
+			png64: IMAGE_ROTARY_BG,
+			pngalignment: 'center:center',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PresetActionId.SetPresetSpeed,
+						options: {
+							[PresetSpeedOptionId]: 12,
+						},
+					},
+				],
+				up: [],
+				rotate_left: [
+					{
+						actionId: PresetActionId.PresetSpeedDown,
+						options: {},
+					},
+				],
+				rotate_right: [
+					{
+						actionId: PresetActionId.PresetSpeedUp,
+						options: {},
+					},
+				],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['preset_speed_up_preset'] = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Preset Speed Up',
+		style: {
+			text: 'Preset Speed\\nUP',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PresetActionId.PresetSpeedUp,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['preset_speed_down_preset'] = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Preset Speed Down',
+		style: {
+			text: 'Preset Speed\\nDOWN',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PresetActionId.PresetSpeedDown,
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['preset_speed_direct_preset'] = {
+		type: 'button',
+		category: 'Presets',
+		name: 'Preset Speed Set',
+		style: {
+			text: 'Preset Speed\\nSet\\n12',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: PresetActionId.SetPresetSpeed,
+						options: { [PresetSpeedOptionId]: 12 },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.PresetSpeed,
+				options: { [PresetSpeedValueId]: 12 },
+				style: {
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(223, 85, 0),
+				},
+			},
+		],
 	}
 
 	return presets
