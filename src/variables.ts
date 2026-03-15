@@ -40,6 +40,7 @@ export function getVariableDefinitions(): CompanionVariableDefinition[] {
 		{ variableId: 'focus_position_bar', name: 'Focus Position Bar' },
 		{ variableId: 'iris_position_bar', name: 'Iris Position Bar' },
 		// Camera preset variables
+		// Camera preset variables
 		{ variableId: 'preset_speed', name: 'Preset Speed' },
 		{ variableId: 'last_preset_selected', name: 'Last Preset Selected' },
 		{ variableId: 'preset_save_active', name: 'Preset Save Active' },

@@ -89,7 +89,7 @@ Commands and inquiries follow consistent byte patterns for related camera proper
 | Sharpness Mode | —       | `04 05` | `04 05` |
 | Shutter        | `04 0A` | `04 4A` | `04 4A` |
 | Iris           | `04 0B` | `04 4B` | `04 4B` |
-| Gain           | `04 0C` | `04 4C` | —       |
+| Gain           | `04 0C` | `04 4C` | `04 4C` |
 | Bright         | `04 0D` | `04 4D` | `04 4D` |
 | Exp Comp       | `04 0E` | `04 4E` | `04 4E` |
 
@@ -100,6 +100,8 @@ Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 
 **Preset Recall Speed**: `81 01 06 01 ss FF` (speed 0x01-0x18, i.e., 1-24). This is a global speed setting — not per-preset. The legacy per-preset `PresetDriveSpeed` command (`81 01 06 01 pp ss FF`) exists in the codebase but does not work on this camera model.
 
 **Zoom coordinate systems**: `CAM_LensBlockInq` returns zoom position in stepper motor steps (~0–5140 range), while `CAM_ZoomDirect` and `CAM_ZoomPosInq` use a different coordinate system (~0–16384 range, ratio ≈3.1875). The `zoom_position` variable uses stepper units from LensBlockInq. For incremental zoom steps, an on-demand `ZoomPositionInquiry` fetches the current ZoomDirect value and steps ±4 in that coordinate system (avoids getting stuck due to rounding). For absolute positioning (e.g., Wide/Mid/Tele), stepper values are converted using the 3.1875 ratio. Focus position does not have this dual-coordinate issue — `FocusDirect` uses the same units as `LensBlockInq`.
+
+**Noise Reduction**: 2D and 3D NR levels are set independently via `81 01 04 53 0p FF` (2D, 0=Off through 5=Strong) and `81 01 04 54 0p FF` (3D, 0=Off through 5; camera OSD allows up to 8 but VISCA clamps at 5). These commands are not in the official PTZOptics documentation but are verified working on G2 cameras. The `GainPositionInquiry` (`81 09 04 4C FF`) is also undocumented but verified to match CameraBlockInq gain values — kept in `src/camera/exposure.ts` for future use but not polled.
 
 ### Upgrade System
 

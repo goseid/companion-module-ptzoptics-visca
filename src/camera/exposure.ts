@@ -127,6 +127,16 @@ export const GainDirect = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x4c, 0x00
 	},
 })
 
+/** @public Kept for future use — verified to match CameraBlockInq gain value. */
+export const GainPositionInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x04, 0x4c, 0xff], {
+	bytes: [0x90, 0x50, 0x00, 0x00, 0x00, 0x00, 0xff],
+	params: {
+		position: {
+			nibbles: [5, 7, 9, 11],
+		},
+	},
+})
+
 export const BacklightOn = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x33, 0x02, 0xff])
 export const BacklightOff = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x33, 0x03, 0xff])
 

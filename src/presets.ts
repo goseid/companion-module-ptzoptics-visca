@@ -18,6 +18,7 @@ import {
 } from './feedbacks.js'
 import { FocusActionId, FocusModeId, FocusPositionId, FocusSpeedId } from './actions/focus.js'
 import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
+import { NoiseReductionActionId } from './actions/noise-reduction.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
 import { PanTiltActionId } from './actions/pan-tilt.js'
 import {
@@ -3286,6 +3287,102 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 						options: {
 							[SharpnessPositionId]: 3,
 						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['nr_2d_off_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: '2D NR Off',
+		style: {
+			text: '2D NR\\nOFF',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: NoiseReductionActionId.Set2DLevel,
+						options: { level: '0' },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['nr_2d_level_3_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: '2D NR Level 3',
+		style: {
+			text: '2D NR\\nLevel 3',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: NoiseReductionActionId.Set2DLevel,
+						options: { level: '3' },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['nr_3d_off_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: '3D NR Off',
+		style: {
+			text: '3D NR\\nOFF',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: NoiseReductionActionId.Set3DLevel,
+						options: { level: '0' },
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	}
+
+	presets['nr_3d_level_3_preset'] = {
+		type: 'button',
+		category: 'Image',
+		name: '3D NR Level 3',
+		style: {
+			text: '3D NR\\nLevel 3',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: NoiseReductionActionId.Set3DLevel,
+						options: { level: '3' },
 					},
 				],
 				up: [],

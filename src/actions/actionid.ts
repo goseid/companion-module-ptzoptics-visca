@@ -3,6 +3,7 @@ import type { AutoTrackingActionId } from './auto-tracking.js'
 import type { CustomCommandActionId } from './custom-command.js'
 import type { ExposureActionId } from './exposure.js'
 import type { FocusActionId } from './focus.js'
+import type { NoiseReductionActionId } from './noise-reduction.js'
 import type { OSDActionId } from './osd.js'
 import type { PanTiltActionId } from './pan-tilt.js'
 import type { PowerActionId } from './power.js'
@@ -23,6 +24,7 @@ export type PtzOpticsActionId =
 	| CustomCommandActionId
 	| ExposureActionId
 	| FocusActionId
+	| NoiseReductionActionId
 	| OSDActionId
 	| PanTiltActionId
 	| PowerActionId

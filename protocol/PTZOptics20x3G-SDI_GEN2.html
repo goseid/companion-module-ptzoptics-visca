@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PTZOptics 20x 3G-SDI (GEN 2) Protocol Info</title>
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; margin: 2em; color: #222; }
+  h1 { font-size: 1.4em; }
+  h2 { font-size: 1.2em; margin-top: 2em; }
+  h3 { font-size: 1.05em; margin-top: 1.5em; }
+  ul { margin: 0.5em 0; padding-left: 1.5em; }
+  table { border-collapse: collapse; margin: 1em 0; width: 100%; }
+  th, td { border: 1px solid #bbb; padding: 4px 8px; text-align: left; vertical-align: top; font-size: 0.9em; }
+  th { background: #f0f0f0; }
+  td.packet { font-family: Consolas, 'Courier New', monospace; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<h1>PTZOptics 20x 3G-SDI (GEN 2) Protocol Info</h1>
+<p>This document contains information about the VISCA Protocol for the following cameras:</p>
+<ul>
+  <li>PT20X-SDI-GY-G2</li>
+  <li>PT20X-SDI-WH-G2 V1.5</li>
+</ul>
+
+<h2>VISCA Command List</h2>
+
+<h3>Part 1: Camera-Issued Messages</h3>
+<table>
+  <tr><th>Function</th><th>Packet</th><th>Notes</th><th>Comments</th></tr>
+  <tr><td>ACK</td><td class="packet">90 4y FF</td><td>y: Socket Number</td><td>Returned when the command is accepted.</td></tr>
+  <tr><td>Completion</td><td class="packet">90 5y FF</td><td>y: Socket Number</td><td>Returned when the command has been executed.</td></tr>
+</table>
+
+<h3>Part 2: Camera Control Commands</h3>
+<table>
+  <tr><th>Command</th><th>Function</th><th>Packet</th><th>Comments</th></tr>
+  <tr><td>CAM_Zoom</td><td>Stop</td><td class="packet">81 01 04 07 00 FF</td><td></td></tr>
+  <tr><td>CAM_Zoom</td><td>Tele (Standard)</td><td class="packet">81 01 04 07 02 FF</td><td></td></tr>
+  <tr><td>CAM_Zoom</td><td>Wide (Standard)</td><td class="packet">81 01 04 07 03 FF</td><td></td></tr>
+  <tr><td>CAM_Zoom</td><td>Tele (Variable)</td><td class="packet">81 01 04 07 2p FF</td><td>p = (low) &ndash; 7 (high)</td></tr>
+  <tr><td>CAM_Zoom</td><td>Wide (Variable)</td><td class="packet">81 01 04 07 3p FF</td><td>p = (low) &ndash; 7 (high)</td></tr>
+  <tr><td>CAM_Zoom</td><td>Direct</td><td class="packet">81 01 04 47 p q r s FF</td><td>pqrs: Zoom Position</td></tr>
+  <tr><td>CAM_Focus</td><td>Stop</td><td class="packet">81 01 04 08 00 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Far (Standard)</td><td class="packet">81 01 04 08 02 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Near (Standard)</td><td class="packet">81 01 04 08 03 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Far (Variable)</td><td class="packet">81 01 04 08 2p FF</td><td>p = (low) &ndash; 7 (high)</td></tr>
+  <tr><td>CAM_Focus</td><td>Near (Variable)</td><td class="packet">81 01 04 08 3p FF</td><td>p = (low) &ndash; 7 (high)</td></tr>
+  <tr><td>CAM_Focus</td><td>Direct</td><td class="packet">81 01 04 48 p q r s FF</td><td>pqrs: Focus Position</td></tr>
+  <tr><td>CAM_Focus</td><td>Auto Focus</td><td class="packet">81 01 04 38 02 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Manual Focus</td><td class="packet">81 01 04 38 03 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Auto/Manual Toggle</td><td class="packet">81 01 04 38 10 FF</td><td></td></tr>
+  <tr><td>CAM_Focus</td><td>Focus Lock</td><td class="packet">81 0a 04 68 02 FF</td><td>Prevents any other operation or command from adjusting the current focus state</td></tr>
+  <tr><td>CAM_Focus</td><td>Focus Unlock</td><td class="packet">81 0a 04 68 03 FF</td><td>Prevents any other operation or command from adjusting the current focus state</td></tr>
+  <tr><td>CAM_WB</td><td>Auto</td><td class="packet">81 01 04 35 00 FF</td><td>Normal Auto</td></tr>
+  <tr><td>CAM_WB</td><td>Indoor Mode</td><td class="packet">81 01 04 35 01 FF</td><td>Indoor Mode</td></tr>
+  <tr><td>CAM_WB</td><td>Outdoor Mode</td><td class="packet">81 01 04 35 02 FF</td><td>Outdoor Mode</td></tr>
+  <tr><td>CAM_WB</td><td>OnePush Mode</td><td class="packet">81 01 04 35 03 FF</td><td>OnePush WB Mode</td></tr>
+  <tr><td>CAM_WB</td><td>Manual</td><td class="packet">81 01 04 35 05 FF</td><td>Manual Control Mode</td></tr>
+  <tr><td>CAM_WB</td><td>OnePush Trigger</td><td class="packet">81 01 04 10 05 FF</td><td>OnePush WB Trigger</td></tr>
+  <tr><td>CAM_RGain</td><td>Reset</td><td class="packet">81 01 04 03 00 FF</td><td>Manual Control of R Gain</td></tr>
+  <tr><td>CAM_RGain</td><td>Up</td><td class="packet">81 01 04 03 02 FF</td><td>Manual Control of R Gain</td></tr>
+  <tr><td>CAM_RGain</td><td>Down</td><td class="packet">81 01 04 03 03 FF</td><td>Manual Control of R Gain</td></tr>
+  <tr><td>CAM_RGain</td><td>Direct</td><td class="packet">81 01 04 43 00 00 p q FF</td><td>pq: R Gain</td></tr>
+  <tr><td>CAM_BGain</td><td>Reset</td><td class="packet">81 01 04 04 00 FF</td><td>Manual Control of B Gain</td></tr>
+  <tr><td>CAM_BGain</td><td>Up</td><td class="packet">81 01 04 04 02 FF</td><td>Manual Control of B Gain</td></tr>
+  <tr><td>CAM_BGain</td><td>Down</td><td class="packet">81 01 04 04 03 FF</td><td>Manual Control of B Gain</td></tr>
+  <tr><td>CAM_BGain</td><td>Direct</td><td class="packet">81 01 04 44 00 00 p q FF</td><td>pq: B Gain</td></tr>
+  <tr><td>CAM_AE</td><td>Full auto</td><td class="packet">81 01 04 39 00 FF</td><td>Automatic Exposure mode</td></tr>
+  <tr><td>CAM_AE</td><td>Manual</td><td class="packet">81 01 04 39 03 FF</td><td>Manual Control mode</td></tr>
+  <tr><td>CAM_AE</td><td>Shutter Priority</td><td class="packet">81 01 04 39 0A FF</td><td>Shutter Priority Automatic Exposure mode</td></tr>
+  <tr><td>CAM_AE</td><td>Iris Priority</td><td class="packet">81 01 04 39 0B FF</td><td>Iris Priority Automatic Exposure mode</td></tr>
+  <tr><td>CAM_AE</td><td>Bright</td><td class="packet">81 01 04 39 0D FF</td><td>Bright Mode (Manual control)</td></tr>
+  <tr><td>CAM_Iris</td><td>Reset</td><td class="packet">81 01 04 0B 00 FF</td><td>Reset Iris</td></tr>
+  <tr><td>Exposure Compensation</td><td>On / Off</td><td class="packet">81 01 04 3E 0p FF</td><td>p: 0x2=On, 0x3=Off</td></tr>
+  <tr><td>Exposure Compensation</td><td>Reset</td><td class="packet">81 01 04 0E 00 FF</td><td>Resets to 0x7 (0) value</td></tr>
+  <tr><td>Exposure Compensation</td><td>Up</td><td class="packet">81 01 04 0E 02 FF</td><td>ExpComp Setting</td></tr>
+  <tr><td>Exposure Compensation</td><td>Down</td><td class="packet">81 01 04 0E 03 FF</td><td>ExpComp Setting</td></tr>
+  <tr><td>Exposure Compensation</td><td>Direct</td><td class="packet">81 01 04 4E 00 00 0p 0q FF</td><td>pq: ExpComp Position (0x0=&minus;7 ~ 0x7=0 ~ 0xE=+7)</td></tr>
+  <tr><td>CAM_Iris</td><td>Up</td><td class="packet">81 01 04 0B 02 FF</td><td>Increase Iris</td></tr>
+  <tr><td>CAM_Iris</td><td>Down</td><td class="packet">81 01 04 0B 03 FF</td><td>Decrease Iris</td></tr>
+  <tr><td>CAM_Iris</td><td>Direct</td><td class="packet">81 01 04 4B 00 00 p q FF</td><td>pq: Iris Position</td></tr>
+  <tr><td>Gain</td><td>Reset</td><td class="packet">81 01 04 0C 00 FF</td><td>Resets to 0x2 (2) value</td></tr>
+  <tr><td>Gain</td><td>Up</td><td class="packet">81 01 04 0C 02 FF</td><td>Gain Setting</td></tr>
+  <tr><td>Gain</td><td>Down</td><td class="packet">81 01 04 0C 03 FF</td><td>Gain Setting</td></tr>
+  <tr><td>Gain</td><td>Direct</td><td class="packet">81 01 04 4C 00 00 0p 0q FF</td><td>pq: Gain Position (0x00=0 ~ 0x07=7)</td></tr>
+  <tr><td>Gain</td><td>Limit</td><td class="packet">81 01 04 2C 0p FF</td><td>p: Gain Limit Position (0x0=0 ~ 0xF=15)</td></tr>
+  <tr><td>CAM_Shutter</td><td>Reset</td><td class="packet">81 01 04 0A 00 FF</td><td>Default Shutter Setting</td></tr>
+  <tr><td>CAM_Shutter</td><td>Up</td><td class="packet">81 01 04 0A 02 FF</td><td>Increase Shutter</td></tr>
+  <tr><td>CAM_Shutter</td><td>Down</td><td class="packet">81 01 04 0A 03 FF</td><td>Decrease Shutter</td></tr>
+  <tr><td>CAM_Shutter</td><td>Direct</td><td class="packet">81 01 04 4A 00 00 p q FF</td><td>pq: Shutter Position</td></tr>
+  <tr><td>Exp_Bright</td><td>Reset</td><td class="packet">81 01 04 0D 00 FF</td><td>Resets to 0x7 (7) value</td></tr>
+  <tr><td>Exp_Bright</td><td>Up</td><td class="packet">81 01 04 0D 02 FF</td><td>Exposure Bright Setting Up</td></tr>
+  <tr><td>Exp_Bright</td><td>Down</td><td class="packet">81 01 04 0D 03 FF</td><td>Exposure Bright Setting Down</td></tr>
+  <tr><td>Exp_Bright</td><td>Direct</td><td class="packet">81 01 04 4D 00 00 0p 0q FF</td><td>pq: Exposure Bright Position (0x00=0 ~ 0x11=17)</td></tr>
+  <tr><td>CAM_Backlight</td><td>On</td><td class="packet">81 01 04 33 02 FF</td><td>Back Light Compensation On</td></tr>
+  <tr><td>CAM_Backlight</td><td>Off</td><td class="packet">81 01 04 33 03 FF</td><td>Back Light Compensation Off</td></tr>
+  <tr><td>CAM_Flicker</td><td>&ndash;</td><td class="packet">81 01 04 23 0p FF</td><td>p: Flicker Settings &ndash; (0: Off, 1: 50Hz, 2: 60Hz)</td></tr>
+  <tr><td>CAM_NR2DLevel</td><td>Level</td><td class="packet">81 01 04 53 0p FF</td><td>p: 2D NR Level (0=Off, 1=Weak through 5=Strong).<br>Not in official documentation; verified working.</td></tr>
+  <tr><td>CAM_NR3DLevel</td><td>Level</td><td class="packet">81 01 04 54 0p FF</td><td>p: 3D NR Level (0=Off, 1 through 5).<br>OSD allows up to 8 but VISCA clamps at 5.<br>Not in official documentation; verified.</td></tr>
+  <tr><td>CAM_PictureEffect</td><td>Off</td><td class="packet">81 01 04 63 00 FF</td><td>Picture Effect Setting Off</td></tr>
+  <tr><td>CAM_PictureEffect</td><td>B&amp;W</td><td class="packet">81 01 04 63 04 FF</td><td>Picture Effect Setting Black &amp; White</td></tr>
+  <tr><td>CAM_Memory</td><td>Reset</td><td class="packet">81 01 04 3F 00 pp FF</td><td>pp: Memory Number (Hex 0,0 &ndash; 3,F)</td></tr>
+  <tr><td>CAM_Memory</td><td>Set</td><td class="packet">81 01 04 3F 01 pp FF</td><td>pp: Memory Number (Hex 0,0 &ndash; 3,F)</td></tr>
+  <tr><td>CAM_Memory</td><td>Recall</td><td class="packet">81 01 04 3F 02 pp FF</td><td>pp: Memory Number (Hex 0,0 &ndash; 3,F)</td></tr>
+  <tr><td>Preset Recall Speed</td><td>Preset Speed</td><td class="packet">81 01 06 01 p FF</td><td>p: Speed grade, values are 0x1~0x18</td></tr>
+  <tr><td>CAM_LR_Reverse</td><td>On</td><td class="packet">81 01 04 61 02 FF</td><td>Image Flip Horizontal On</td></tr>
+  <tr><td>CAM_LR_Reverse</td><td>Off</td><td class="packet">81 01 04 61 03 FF</td><td>Image Flip Horizontal Off</td></tr>
+  <tr><td>CAM_PictureFlip</td><td>On</td><td class="packet">81 01 04 66 02 FF</td><td>Image Flip Vertical On</td></tr>
+  <tr><td>CAM_PictureFlip</td><td>Off</td><td class="packet">81 01 04 66 03 FF</td><td>Image Flip Vertical Off</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Up</td><td class="packet">81 01 06 01 VV WW 03 01 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Down</td><td class="packet">81 01 06 01 VV WW 03 02 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Left</td><td class="packet">81 01 06 01 VV WW 01 03 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Right</td><td class="packet">81 01 06 01 VV WW 02 03 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Up Left</td><td class="packet">81 01 06 01 VV WW 01 01 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Up Right</td><td class="packet">81 01 06 01 VV WW 02 01 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Down Left</td><td class="packet">81 01 06 01 VV WW 01 02 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Down Right</td><td class="packet">81 01 06 01 VV WW 02 02 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Stop</td><td class="packet">81 01 06 01 VV WW 03 03 FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Absolute Position</td><td class="packet">81 01 06 02 VV WW Y Y Y Y Z Z Z Z FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)<br>YYYY: Pan Position<br>ZZZZ: Tilt Position</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Relative Position</td><td class="packet">81 01 06 03 VV WW Y Y Y Y Z Z Z Z FF</td><td>VV: Pan Speed 0x01 (Low) to 0x18 (High)<br>WW: Tilt Speed 0x01 (Low) to 0x18 (High)<br>YYYY: Pan Position<br>ZZZZ: Tilt Position</td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Home</td><td class="packet">81 01 06 04 FF</td><td></td></tr>
+  <tr><td>Pan Tilt Drive</td><td>Reset</td><td class="packet">81 01 06 05 FF</td><td></td></tr>
+  <tr><td>Image_Brightness</td><td>Direct</td><td class="packet">81 01 04 A1 00 00 0p 0q FF</td><td>pq: Brightness Position</td></tr>
+  <tr><td>Image_Contrast</td><td>Direct</td><td class="packet">81 01 04 A2 00 00 0p 0q FF</td><td>pq: Contrast Position</td></tr>
+  <tr><td>Image_Sharpness</td><td>Mode</td><td class="packet">81 01 04 05 0p FF</td><td>p: 0x2=Auto, 0x3=Manual</td></tr>
+  <tr><td>Image_Sharpness</td><td>Reset</td><td class="packet">81 01 04 02 00 FF</td><td>Resets to default position 0x03 (3) value</td></tr>
+  <tr><td>Image_Sharpness</td><td>Up</td><td class="packet">81 01 04 02 02 FF</td><td>Aperture Control</td></tr>
+  <tr><td>Image_Sharpness</td><td>Down</td><td class="packet">81 01 04 02 03 FF</td><td>Aperture Control</td></tr>
+  <tr><td>Image_Sharpness</td><td>Direct</td><td class="packet">81 01 04 42 00 00 0p 0q FF</td><td>pq: Aperture Gain (0x00=0 ~ 0x0F=15)</td></tr>
+  <tr><td>CAM-Flip</td><td>Off</td><td class="packet">81 01 04 A4 00 FF</td><td>Single Command For Video Flip &ndash; Off</td></tr>
+  <tr><td>CAM-Flip</td><td>Flip-H</td><td class="packet">81 01 04 A4 01 FF</td><td>Flip Video Horizontally</td></tr>
+  <tr><td>CAM-Flip</td><td>Flip-V</td><td class="packet">81 01 04 A4 02 FF</td><td>Flip Video Vertically</td></tr>
+  <tr><td>CAM-Flip</td><td>Flip-HV</td><td class="packet">81 01 04 A4 03 FF</td><td>Flip Video Horizontally and Vertically</td></tr>
+  <tr><td>CAM_SettingSave</td><td>Save</td><td class="packet">81 01 04 A5 10 FF</td><td>Save Current Setting</td></tr>
+  <tr><td>CAM_AWBSensitivity</td><td>High</td><td class="packet">81 01 04 A9 00 FF</td><td>High</td></tr>
+  <tr><td>CAM_AWBSensitivity</td><td>Normal</td><td class="packet">81 01 04 A9 01 FF</td><td>Normal</td></tr>
+  <tr><td>CAM_AWBSensitivity</td><td>Low</td><td class="packet">81 01 04 A9 02 FF</td><td>Low</td></tr>
+  <tr><td>CAM_AFZone</td><td>Top</td><td class="packet">81 01 04 AA 00 FF</td><td>AF Zone priority Top</td></tr>
+  <tr><td>CAM_AFZone</td><td>Center</td><td class="packet">81 01 04 AA 01 FF</td><td>AF Zone priority Center</td></tr>
+  <tr><td>CAM_AFZone</td><td>Bottom</td><td class="packet">81 01 04 AA 02 FF</td><td>AF Zone priority Bottom</td></tr>
+  <tr><td>CAM_ColorHue</td><td>Direct</td><td class="packet">81 01 04 4F 00 00 00 0p FF</td><td>p: Color Hue 0h (&minus;14 degrees) to Eh (+14 degrees)</td></tr>
+  <tr><td>OSD_Control</td><td>Open/Close</td><td class="packet">81 01 06 06 10 FF</td><td>Open or Close the On Screen Display</td></tr>
+</table>
+
+<h3>Part 3: Query Commands</h3>
+
+<h4>Individual Inquiries</h4>
+<table>
+  <tr><th>Command</th><th>Command Packet</th><th>Response Packet</th><th>Comments</th></tr>
+  <tr><td>CAM_PowerInq</td><td class="packet">81 09 04 00 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off (standby), 4=Internal Power Circuit Error</td></tr>
+  <tr><td>CAM_ZoomPosInq</td><td class="packet">81 09 04 47 FF</td><td class="packet">90 50 p q r s FF</td><td>pqrs: Zoom Position</td></tr>
+  <tr><td>CAM_FocusAFModeInq</td><td class="packet">81 09 04 38 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=Auto Focus, 3=Manual Focus</td></tr>
+  <tr><td>CAM_FocusPosInq</td><td class="packet">81 09 04 48 FF</td><td class="packet">90 50 0p 0q 0r 0s FF</td><td>pqrs: Focus Position</td></tr>
+  <tr><td>CAM_WBModeInq</td><td class="packet">81 09 04 35 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=Auto, 1=Indoor, 2=Outdoor, 3=OnePush, 5=Manual</td></tr>
+  <tr><td>CAM_RGainInq</td><td class="packet">81 09 04 43 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: R Gain</td></tr>
+  <tr><td>CAM_BGainInq</td><td class="packet">81 09 04 44 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: B Gain</td></tr>
+  <tr><td>CAM_AEModeInq</td><td class="packet">81 09 04 39 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=Full Auto, 3=Manual, A=Shutter Priority, B=Iris Priority, D=Bright</td></tr>
+  <tr><td>CAM_ShutterPosInq</td><td class="packet">81 09 04 4A FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Shutter Position</td></tr>
+  <tr><td>CAM_IrisPosInq</td><td class="packet">81 09 04 4B FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Iris Position</td></tr>
+  <tr><td>CAM_GainPosInq</td><td class="packet">81 09 04 4C FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Gain Position.<br>Not in official documentation; verified to match CameraBlockInq gain value.</td></tr>
+  <tr><td>CAM_BrightPosInq</td><td class="packet">81 09 04 4D FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Bright Position</td></tr>
+  <tr><td>CAM_ExpCompModeInq</td><td class="packet">81 09 04 3E FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>CAM_ExpCompPosInq</td><td class="packet">81 09 04 4E FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: ExpComp Position</td></tr>
+  <tr><td>CAM_BacklightModeInq</td><td class="packet">81 09 04 33 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>CAM_Noise2DModeInq</td><td class="packet">81 09 04 50 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=Auto Noise 2D, 3=Manual Noise 2D</td></tr>
+  <tr><td>CAM_Noise2DLevelInq</td><td class="packet">81 09 04 53 FF</td><td class="packet">90 50 0p FF</td><td>Noise Reduction (2D) p: 0 to 5</td></tr>
+  <tr><td>CAM_Noise3DLevelInq</td><td class="packet">81 09 04 54 FF</td><td class="packet">90 50 0p FF</td><td>Noise Reduction (3D) p: 0 to 8</td></tr>
+  <tr><td>CAM_FlickerModeInq</td><td class="packet">81 09 04 55 FF</td><td class="packet">90 50 0p FF</td><td>p: Flicker Settings (0: OFF, 1: 50Hz, 2: 60Hz)</td></tr>
+  <tr><td>CAM_SharpnessModeInq</td><td class="packet">81 09 04 05 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=Auto, 3=Manual</td></tr>
+  <tr><td>CAM_SharpnessInq</td><td class="packet">81 09 04 42 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Sharpness</td></tr>
+  <tr><td>CAM_PictureEffectModeInq</td><td class="packet">81 09 04 63 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=Off, 4=B&amp;W</td></tr>
+  <tr><td>CAM_MemoryInq</td><td class="packet">81 09 04 3F FF</td><td class="packet">90 50 0p FF</td><td>p: Memory number last operated</td></tr>
+  <tr><td>SYS_MenuModeInq</td><td class="packet">81 09 06 06 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>CAM_LR_ReverseInq</td><td class="packet">81 09 04 61 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>CAM_PictureFlipInq</td><td class="packet">81 09 04 66 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>CAM_RegisterValueInq</td><td class="packet">81 09 04 24 mm FF</td><td class="packet">90 50 0p 0p FF</td><td>mm: Register No. (00 to FF)<br>pp: Register Value (00 to FF)</td></tr>
+  <tr><td>CAM_ColorGainInq</td><td class="packet">81 09 04 49 FF</td><td class="packet">90 50 00 00 00 0p FF</td><td>p: Color Gain setting 0h (60%) to Eh (200%)</td></tr>
+  <tr><td>CAM_IDInq</td><td class="packet">81 09 04 22 FF</td><td class="packet">90 50 0p 0q 0r 0s FF</td><td>pqrs: Camera ID</td></tr>
+  <tr><td>CAM_VersionInq</td><td class="packet">81 09 00 02 FF</td><td class="packet">90 50 ab cd mn pq rs tu vw FF</td><td>ab: Factory Code (00=VHD, 01=MR, 08=T)<br>cd: Hardware Version<br>mnpq: ARM Version<br>rstu: FPGA Version<br>vw: Camera Model (01=C Type, 02=M Type, 03=S Type)</td></tr>
+  <tr><td>VideoSystemInq</td><td class="packet">81 09 06 23 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=1920x1080i60, 1=1920x1080p30, 2=1280x720p60,<br>4=NTSC, 5=NTSC, 6=NTSC, 7=1920x1080p60,<br>8=1920x1080i50, 9=1920x1080p25, A=1280x720p50,<br>C=PAL, D=PAL, E=PAL</td></tr>
+  <tr><td>IR_Receive</td><td class="packet">81 09 06 08 FF</td><td class="packet">90 50 0p FF</td><td>p: 2=On, 3=Off</td></tr>
+  <tr><td>Pan-tiltMaxSpeedInq</td><td class="packet">81 09 06 11 FF</td><td class="packet">90 50 ww zz FF</td><td>ww: Pan Max Speed<br>zz: Tilt Max Speed</td></tr>
+  <tr><td>CAM_PanTiltPosInq</td><td class="packet">81 09 06 12 FF</td><td class="packet">90 50 0w 0w 0w 0w 0z 0z 0z 0z FF</td><td>wwww: Pan Position<br>zzzz: Tilt Position</td></tr>
+  <tr><td>CAM_TypeInq</td><td class="packet">81 09 00 03 FF</td><td class="packet">90 50 0p FF</td><td>p: 1=C Type, 2=M Type, 3=S Type</td></tr>
+  <tr><td>CAM_DateInq</td><td class="packet">81 09 00 04 FF</td><td class="packet">90 50 0r ss uu uu vv ww 0D FF</td><td>r: unknown<br>ss: unknown<br>uuuu: Year<br>vv: Month<br>ww: Day</td></tr>
+  <tr><td>CAM_ModeInq</td><td class="packet">81 09 04 A6 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=Mode0, 2=Mode2</td></tr>
+  <tr><td>CAM_GainLimitInq</td><td class="packet">81 09 04 2C FF</td><td class="packet">90 50 0p FF</td><td>p: Gain Limit</td></tr>
+  <tr><td>CAM_DHotPixelInq</td><td class="packet">81 09 04 56 FF</td><td class="packet">90 50 0p FF</td><td>p: Dynamic Hot Pixel Setting (0: Off, level 1 to 6)</td></tr>
+  <tr><td>CAM_AFSensitivityInq</td><td class="packet">81 09 04 58 FF</td><td class="packet">90 50 0p FF</td><td>p: 1=High, 2=Normal, 3=Low</td></tr>
+  <tr><td>CAM_BrightnessInq</td><td class="packet">81 09 04 A1 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Brightness Position</td></tr>
+  <tr><td>CAM_ContrastInq</td><td class="packet">81 09 04 A2 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Contrast Position</td></tr>
+  <tr><td>CAM_FlipInq</td><td class="packet">81 09 04 A4 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=Off, 1=Flip-H, 2=Flip-V, 3=Flip-HV</td></tr>
+  <tr><td>CAM_IridixInq</td><td class="packet">81 09 04 A7 FF</td><td class="packet">90 50 00 00 0p 0q FF</td><td>pq: Iridix Position</td></tr>
+  <tr><td>CAM_AFZoneInq</td><td class="packet">81 09 04 AA FF</td><td class="packet">90 50 0p FF</td><td>p: 0=Top, 1=Center, 2=Bottom</td></tr>
+  <tr><td>CAM_ColorHueInq</td><td class="packet">81 09 04 4F FF</td><td class="packet">90 50 00 00 00 0p FF</td><td>p: Color Hue setting 0h (&minus;14 degrees) to Eh (+14 degrees)</td></tr>
+  <tr><td>CAM_AWBSensitivityInq</td><td class="packet">81 09 04 A9 FF</td><td class="packet">90 50 0p FF</td><td>p: 0=High, 1=Normal, 2=Low</td></tr>
+</table>
+
+<h4>Block Inquiries</h4>
+<table>
+  <tr><th>Command</th><th>Command Packet</th><th>Response Packet</th><th>Comments</th></tr>
+  <tr><td>CAM_LensBlockInq</td><td class="packet">81 09 7E 7E 00 FF</td><td class="packet">90 50 0u 0u 0u 0u 00 00 0v 0v 0v 0v 00 0w 00 FF</td><td>uuuu: Zoom Position<br>vvvv: Focus Position<br>w.bit0: Focus Mode (1=Auto, 0=Manual)</td></tr>
+  <tr><td>CAM_CameraBlockInq</td><td class="packet">81 09 7E 7E 01 FF</td><td class="packet">90 50 0p 0p 0q 0q 0r 0s tt 0u vv ww yy xx 0z FF</td><td>pp: R_Gain<br>qq: B_Gain<br>r: WB Mode<br>s: Sharpness<br>tt: AE Mode<br>u.bit2: Back Light<br>u.bit1: Exposure Comp<br>vv: Shutter Position<br>ww: Iris Position<br>yy: Gain Position<br>xx: Bright Position<br>z: Exposure Comp. Position</td></tr>
+  <tr><td>CAM_OtherBlockInq</td><td class="packet">81 09 7E 7E 02 FF</td><td class="packet">90 50 0p 0q 00 0r 00 00 00 00 00 00 00 00 00 FF</td><td>p.bit0: Power (1:On, 0:Off)<br>q.bit2: LR Reverse (1:On, 0:Off)<br>r.bit3~0: Picture Effect Mode</td></tr>
+  <tr><td>CAM_EnlargementBlockInq</td><td class="packet">81 09 7E 7E 03 FF</td><td class="packet">90 50 00 00 00 00 00 00 00 0p 0q rr 0s 0t 0u FF</td><td>p: AF sensitivity<br>q.bit0: Picture flip (1:On, 0:Off)<br>rr.bit6~3: Color Gain (0h(60%) to Eh(200%))<br>s: Flip (0: Off, 1:Flip-H, 2:Flip-V, 3:Flip-HV)<br>t.bit2~0: NR2D Level<br>u: Gain Limit</td></tr>
+</table>
+
+</body>
+</html>
