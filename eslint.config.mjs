@@ -75,6 +75,7 @@ const customConfig = [
 					fixStyle: 'inline-type-imports',
 				},
 			],
+			'n/prefer-node-protocol': 'error',
 
 			// Turn off the general unused-vars rule, and turn on a more refined
 			// TypeScript-specific rule.
@@ -92,6 +93,19 @@ const customConfig = [
 					// these will be erased during compilation, allow them in
 					// source files as well as in test files.
 					varsIgnorePattern: '^(?:assert)?_',
+				},
+			],
+
+			'no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '@companion-module/base',
+							importNames: ['assertNever'],
+							message: "Use `Expect<IsNever<typeof val>>` from 'type-testing' instead.",
+						},
+					],
 				},
 			],
 		},
