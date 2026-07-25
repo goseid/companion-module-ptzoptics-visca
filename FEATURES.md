@@ -46,7 +46,8 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 
 ## Presets (buttons)
 
-- **Smart preset buttons**: hold-to-save — short press (<1s) recalls, long press (>1s) saves.
+- **Smart preset buttons** (~245, one per valid preset): each carries a per-button `PresetNumber` local variable (API 2.0) set to its preset number, so the button text, recall/save actions, and "selected" feedback all follow the variable. Drag in the presets you need, then copy any button and change only `PresetNumber` to retarget it — clone a customized button without re-editing every field.
+- Hold-to-save behavior: short press (<1s) recalls, long press (>1s) saves.
 - Config-driven preset button colors; global **preset recall speed** (`81 01 06 01 ss FF`).
 - `PresetSaveActive` (yellow) + `PresetSelected` (orange) feedbacks.
 - Removed the separate "Recall Preset" / "Save Preset" categories.

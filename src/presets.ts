@@ -28,6 +28,7 @@ import {
 	PresetIsTextId,
 	PresetSpeedOptionId,
 } from './actions/presets.js'
+import { isValidPreset } from './camera/presets.js'
 import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
 import { ZoomActionId, ZoomPositionId, ZoomSpeedId } from './actions/zoom.js'
@@ -42,7 +43,6 @@ import {
 	IMAGE_DOWN_RIGHT,
 	IMAGE_ROTARY_BG,
 } from './assets/assets.js'
-import { isValidPreset } from './camera/presets.js'
 
 export function getPresets(
 	presetColorText: number,
@@ -3433,7 +3433,11 @@ export function getPresets(
 		feedbacks: [],
 	}
 
-	// Smart preset buttons: short press = recall, hold > 1s = save
+	// Smart preset buttons: one per valid preset (short press = recall, hold > 1s
+	// = save).  Each carries a per-button `PresetNumber` local variable set to its
+	// preset number, so the button text, recall/save actions, and "selected"
+	// feedback all follow the variable.  Copy any button and change `PresetNumber`
+	// to retarget the whole button to a different preset.
 	const smartPresetIds: string[] = []
 	for (let n = 0; n < 255; n++) {
 		if (!isValidPreset(n)) continue
@@ -3443,8 +3447,15 @@ export function getPresets(
 		presets[smartPresetId] = {
 			type: 'simple',
 			name: `Preset ${n}`,
+			localVariables: [
+				{
+					variableType: 'simple',
+					variableName: 'PresetNumber',
+					startupValue: n,
+				},
+			],
 			style: {
-				text: `Preset\\n${n}`,
+				text: 'Preset\\n$(local:PresetNumber)',
 				size: '18',
 				color: presetColorText,
 				bgcolor: presetColorBG,
@@ -3455,9 +3466,10 @@ export function getPresets(
 						{
 							actionId: PresetActionId.SmartPresetDown,
 							options: {
-								[PresetIsTextId]: false,
+								[PresetIsTextId]: true,
 								[PresetAsNumberId]: n,
-								[PresetAsTextId]: `${n}`,
+								// Expression mode so the per-button local variable resolves.
+								[PresetAsTextId]: { isExpression: true, value: '$(local:PresetNumber)' },
 							},
 						},
 					],
@@ -3465,9 +3477,10 @@ export function getPresets(
 						{
 							actionId: PresetActionId.SmartPresetUp,
 							options: {
-								[PresetIsTextId]: false,
+								[PresetIsTextId]: true,
 								[PresetAsNumberId]: n,
-								[PresetAsTextId]: `${n}`,
+								// Expression mode so the per-button local variable resolves.
+								[PresetAsTextId]: { isExpression: true, value: '$(local:PresetNumber)' },
 							},
 						},
 					],
@@ -3476,7 +3489,9 @@ export function getPresets(
 			feedbacks: [
 				{
 					feedbackId: FeedbackId.PresetSelected,
-					options: { [PresetSelectedValueId]: n },
+					// A number field can't hold a variable reference in value mode, so
+					// drive it with an expression evaluating the local variable.
+					options: { [PresetSelectedValueId]: { isExpression: true, value: '$(local:PresetNumber)' } },
 					style: {
 						color: combineRgb(255, 255, 255),
 						bgcolor: combineRgb(223, 85, 0),
