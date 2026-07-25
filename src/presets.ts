@@ -2948,8 +2948,23 @@ export function getPresets(
 	presets['rb_gain_direct_preset'] = {
 		type: 'simple',
 		name: 'RB Gain Direct',
+		// Per-button `RedGain`/`BlueGain` local variables drive both the button
+		// text and the R/B gain values sent, so a copied button can target
+		// different gains by editing just the two variables.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'RedGain',
+				startupValue: 226,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'BlueGain',
+				startupValue: 188,
+			},
+		],
 		style: {
-			text: 'RB Gain\\nDirect',
+			text: 'RB Gain\\nDirect\\n$(local:RedGain)|$(local:BlueGain)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0x33, 0x00, 0x33),
@@ -2959,14 +2974,15 @@ export function getPresets(
 				down: [
 					{
 						actionId: WhiteBalanceActionId.RGainDirect,
+						// Number field, so reference the local variable via expression mode.
 						options: {
-							gain: 226,
+							gain: { isExpression: true, value: '$(local:RedGain)' },
 						},
 					},
 					{
 						actionId: WhiteBalanceActionId.BGainDirect,
 						options: {
-							gain: 188,
+							gain: { isExpression: true, value: '$(local:BlueGain)' },
 						},
 					},
 				],

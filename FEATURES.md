@@ -43,6 +43,7 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 
 - WB actions, R/B gain **reset** actions, Color presets.
 - Consolidated single **selectable WB feedback** (dropdown) + WB tests.
+- **RB Gain Direct** preset uses `RedGain`/`BlueGain` local variables (button text shows `RedGain|BlueGain`; both gain values driven by the variables).
 
 ## Presets (buttons)
 
