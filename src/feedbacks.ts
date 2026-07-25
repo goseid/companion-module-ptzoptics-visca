@@ -1,4 +1,5 @@
 import { combineRgb, type CompanionFeedbackDefinitions } from '@companion-module/base'
+import { optString } from './utils/option-value.js'
 import { PanTiltBounds } from './actions/pan-tilt.js'
 import type { PtzOpticsInstance } from './instance.js'
 
@@ -496,7 +497,9 @@ export function getFeedbacks(instance: PtzOpticsInstance): CompanionFeedbackDefi
 				bgcolor: combineRgb(223, 85, 0),
 			},
 			callback: ({ options }) => {
-				return String(instance.getVariableValue('last_preset_selected')) === String(options[PresetSelectedValueId])
+				return (
+					optString(instance.getVariableValue('last_preset_selected')) === optString(options[PresetSelectedValueId])
+				)
 			},
 		},
 		[FeedbackId.PresetSaveActive]: {

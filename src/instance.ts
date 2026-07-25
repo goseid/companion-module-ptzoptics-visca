@@ -1,4 +1,4 @@
-import { InstanceBase, InstanceStatus, type SomeCompanionConfigField } from '@companion-module/base'
+import { InstanceBase, type InstanceTypes, InstanceStatus, type SomeCompanionConfigField } from '@companion-module/base'
 import { getActions } from './actions/actions.js'
 import { PresetRecallSpeed, PresetSave, PresetRecall } from './camera/presets.js'
 import { FeedbackId, getFeedbacks } from './feedbacks.js'
@@ -19,7 +19,18 @@ import type { Command, CommandParameters, CommandParamValues, NoCommandParameter
 import type { Answer, AnswerParameters, Inquiry } from './visca/inquiry.js'
 import { VISCAPort } from './visca/port.js'
 
-export class PtzOpticsInstance extends InstanceBase<RawConfig> {
+/**
+ * The generic type-argument bundle for this module's `InstanceBase`.  Config is
+ * our loosely-typed `RawConfig` (defensively validated into `PtzOpticsConfig`);
+ * this module has no secrets.  Actions/feedbacks/variables use the permissive
+ * defaults from `InstanceTypes`.
+ */
+interface PtzOpticsInstanceTypes extends InstanceTypes {
+	config: RawConfig
+	secrets: undefined
+}
+
+export class PtzOpticsInstance extends InstanceBase<PtzOpticsInstanceTypes> {
 	/** Configuration dictating the behavior of this instance. */
 	#config: PtzOpticsConfig = noCameraConfig()
 
@@ -320,7 +331,8 @@ export class PtzOpticsInstance extends InstanceBase<RawConfig> {
 		this.#config = config
 
 		// Re-register presets so they pick up any color changes.
-		this.setPresetDefinitions(getPresets(config.presetColorText, config.presetColorBG))
+		const { structure, presets } = getPresets(config.presetColorText, config.presetColorBG)
+		this.setPresetDefinitions(structure, presets)
 
 		if (canUpdateConfigWithoutRestarting(oldConfig, config)) {
 			return

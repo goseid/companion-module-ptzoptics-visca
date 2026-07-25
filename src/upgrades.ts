@@ -13,7 +13,7 @@ import { type RawConfig, tryUpdateConfigWithDebugLogging, tryUpdateConfigWithPre
 function ActionUpdater(
 	tryUpdate: (action: CompanionMigrationAction) => boolean,
 ): CompanionStaticUpgradeScript<RawConfig> {
-	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig>) => {
+	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig, undefined>) => {
 		return {
 			updatedActions: props.actions.filter(tryUpdate),
 			updatedConfig: null,
@@ -25,7 +25,7 @@ function ActionUpdater(
 function FeedbackUpdater(
 	tryUpdate: (feedback: CompanionMigrationFeedback) => boolean,
 ): CompanionStaticUpgradeScript<RawConfig> {
-	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig>) => {
+	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig, undefined>) => {
 		return {
 			updatedActions: [],
 			updatedConfig: null,
@@ -35,7 +35,7 @@ function FeedbackUpdater(
 }
 
 function ConfigUpdater(tryUpdate: (config: RawConfig) => boolean): CompanionStaticUpgradeScript<RawConfig> {
-	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig>) => {
+	return (_context: CompanionUpgradeContext<RawConfig>, props: CompanionStaticUpgradeProps<RawConfig, undefined>) => {
 		return {
 			updatedActions: [],
 			updatedConfig: props.config !== null && tryUpdate(props.config) ? props.config : null,
@@ -56,7 +56,7 @@ const oldWbFeedbackToMode: Record<string, string> = {
 function tryUpdateFocusModeFeedback(feedback: CompanionMigrationFeedback): boolean {
 	if (feedback.feedbackId !== 'focus_mode_auto') return false
 	feedback.feedbackId = 'focus_mode'
-	feedback.options['mode'] = 'auto'
+	feedback.options['mode'] = { isExpression: false, value: 'auto' }
 	return true
 }
 
@@ -64,7 +64,7 @@ function tryUpdateWhiteBalanceFeedbacks(feedback: CompanionMigrationFeedback): b
 	const mode = oldWbFeedbackToMode[feedback.feedbackId]
 	if (mode === undefined) return false
 	feedback.feedbackId = 'wb_mode'
-	feedback.options['mode'] = mode
+	feedback.options['mode'] = { isExpression: false, value: mode }
 	return true
 }
 

@@ -1,4 +1,5 @@
 import type { CompanionMigrationAction } from '@companion-module/base'
+import { migOpt, migValue } from '../utils/migration.js'
 import { describe, expect, test } from 'vitest'
 import { ExposureActionId, tryUpdateIrisHexValues } from './exposure.js'
 
@@ -24,11 +25,11 @@ describe('iris hex value upgrade migration', () => {
 				actionId: ExposureActionId.SetIris,
 				id: 'test',
 				controlId: 'x',
-				options: { val: oldHex },
+				options: { val: migOpt(oldHex) },
 			}
 
 			expect(tryUpdateIrisHexValues(action)).toBe(true)
-			expect(action.options['val']).toBe(newHex)
+			expect(migValue(action.options['val'])).toBe(newHex)
 		}
 	})
 
@@ -37,11 +38,11 @@ describe('iris hex value upgrade migration', () => {
 			actionId: ExposureActionId.SetIris,
 			id: 'test',
 			controlId: 'x',
-			options: { val: '0f' },
+			options: { val: migOpt('0f') },
 		}
 
 		expect(tryUpdateIrisHexValues(action)).toBe(true)
-		expect(action.options['val']).toBe('0A')
+		expect(migValue(action.options['val'])).toBe('0A')
 	})
 
 	test('does not modify already-corrected hex values', () => {
@@ -53,11 +54,11 @@ describe('iris hex value upgrade migration', () => {
 				actionId: ExposureActionId.SetIris,
 				id: 'test',
 				controlId: 'x',
-				options: { val },
+				options: { val: migOpt(val) },
 			}
 
 			expect(tryUpdateIrisHexValues(action)).toBe(false)
-			expect(action.options['val']).toBe(val)
+			expect(migValue(action.options['val'])).toBe(val)
 		}
 	})
 
@@ -66,11 +67,11 @@ describe('iris hex value upgrade migration', () => {
 			actionId: 'someOtherAction',
 			id: 'test',
 			controlId: 'x',
-			options: { val: '11' },
+			options: { val: migOpt('11') },
 		}
 
 		expect(tryUpdateIrisHexValues(action)).toBe(false)
-		expect(action.options['val']).toBe('11')
+		expect(migValue(action.options['val'])).toBe('11')
 	})
 
 	test('does not modify when option value is not a string', () => {
@@ -78,11 +79,11 @@ describe('iris hex value upgrade migration', () => {
 			actionId: ExposureActionId.SetIris,
 			id: 'test',
 			controlId: 'x',
-			options: { val: 11 },
+			options: { val: migOpt(11) },
 		}
 
 		expect(tryUpdateIrisHexValues(action)).toBe(false)
-		expect(action.options['val']).toBe(11)
+		expect(migValue(action.options['val'])).toBe(11)
 	})
 
 	test('does not modify when option is missing', () => {

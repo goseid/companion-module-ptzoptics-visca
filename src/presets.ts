@@ -1,4 +1,4 @@
-import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
+import { combineRgb, type CompanionPresetDefinitions, type CompanionPresetSection } from '@companion-module/base'
 import { ExposureActionId, ExposureModeId, IrisSettingId, ShutterSettingId } from './actions/exposure.js'
 import {
 	FeedbackId,
@@ -44,12 +44,14 @@ import {
 } from './assets/assets.js'
 import { isValidPreset } from './camera/presets.js'
 
-export function getPresets(presetColorText: number, presetColorBG: number): CompanionPresetDefinitions {
+export function getPresets(
+	presetColorText: number,
+	presetColorBG: number,
+): { structure: CompanionPresetSection[]; presets: CompanionPresetDefinitions } {
 	const presets: CompanionPresetDefinitions = {}
 
 	presets['tilt_up_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'UP',
 		style: {
 			text: '',
@@ -79,8 +81,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['tilt_down_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'DOWN',
 		style: {
 			text: '',
@@ -110,8 +111,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pan_left_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'LEFT',
 		style: {
 			text: '',
@@ -141,8 +141,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pan_right_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'RIGHT',
 		style: {
 			text: '',
@@ -172,8 +171,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pt_up_right_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'UP RIGHT',
 		style: {
 			text: '',
@@ -203,8 +201,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pt_up_left_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'UP LEFT',
 		style: {
 			text: '',
@@ -234,8 +231,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pt_down_left_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'DOWN LEFT',
 		style: {
 			text: '',
@@ -265,8 +261,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pt_down_right_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'DOWN RIGHT',
 		style: {
 			text: '',
@@ -296,8 +291,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['home_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Home',
 		style: {
 			text: 'HOME',
@@ -320,8 +314,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['absolute_position_center'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Center (0, 0)',
 		style: {
 			text: 'Center\\n0, 0',
@@ -365,8 +358,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['speed_up_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Speed Up',
 		style: {
 			text: 'SPEED\\nUP',
@@ -389,8 +381,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['speed_down_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Speed Down',
 		style: {
 			text: 'SPEED\\nDOWN',
@@ -413,10 +404,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pan_position_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Pan',
-		options: { rotaryActions: true },
 		style: {
 			text: 'PAN\\n$(ptzoptics-visca:pan_position)\\n$(ptzoptics-visca:pan_position_bar)',
 			size: '14',
@@ -447,10 +436,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['tilt_position_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Tilt',
-		options: { rotaryActions: true },
 		style: {
 			text: 'TILT\\n$(ptzoptics-visca:tilt_position)\\n$(ptzoptics-visca:tilt_position_bar)',
 			size: '14',
@@ -481,8 +468,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pan_step_left_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Pan Step Left',
 		style: {
 			text: 'Pan\\nStep\\nLEFT',
@@ -505,8 +491,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['pan_step_right_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Pan Step Right',
 		style: {
 			text: 'Pan\\nStep\\nRIGHT',
@@ -529,8 +514,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['tilt_step_up_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Tilt Step Up',
 		style: {
 			text: 'Tilt\\nStep\\nUP',
@@ -553,8 +537,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['tilt_step_down_preset'] = {
-		type: 'button',
-		category: 'Pan/Tilt',
+		type: 'simple',
 		name: 'Tilt Step Down',
 		style: {
 			text: 'Tilt\\nStep\\nDOWN',
@@ -577,10 +560,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom',
-		options: { rotaryActions: true },
 		style: {
 			text: 'ZOOM\\n$(ptzoptics-visca:zoom_position)\\n$(ptzoptics-visca:zoom_position_bar)',
 			size: '14',
@@ -611,8 +592,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_in_variable_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom In',
 		style: {
 			text: 'ZOOM\\nIN',
@@ -640,8 +620,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_out_variable_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Out',
 		style: {
 			text: 'ZOOM\\nOUT',
@@ -669,10 +648,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_speed_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Speed',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Zoom Speed\\n$(ptzoptics-visca:zoom_speed)',
 			size: '14',
@@ -710,8 +687,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_speed_up_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Speed Up',
 		style: {
 			text: 'Zoom Speed\\nUP',
@@ -734,8 +710,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_speed_down_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Speed Down',
 		style: {
 			text: 'Zoom Speed\\nDOWN',
@@ -758,8 +733,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_speed_direct_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Speed Set',
 		style: {
 			text: 'Zoom Speed\\nSet\\n4',
@@ -791,8 +765,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_step_in_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Step In',
 		style: {
 			text: 'Zoom\\nStep\\nIN',
@@ -815,8 +788,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_step_out_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Step Out',
 		style: {
 			text: 'Zoom\\nStep\\nOUT',
@@ -839,8 +811,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_direct_wide_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Wide',
 		style: {
 			text: 'Zoom\\nWide\\n0',
@@ -872,8 +843,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_direct_mid_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Mid',
 		style: {
 			text: 'Zoom\\nMid\\n2570',
@@ -905,8 +875,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['zoom_direct_tele_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Zoom Tele',
 		style: {
 			text: 'Zoom\\nTele\\n5140',
@@ -938,10 +907,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus',
-		options: { rotaryActions: true },
 		style: {
 			text: 'FOCUS\\n$(ptzoptics-visca:focus_position)\\n$(ptzoptics-visca:focus_position_bar)',
 			size: '14',
@@ -988,8 +955,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_near_variable_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Near',
 		style: {
 			text: 'FOCUS\\nNEAR',
@@ -1017,8 +983,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_far_variable_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Far',
 		style: {
 			text: 'FOCUS\\nFAR',
@@ -1046,10 +1011,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_speed_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Speed',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Focus Speed\\n$(ptzoptics-visca:focus_speed)',
 			size: '14',
@@ -1087,8 +1050,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_speed_up_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Speed Up',
 		style: {
 			text: 'Focus Speed\\nUP',
@@ -1111,8 +1073,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_speed_down_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Speed Down',
 		style: {
 			text: 'Focus Speed\\nDOWN',
@@ -1135,8 +1096,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_speed_direct_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Speed Set',
 		style: {
 			text: 'Focus Speed\\nSet\\n4',
@@ -1168,8 +1128,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_step_far_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Step Far',
 		style: {
 			text: 'Focus\\nStep\\nFAR',
@@ -1192,8 +1151,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_step_near_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Step Near',
 		style: {
 			text: 'Focus\\nStep\\nNEAR',
@@ -1216,8 +1174,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_direct_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Direct',
 		style: {
 			text: 'Focus\\nDirect\\n1500',
@@ -1249,8 +1206,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['auto_focus_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Auto Focus',
 		style: {
 			text: 'AUTO\\nFOCUS',
@@ -1284,8 +1240,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_lock_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Lock',
 		style: {
 			text: 'FOCUS\\nLOCK',
@@ -1308,8 +1263,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['focus_unlock_preset'] = {
-		type: 'button',
-		category: 'Lens',
+		type: 'simple',
 		name: 'Focus Unlock',
 		style: {
 			text: 'FOCUS\\nUNLOCK',
@@ -1332,8 +1286,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Mode',
 		style: {
 			text: 'EXP\\nMODE',
@@ -1447,8 +1400,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_full_auto_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Full Auto',
 		style: {
 			text: 'EXP Mode\\nAuto',
@@ -1482,8 +1434,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_manual_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Manual',
 		style: {
 			text: 'EXP Mode\\nManual',
@@ -1517,8 +1468,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_shutter_priority_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Shutter Priority',
 		style: {
 			text: 'EXP Mode\\nShutter',
@@ -1552,8 +1502,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_iris_priority_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Iris Priority',
 		style: {
 			text: 'EXP Mode\\nIris',
@@ -1587,8 +1536,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exposure_mode_bright_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exposure Bright Mode',
 		style: {
 			text: 'EXP Mode\\nBright',
@@ -1622,8 +1570,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_on_off_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp On/Off',
 		style: {
 			text: 'EXP Comp\\nON/OFF',
@@ -1664,10 +1611,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp',
-		options: { rotaryActions: true },
 		style: {
 			text: 'EXP Comp\\n$(ptzoptics-visca:exp_comp_position)',
 			size: '14',
@@ -1705,8 +1650,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp Up',
 		style: {
 			text: 'EXP Comp\\nUP',
@@ -1729,8 +1673,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp Down',
 		style: {
 			text: 'EXP Comp\\nDOWN',
@@ -1753,8 +1696,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp Reset',
 		style: {
 			text: 'EXP Comp\\nRESET',
@@ -1777,8 +1719,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['exp_comp_set_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Exp Comp Set',
 		style: {
 			text: 'EXP Comp\\nSet\\n0',
@@ -1814,10 +1755,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['iris_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Iris',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Iris\\n$(ptzoptics-visca:iris_position)\\n$(ptzoptics-visca:iris_position_bar)',
 			size: '14',
@@ -1855,8 +1794,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['iris_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Iris Up',
 		style: {
 			text: 'Iris\\nUP',
@@ -1879,8 +1817,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['iris_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Iris Down',
 		style: {
 			text: 'Iris\\nDOWN',
@@ -1903,8 +1840,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['iris_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Iris Reset',
 		style: {
 			text: 'Iris\\nRESET',
@@ -1927,8 +1863,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['iris_direct_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Iris Set',
 		style: {
 			text: 'Iris\\nSet\\nƒ 2.0',
@@ -1964,10 +1899,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['gain_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Gain',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Gain\\n$(ptzoptics-visca:gain_position)',
 			size: '14',
@@ -2005,8 +1938,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['gain_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Gain Up',
 		style: {
 			text: 'Gain\\nUP',
@@ -2029,8 +1961,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['gain_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Gain Down',
 		style: {
 			text: 'Gain\\nDOWN',
@@ -2053,8 +1984,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['gain_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Gain Reset',
 		style: {
 			text: 'Gain\\nRESET',
@@ -2077,8 +2007,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['gain_set_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Gain Set',
 		style: {
 			text: 'Gain\\nSet\\n2',
@@ -2114,10 +2043,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['shutter_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Shutter',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Shutter\\n$(ptzoptics-visca:shutter_position)',
 			size: '14',
@@ -2155,8 +2082,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['shutter_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Shutter Up',
 		style: {
 			text: 'Shutter\\nUP',
@@ -2179,8 +2105,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['shutter_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Shutter Down',
 		style: {
 			text: 'Shutter\\nDOWN',
@@ -2203,8 +2128,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['shutter_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Shutter Reset',
 		style: {
 			text: 'Shutter\\nRESET',
@@ -2227,8 +2151,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['shutter_set_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Shutter Set',
 		style: {
 			text: 'Shutter\\nSet\\n1/60',
@@ -2264,10 +2187,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['bright_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Bright',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Bright\\n$(ptzoptics-visca:bright_position)',
 			size: '14',
@@ -2305,8 +2226,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['bright_up_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Bright Up',
 		style: {
 			text: 'Bright\\nUP',
@@ -2329,8 +2249,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['bright_down_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Bright Down',
 		style: {
 			text: 'Bright\\nDOWN',
@@ -2353,8 +2272,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['bright_reset_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Bright Reset',
 		style: {
 			text: 'Bright\\nRESET',
@@ -2377,8 +2295,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['bright_set_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Bright Set',
 		style: {
 			text: 'Bright\\nSet\\n7',
@@ -2414,8 +2331,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['backlight_on_off_preset'] = {
-		type: 'button',
-		category: 'Exposure',
+		type: 'simple',
 		name: 'Backlight On/Off',
 		style: {
 			text: 'Backlight\\nON/OFF',
@@ -2456,8 +2372,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'White Balance Mode',
 		style: {
 			text: 'WB\\nMODE',
@@ -2572,8 +2487,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_auto_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'WB Auto',
 		style: {
 			text: 'WB\\nAUTO',
@@ -2607,8 +2521,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_indoor_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'WB Indoor',
 		style: {
 			text: 'WB\\nIndoor',
@@ -2642,8 +2555,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_outdoor_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'WB Outdoor',
 		style: {
 			text: 'WB\\nOutdoor',
@@ -2677,8 +2589,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_onepush_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'WB One Push',
 		style: {
 			text: 'WB\\nONE PUSH',
@@ -2712,8 +2623,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['wb_mode_manual_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'WB Manual',
 		style: {
 			text: 'WB\\nMANUAL',
@@ -2747,8 +2657,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['trigger_one_push_white_balance_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'Trigger One Push White Balance',
 		style: {
 			text: 'WB\\nTRIGGER\\nONE PUSH',
@@ -2771,10 +2680,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['r_gain_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'R Gain',
-		options: { rotaryActions: true },
 		style: {
 			text: 'R Gain\\n$(ptzoptics-visca:r_gain)',
 			size: '14',
@@ -2812,10 +2719,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['b_gain_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'B Gain',
-		options: { rotaryActions: true },
 		style: {
 			text: 'B Gain\\n$(ptzoptics-visca:b_gain)',
 			size: '14',
@@ -2853,8 +2758,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['r_gain_up_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'R Gain Up',
 		style: {
 			text: 'R Gain\\nUp',
@@ -2877,8 +2781,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['r_gain_down_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'R Gain Down',
 		style: {
 			text: 'R Gain\\nDown',
@@ -2901,8 +2804,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['r_gain_reset_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'R Gain Reset',
 		style: {
 			text: 'R Gain\\nReset',
@@ -2925,8 +2827,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['r_gain_direct_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'R Gain Direct',
 		style: {
 			text: 'R Gain\\nDirect',
@@ -2951,8 +2852,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['b_gain_up_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'B Gain Up',
 		style: {
 			text: 'B Gain\\nUp',
@@ -2975,8 +2875,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['b_gain_down_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'B Gain Down',
 		style: {
 			text: 'B Gain\\nDown',
@@ -2999,8 +2898,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['b_gain_reset_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'B Gain Reset',
 		style: {
 			text: 'B Gain\\nReset',
@@ -3023,8 +2921,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['b_gain_direct_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'B Gain Direct',
 		style: {
 			text: 'B Gain\\nDirect',
@@ -3049,8 +2946,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['rb_gain_direct_preset'] = {
-		type: 'button',
-		category: 'Color',
+		type: 'simple',
 		name: 'RB Gain Direct',
 		style: {
 			text: 'RB Gain\\nDirect',
@@ -3083,10 +2979,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	// Sharpness presets
 
 	presets['sharpness_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Sharp\\n$(ptzoptics-visca:sharpness)',
 			size: '14',
@@ -3124,8 +3018,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_mode_auto_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Auto',
 		style: {
 			text: 'Sharp\\nAuto',
@@ -3161,8 +3054,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_mode_manual_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Manual',
 		style: {
 			text: 'Sharp\\nManual',
@@ -3198,8 +3090,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_reset_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Reset',
 		style: {
 			text: 'Sharp\\nReset',
@@ -3222,8 +3113,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_up_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Up',
 		style: {
 			text: 'Sharp\\nUp',
@@ -3246,8 +3136,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_down_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Down',
 		style: {
 			text: 'Sharp\\nDown',
@@ -3270,8 +3159,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['sharpness_direct_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: 'Sharpness Direct',
 		style: {
 			text: 'Sharp\\nDirect',
@@ -3296,8 +3184,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['nr_2d_off_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: '2D NR Off',
 		style: {
 			text: '2D NR\\nOFF',
@@ -3320,8 +3207,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['nr_2d_level_3_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: '2D NR Level 3',
 		style: {
 			text: '2D NR\\nLevel 3',
@@ -3344,8 +3230,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['nr_3d_off_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: '3D NR Off',
 		style: {
 			text: '3D NR\\nOFF',
@@ -3368,8 +3253,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['nr_3d_level_3_preset'] = {
-		type: 'button',
-		category: 'Image',
+		type: 'simple',
 		name: '3D NR Level 3',
 		style: {
 			text: '3D NR\\nLevel 3',
@@ -3392,8 +3276,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['auto_tracking_on'] = {
-		type: 'button',
-		category: 'Auto Tracking',
+		type: 'simple',
 		name: 'Auto Tracking On',
 		style: {
 			text: 'Auto\\nTracking\\nOn',
@@ -3418,8 +3301,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['auto_tracking_off'] = {
-		type: 'button',
-		category: 'Auto Tracking',
+		type: 'simple',
 		name: 'Auto Tracking Off',
 		style: {
 			text: 'Auto\\nTracking\\nOff',
@@ -3444,8 +3326,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['osd_toggle'] = {
-		type: 'button',
-		category: 'OSD Menu',
+		type: 'simple',
 		name: 'OSD Menu',
 		style: {
 			text: 'OSD\\nOpen/Close',
@@ -3469,15 +3350,17 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 		feedbacks: [],
 	}
 
+	const osdNavigateIds: string[] = []
 	for (const [DIRECTION, IMAGE] of [
 		['up', IMAGE_UP],
 		['right', IMAGE_RIGHT],
 		['down', IMAGE_DOWN],
 		['left', IMAGE_LEFT],
 	]) {
-		presets['osd_navigate_' + DIRECTION] = {
-			type: 'button',
-			category: 'OSD Menu',
+		const osdNavigateId = 'osd_navigate_' + DIRECTION
+		osdNavigateIds.push(osdNavigateId)
+		presets[osdNavigateId] = {
+			type: 'simple',
 			name: 'OSD Navigate',
 			style: {
 				text: '',
@@ -3505,8 +3388,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['osd_enter'] = {
-		type: 'button',
-		category: 'OSD Menu',
+		type: 'simple',
 		name: 'OSD Enter',
 		style: {
 			text: 'OSD\\nEnter',
@@ -3529,8 +3411,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['osd_back'] = {
-		type: 'button',
-		category: 'OSD Menu',
+		type: 'simple',
 		name: 'OSD Back',
 		style: {
 			text: 'OSD\\nBack',
@@ -3553,12 +3434,14 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	// Smart preset buttons: short press = recall, hold > 1s = save
+	const smartPresetIds: string[] = []
 	for (let n = 0; n < 255; n++) {
 		if (!isValidPreset(n)) continue
 
-		presets[`smart_preset_${n}`] = {
-			type: 'button',
-			category: 'Presets',
+		const smartPresetId = `smart_preset_${n}`
+		smartPresetIds.push(smartPresetId)
+		presets[smartPresetId] = {
+			type: 'simple',
 			name: `Preset ${n}`,
 			style: {
 				text: `Preset\\n${n}`,
@@ -3612,10 +3495,8 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['preset_speed_preset'] = {
-		type: 'button',
-		category: 'Presets',
+		type: 'simple',
 		name: 'Preset Speed',
-		options: { rotaryActions: true },
 		style: {
 			text: 'Preset Speed\\n$(ptzoptics-visca:preset_speed)',
 			size: '14',
@@ -3653,8 +3534,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['preset_speed_up_preset'] = {
-		type: 'button',
-		category: 'Presets',
+		type: 'simple',
 		name: 'Preset Speed Up',
 		style: {
 			text: 'Preset Speed\\nUP',
@@ -3677,8 +3557,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['preset_speed_down_preset'] = {
-		type: 'button',
-		category: 'Presets',
+		type: 'simple',
 		name: 'Preset Speed Down',
 		style: {
 			text: 'Preset Speed\\nDOWN',
@@ -3701,8 +3580,7 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 	}
 
 	presets['preset_speed_direct_preset'] = {
-		type: 'button',
-		category: 'Presets',
+		type: 'simple',
 		name: 'Preset Speed Set',
 		style: {
 			text: 'Preset Speed\\nSet\\n12',
@@ -3733,5 +3611,164 @@ export function getPresets(presetColorText: number, presetColorBG: number): Comp
 		],
 	}
 
-	return presets
+	const structure: CompanionPresetSection[] = [
+		{
+			id: 'pan-tilt',
+			name: 'Pan/Tilt',
+			definitions: [
+				'tilt_up_preset',
+				'tilt_down_preset',
+				'pan_left_preset',
+				'pan_right_preset',
+				'pt_up_right_preset',
+				'pt_up_left_preset',
+				'pt_down_left_preset',
+				'pt_down_right_preset',
+				'home_preset',
+				'absolute_position_center',
+				'speed_up_preset',
+				'speed_down_preset',
+				'pan_position_preset',
+				'tilt_position_preset',
+				'pan_step_left_preset',
+				'pan_step_right_preset',
+				'tilt_step_up_preset',
+				'tilt_step_down_preset',
+			],
+		},
+		{
+			id: 'lens',
+			name: 'Lens',
+			definitions: [
+				'zoom_preset',
+				'zoom_in_variable_preset',
+				'zoom_out_variable_preset',
+				'zoom_speed_preset',
+				'zoom_speed_up_preset',
+				'zoom_speed_down_preset',
+				'zoom_speed_direct_preset',
+				'zoom_step_in_preset',
+				'zoom_step_out_preset',
+				'zoom_direct_wide_preset',
+				'zoom_direct_mid_preset',
+				'zoom_direct_tele_preset',
+				'focus_preset',
+				'focus_near_variable_preset',
+				'focus_far_variable_preset',
+				'focus_speed_preset',
+				'focus_speed_up_preset',
+				'focus_speed_down_preset',
+				'focus_speed_direct_preset',
+				'focus_step_far_preset',
+				'focus_step_near_preset',
+				'focus_direct_preset',
+				'auto_focus_preset',
+				'focus_lock_preset',
+				'focus_unlock_preset',
+			],
+		},
+		{
+			id: 'exposure',
+			name: 'Exposure',
+			definitions: [
+				'exposure_mode_preset',
+				'exposure_mode_full_auto_preset',
+				'exposure_mode_manual_preset',
+				'exposure_mode_shutter_priority_preset',
+				'exposure_mode_iris_priority_preset',
+				'exposure_mode_bright_preset',
+				'exp_comp_on_off_preset',
+				'exp_comp_preset',
+				'exp_comp_up_preset',
+				'exp_comp_down_preset',
+				'exp_comp_reset_preset',
+				'exp_comp_set_preset',
+				'iris_preset',
+				'iris_up_preset',
+				'iris_down_preset',
+				'iris_reset_preset',
+				'iris_direct_preset',
+				'gain_preset',
+				'gain_up_preset',
+				'gain_down_preset',
+				'gain_reset_preset',
+				'gain_set_preset',
+				'shutter_preset',
+				'shutter_up_preset',
+				'shutter_down_preset',
+				'shutter_reset_preset',
+				'shutter_set_preset',
+				'bright_preset',
+				'bright_up_preset',
+				'bright_down_preset',
+				'bright_reset_preset',
+				'bright_set_preset',
+				'backlight_on_off_preset',
+			],
+		},
+		{
+			id: 'color',
+			name: 'Color',
+			definitions: [
+				'wb_mode_preset',
+				'wb_mode_auto_preset',
+				'wb_mode_indoor_preset',
+				'wb_mode_outdoor_preset',
+				'wb_mode_onepush_preset',
+				'wb_mode_manual_preset',
+				'trigger_one_push_white_balance_preset',
+				'r_gain_preset',
+				'b_gain_preset',
+				'r_gain_up_preset',
+				'r_gain_down_preset',
+				'r_gain_reset_preset',
+				'r_gain_direct_preset',
+				'b_gain_up_preset',
+				'b_gain_down_preset',
+				'b_gain_reset_preset',
+				'b_gain_direct_preset',
+				'rb_gain_direct_preset',
+			],
+		},
+		{
+			id: 'image',
+			name: 'Image',
+			definitions: [
+				'sharpness_preset',
+				'sharpness_mode_auto_preset',
+				'sharpness_mode_manual_preset',
+				'sharpness_reset_preset',
+				'sharpness_up_preset',
+				'sharpness_down_preset',
+				'sharpness_direct_preset',
+				'nr_2d_off_preset',
+				'nr_2d_level_3_preset',
+				'nr_3d_off_preset',
+				'nr_3d_level_3_preset',
+			],
+		},
+		{
+			id: 'auto-tracking',
+			name: 'Auto Tracking',
+			definitions: ['auto_tracking_on', 'auto_tracking_off'],
+		},
+		{
+			id: 'osd-menu',
+			name: 'OSD Menu',
+			definitions: ['osd_toggle', 'osd_enter', 'osd_back', ...osdNavigateIds],
+		},
+		{
+			id: 'presets',
+			name: 'Presets',
+			definitions: [
+				...smartPresetIds,
+				'preset_speed_preset',
+				'preset_speed_up_preset',
+				'preset_speed_down_preset',
+				'preset_speed_direct_preset',
+			],
+		},
+	]
+
+	return { structure, presets }
 }

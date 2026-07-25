@@ -1,4 +1,4 @@
-import { combineRgb, type InputValue, Regex, type SomeCompanionConfigField } from '@companion-module/base'
+import { combineRgb, type JsonValue, Regex, type SomeCompanionConfigField } from '@companion-module/base'
 import type { Branded } from './utils/brand.js'
 
 /**
@@ -11,7 +11,11 @@ import type { Branded } from './utils/brand.js'
  * `validateConfig` for details.)
  */
 export interface RawConfig {
-	[key: string]: InputValue | undefined
+	// Values are typed as `JsonValue` (not `JsonValue | undefined`) so `RawConfig`
+	// satisfies the `JsonObject` constraint that Companion's config types require.
+	// Missing keys still read back as `undefined` at runtime, so the defensive
+	// `!== undefined` guards below remain meaningful.
+	[key: string]: JsonValue
 }
 
 /** The id of the debug-logging config option. */
@@ -74,7 +78,7 @@ export function getConfigFields(): SomeCompanionConfigField[] {
 			width: 6,
 			default: '',
 			regex: Regex.IP,
-			required: true,
+			minLength: 1,
 		},
 		{
 			type: 'textinput',
@@ -83,7 +87,7 @@ export function getConfigFields(): SomeCompanionConfigField[] {
 			width: 6,
 			default: '5678',
 			regex: Regex.PORT,
-			required: true,
+			minLength: 1,
 		},
 		{
 			type: 'checkbox',
@@ -176,11 +180,8 @@ export function isValidHost(str: string): str is Host {
 }
 
 function toHost(host: RawConfig['host']): string {
-	if (host !== undefined) {
-		const str = String(host)
-		if (isValidHost(str)) {
-			return str
-		}
+	if (typeof host === 'string' && isValidHost(host)) {
+		return host
 	}
 
 	return ''
@@ -191,11 +192,11 @@ const DefaultPort = 5678
 const portRegExp = new RegExp(Regex.PORT.slice(1, -1))
 
 function toPort(port: RawConfig['port']): number {
-	if (port !== undefined) {
-		const portStr = String(port)
-		if (portRegExp.test(portStr)) {
-			return Number(portStr)
-		}
+	if (typeof port === 'number' && portRegExp.test(String(port))) {
+		return port
+	}
+	if (typeof port === 'string' && portRegExp.test(port)) {
+		return Number(port)
 	}
 
 	return DefaultPort

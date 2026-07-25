@@ -1,6 +1,7 @@
 import type { CompanionOptionValues } from '@companion-module/base'
 import { describe, expect, test } from 'vitest'
 import { optionConversions, optionNullConversions } from './option-conversion.js'
+import { optString } from '../utils/option-value.js'
 
 describe('optionConversions', () => {
 	const OptId = 'foobar'
@@ -41,7 +42,7 @@ describe('optionConversions', () => {
 			],
 			15,
 			'10',
-			(option: CompanionOptionValues[typeof OptId]) => String(option).toUpperCase(),
+			(option: CompanionOptionValues[typeof OptId]) => optString(option).toUpperCase(),
 		)
 
 		expect(getSemantic({ [OptId]: '0f' })).toBe(15)
@@ -86,7 +87,7 @@ describe('optionNullConversions', () => {
 			OptId,
 			['0F', '10', '11'],
 			'10',
-			(option: CompanionOptionValues[typeof OptId]) => String(option).toUpperCase(),
+			(option: CompanionOptionValues[typeof OptId]) => optString(option).toUpperCase(),
 		)
 
 		expect(getSemantic({ [OptId]: '0f' })).toBe('0F')

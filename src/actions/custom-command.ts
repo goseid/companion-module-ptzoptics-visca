@@ -4,11 +4,13 @@ import type {
 	CompanionMigrationAction,
 	CompanionOptionValues,
 } from '@companion-module/base'
+import { optString } from '../utils/option-value.js'
 import type { ActionDefinitions } from './actionid.js'
 import type { PtzOpticsInstance } from '../instance.js'
 import type { Bytes } from '../utils/byte.js'
 import type { Mutable } from '../utils/mutable.js'
 import { type CommandParameters, type CommandParamValues, UserDefinedCommand } from '../visca/command.js'
+import { migOpt } from '../utils/migration.js'
 
 export enum CustomCommandActionId {
 	SendCustomCommand = 'custom',
@@ -125,9 +127,9 @@ export function tryUpdateCustomCommandsWithCommandParamOptions(action: Companion
 		actionId === CustomCommandActionId.SendCustomCommand &&
 		!(CommandParametersOptionId in options)
 	) {
-		options[CommandParametersOptionId] = CommandParametersDefault
+		options[CommandParametersOptionId] = migOpt(CommandParametersDefault)
 		for (let i = 0; i < MAX_PARAMETERS_IN_COMMAND; i++) {
-			options[`parameter${i}`] = CommandParameterDefault
+			options[`parameter${i}`] = migOpt(CommandParameterDefault)
 		}
 		return true
 	}
@@ -149,26 +151,28 @@ type CommandAndOptions = {
  */
 export async function computeCustomCommandAndOptions(
 	options: CompanionOptionValues,
-	context: CompanionActionContext,
+	_context: CompanionActionContext,
 ): Promise<CommandAndOptions> {
-	const commandBytes = parseMessage(String(options[CustomCommandOptionId]))
+	const commandBytes = parseMessage(optString(options[CustomCommandOptionId]))
 
-	const commandParams: CommandParameters = parseParameters(commandBytes, String(options['command_parameters'])).reduce(
-		(acc, nibbles, i) => {
-			acc[`${i}`] = {
-				nibbles,
-			}
+	const commandParams: CommandParameters = parseParameters(
+		commandBytes,
+		optString(options['command_parameters']),
+	).reduce((acc, nibbles, i) => {
+		acc[`${i}`] = {
+			nibbles,
+		}
 
-			return acc
-		},
-		{} as Mutable<CommandParameters>,
-	)
+		return acc
+	}, {} as Mutable<CommandParameters>)
 
 	const command = new UserDefinedCommand(commandBytes, commandParams)
 
 	const paramValues: Mutable<CommandParamValues<CommandParameters>> = {}
 	for (const i of Object.keys(commandParams)) {
-		const val = await context.parseVariablesInString(String(options[`parameter${i}`]))
+		// In API 2.0 Companion resolves variables/expressions before the callback,
+		// so the option value is already the final resolved value.
+		const val = optString(options[`parameter${i}`])
 		paramValues[i] = Number(val)
 	}
 

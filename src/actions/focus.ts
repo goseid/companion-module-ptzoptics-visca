@@ -1,4 +1,5 @@
 import type { CompanionActionEvent } from '@companion-module/base'
+import { optString } from '../utils/option-value.js'
 import type { ActionDefinitions } from './actionid.js'
 import {
 	FocusDirect,
@@ -66,7 +67,7 @@ export function focusActions(instance: PtzOpticsInstance): ActionDefinitions<Foc
 				},
 			],
 			callback: async ({ options }) => {
-				if (String(options[FocusModeId]) === '2') {
+				if (optString(options[FocusModeId]) === '2') {
 					const answer = await instance.sendInquiry(FocusModeInquiry)
 					if (answer === null) {
 						return

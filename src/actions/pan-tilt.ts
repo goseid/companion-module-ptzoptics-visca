@@ -78,12 +78,12 @@ const speed = (type: PanOrTilt) => `${type}Speed`
 async function getPosition(
 	options: CompanionOptionValues,
 	type: PanOrTilt,
-	context: CompanionActionContext,
+	_context: CompanionActionContext,
 ): Promise<number | string> {
 	const isText = Boolean(options[`${type}PosIsText`])
-	const pos = isText
-		? Number(await context.parseVariablesInString(String(options[`${type}PosAsText`])))
-		: Number(options[`${type}PosAsNumber`])
+	// In API 2.0 Companion resolves variables/expressions before the callback,
+	// so the text option is already the final resolved value.
+	const pos = isText ? Number(options[`${type}PosAsText`]) : Number(options[`${type}PosAsNumber`])
 	const { min, max } = PanTiltBounds[type]
 	return min <= pos && pos <= max
 		? pos
@@ -141,7 +141,7 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 				id: posAsText(type),
 				label: `${uppercased} position`,
 				tooltip: positionTooltip,
-				useVariables: { local: true },
+				useVariables: true,
 				default: '0',
 				isVisibleExpression: `!!$(options:${posIsText(type)})`,
 			},

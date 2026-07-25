@@ -1,4 +1,5 @@
 import type { CompanionMigrationAction } from '@companion-module/base'
+import { migOpt, migValue } from '../utils/migration.js'
 import { describe, expect, test } from 'vitest'
 import {
 	ObsoletePresetUseVariablesOptionId,
@@ -18,7 +19,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 			id: 'bai',
 			controlId: 'm',
 			options: {
-				speed: '0C',
+				speed: migOpt('0C'),
 			},
 		}
 
@@ -26,7 +27,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 
 		const { actionId, options } = action
 		expect(actionId).toBe('foobar')
-		expect(options.speed).toBe('0C')
+		expect(migValue(options.speed)).toBe('0C')
 	})
 
 	test('upgradable pan/tilt set speed, slowest', async () => {
@@ -35,7 +36,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				speed: '01',
+				speed: migOpt('01'),
 			},
 		}
 
@@ -43,7 +44,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 
 		const { actionId, options } = action
 		expect(actionId).toBe(PanTiltActionId.SetMovementSpeed)
-		expect(options[PanTiltSpeedSetSpeedId]).toBe(1)
+		expect(migValue(options[PanTiltSpeedSetSpeedId])).toBe(1)
 		expect(ObsoletePresetUseVariablesOptionId in options).toBe(false)
 		expect(ObsoletePresetValueOptionId in options).toBe(false)
 		expect(ObsoletePresetVariableOptionId in options).toBe(false)
@@ -58,7 +59,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				speed: '0C',
+				speed: migOpt('0C'),
 			},
 		}
 
@@ -66,7 +67,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 
 		const { actionId, options } = action
 		expect(actionId).toBe(PanTiltActionId.SetMovementSpeed)
-		expect(options[PanTiltSpeedSetSpeedId]).toBe(12)
+		expect(migValue(options[PanTiltSpeedSetSpeedId])).toBe(12)
 		expect(ObsoletePresetUseVariablesOptionId in options).toBe(false)
 		expect(ObsoletePresetValueOptionId in options).toBe(false)
 		expect(ObsoletePresetVariableOptionId in options).toBe(false)
@@ -81,7 +82,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				speed: '18',
+				speed: migOpt('18'),
 			},
 		}
 
@@ -89,7 +90,7 @@ describe('obsolete preset/speed encoding upgrades to pan/tilt set-speed action',
 
 		const { actionId, options } = action
 		expect(actionId).toBe(PanTiltActionId.SetMovementSpeed)
-		expect(options[PanTiltSpeedSetSpeedId]).toBe(24)
+		expect(migValue(options[PanTiltSpeedSetSpeedId])).toBe(24)
 		expect(ObsoletePresetUseVariablesOptionId in options).toBe(false)
 		expect(ObsoletePresetValueOptionId in options).toBe(false)
 		expect(ObsoletePresetVariableOptionId in options).toBe(false)

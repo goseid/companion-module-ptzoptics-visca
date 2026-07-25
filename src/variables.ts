@@ -1,4 +1,4 @@
-import type { CompanionVariableDefinition } from '@companion-module/base'
+import type { CompanionVariableDefinitions } from '@companion-module/base'
 import { CameraBlockInquiry, LensBlockInquiry } from './camera/block-inquiry.js'
 import { OnScreenDisplayInquiry } from './camera/osd.js'
 import { PanTiltPositionInquiry } from './camera/pan-tilt.js'
@@ -9,42 +9,41 @@ import { PanTiltBounds } from './actions/pan-tilt.js'
 import { irisLabelToPercent, normalizePercent, progressBar } from './utils/progress-bar.js'
 import { traceLog } from './utils/trace-log.js'
 
-export function getVariableDefinitions(): CompanionVariableDefinition[] {
-	return [
-		{ variableId: 'pan_position', name: 'Pan Position' },
-		{ variableId: 'tilt_position', name: 'Tilt Position' },
-		{ variableId: 'zoom_position', name: 'Zoom Position' },
-		{ variableId: 'zoom_speed', name: 'Zoom Speed' },
-		{ variableId: 'focus_position', name: 'Focus Position' },
-		{ variableId: 'focus_speed', name: 'Focus Speed' },
-		{ variableId: 'focus_mode', name: 'Focus Mode' },
-		{ variableId: 'osd_state', name: 'OSD Menu State' },
+export function getVariableDefinitions(): CompanionVariableDefinitions {
+	return {
+		pan_position: { name: 'Pan Position' },
+		tilt_position: { name: 'Tilt Position' },
+		zoom_position: { name: 'Zoom Position' },
+		zoom_speed: { name: 'Zoom Speed' },
+		focus_position: { name: 'Focus Position' },
+		focus_speed: { name: 'Focus Speed' },
+		focus_mode: { name: 'Focus Mode' },
+		osd_state: { name: 'OSD Menu State' },
 		// CAM_CameraBlockInq variables
-		{ variableId: 'r_gain', name: 'R Gain' },
-		{ variableId: 'b_gain', name: 'B Gain' },
-		{ variableId: 'wb_mode', name: 'White Balance Mode' },
-		{ variableId: 'sharpness', name: 'Sharpness' },
-		{ variableId: 'sharpness_mode', name: 'Sharpness Mode' },
-		{ variableId: 'exposure_mode', name: 'Exposure Mode' },
-		{ variableId: 'backlight', name: 'Back Light' },
-		{ variableId: 'exposure_comp', name: 'Exposure Compensation' },
-		{ variableId: 'shutter_position', name: 'Shutter Position' },
-		{ variableId: 'iris_position', name: 'Iris Position' },
-		{ variableId: 'bright_position', name: 'Bright Position' },
-		{ variableId: 'exp_comp_position', name: 'Exposure Comp Position' },
-		{ variableId: 'gain_position', name: 'Gain Position' },
+		r_gain: { name: 'R Gain' },
+		b_gain: { name: 'B Gain' },
+		wb_mode: { name: 'White Balance Mode' },
+		sharpness: { name: 'Sharpness' },
+		sharpness_mode: { name: 'Sharpness Mode' },
+		exposure_mode: { name: 'Exposure Mode' },
+		backlight: { name: 'Back Light' },
+		exposure_comp: { name: 'Exposure Compensation' },
+		shutter_position: { name: 'Shutter Position' },
+		iris_position: { name: 'Iris Position' },
+		bright_position: { name: 'Bright Position' },
+		exp_comp_position: { name: 'Exposure Comp Position' },
+		gain_position: { name: 'Gain Position' },
 		// Position bar variables
-		{ variableId: 'pan_position_bar', name: 'Pan Position Bar' },
-		{ variableId: 'tilt_position_bar', name: 'Tilt Position Bar' },
-		{ variableId: 'zoom_position_bar', name: 'Zoom Position Bar' },
-		{ variableId: 'focus_position_bar', name: 'Focus Position Bar' },
-		{ variableId: 'iris_position_bar', name: 'Iris Position Bar' },
+		pan_position_bar: { name: 'Pan Position Bar' },
+		tilt_position_bar: { name: 'Tilt Position Bar' },
+		zoom_position_bar: { name: 'Zoom Position Bar' },
+		focus_position_bar: { name: 'Focus Position Bar' },
+		iris_position_bar: { name: 'Iris Position Bar' },
 		// Camera preset variables
-		// Camera preset variables
-		{ variableId: 'preset_speed', name: 'Preset Speed' },
-		{ variableId: 'last_preset_selected', name: 'Last Preset Selected' },
-		{ variableId: 'preset_save_active', name: 'Preset Save Active' },
-	]
+		preset_speed: { name: 'Preset Speed' },
+		last_preset_selected: { name: 'Last Preset Selected' },
+		preset_save_active: { name: 'Preset Save Active' },
+	}
 }
 
 /** Default speed for variable-speed zoom and focus commands. */

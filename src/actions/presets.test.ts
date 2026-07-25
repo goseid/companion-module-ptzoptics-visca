@@ -1,4 +1,5 @@
 import type { CompanionMigrationAction, CompanionOptionValues } from '@companion-module/base'
+import { migOpt, migValue } from '../utils/migration.js'
 import { describe, expect, test } from 'vitest'
 import {
 	getPresetNumber,
@@ -67,18 +68,16 @@ describe('test invalid preset input', () => {
 		expect(result).toBe(PresetRecallDefault)
 	})
 
-	test('User enters a variable that resolves to an invalid preset', async () => {
+	test('Text input resolves to 255 (an invalid preset)', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '255')
-		const options = optionsWithPresetAsNumberOrText(true, '$(internal:foo)', 250)
+		const options = optionsWithPresetAsNumberOrText(true, '255', 250)
 		const result = await getPresetNumber(options, context)
 		expectIsErrorString(result)
 	})
 
-	test('User enters a variable that resolves to an invalid preset but number is used', async () => {
+	test('Text input resolves to invalid 255 but number input is used', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '255')
-		const options = optionsWithPresetAsNumberOrText(false, '$(internal:foo)', 250)
+		const options = optionsWithPresetAsNumberOrText(false, '255', 250)
 		const result = await getPresetNumber(options, context)
 		expect(result).toBe(250)
 	})
@@ -99,18 +98,16 @@ describe('test recall preset values', () => {
 		expect(result).toBe(11)
 	})
 
-	test('User enters a variable that resolves to dec 254', async () => {
+	test('Text input resolves to dec 254', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '254')
-		const options = optionsWithPresetAsNumberOrText(true, '$(internal:foo)', 16)
+		const options = optionsWithPresetAsNumberOrText(true, '254', 16)
 		const result = await getPresetNumber(options, context)
 		expect(result).toBe(254)
 	})
 
-	test('User enters a variable that resolves to dec 254 but number is used', async () => {
+	test('Text input resolves to dec 254 but number is used', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '254')
-		const options = optionsWithPresetAsNumberOrText(false, '$(internal:foo)', 16)
+		const options = optionsWithPresetAsNumberOrText(false, '254', 16)
 		const result = await getPresetNumber(options, context)
 		expect(result).toBe(16)
 	})
@@ -131,18 +128,16 @@ describe('test set preset values', () => {
 		expect(result).toBe(82)
 	})
 
-	test('User enters a variable that resolves to dec 254', async () => {
+	test('Text input resolves to dec 254', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '254')
-		const options = optionsWithPresetAsNumberOrText(true, '$(internal:foo)', 77)
+		const options = optionsWithPresetAsNumberOrText(true, '254', 77)
 		const result = await getPresetNumber(options, context)
 		expect(result).toBe(254)
 	})
 
-	test('User enters a variable that resolves to dec 254 but number is used', async () => {
+	test('Text input resolves to dec 254 but number is used', async () => {
 		const context = new MockContext()
-		context.setVariable('internal:foo', '254')
-		const options = optionsWithPresetAsNumberOrText(false, '$(internal:foo)', 77)
+		const options = optionsWithPresetAsNumberOrText(false, '254', 77)
 		const result = await getPresetNumber(options, context)
 		expect(result).toBe(77)
 	})
@@ -156,7 +151,7 @@ describe('preset upgrading of non-preset action', () => {
 				id: 'ohai',
 				controlId: 'x',
 				options: {
-					val: '123',
+					val: migOpt('123'),
 				},
 			}
 
@@ -164,7 +159,7 @@ describe('preset upgrading of non-preset action', () => {
 
 			const { actionId, options } = action
 			expect(actionId).toBe('foobar')
-			expect(options.val).toBe('123')
+			expect(migValue(options.val)).toBe('123')
 		})
 	})
 })
@@ -176,7 +171,7 @@ describe('obsolete preset recall upgrades', () => {
 			id: 'kthx',
 			controlId: 'x',
 			options: {
-				val: twoDigitHex(66), // '42'
+				val: migOpt(twoDigitHex(66)), // '42'
 			},
 		}
 
@@ -184,9 +179,9 @@ describe('obsolete preset recall upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteRecallPsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(false)
-		expect(options[ObsoletePresetValueOptionId]).toBe('42')
-		expect(options[ObsoletePresetVariableOptionId]).toBe(`66`)
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(false)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe('42')
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe(`66`)
 	})
 
 	test('upgradable with variable preset containing number', async () => {
@@ -195,7 +190,7 @@ describe('obsolete preset recall upgrades', () => {
 			id: 'kthx',
 			controlId: 'y',
 			options: {
-				val: '42',
+				val: migOpt('42'),
 			},
 		}
 
@@ -203,9 +198,9 @@ describe('obsolete preset recall upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteRecallPsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(true)
-		expect(options[ObsoletePresetValueOptionId]).toBe(twoDigitHex(42))
-		expect(options[ObsoletePresetVariableOptionId]).toBe('42')
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(true)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe(twoDigitHex(42))
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe('42')
 	})
 
 	test('upgradable with variable preset containing variable', async () => {
@@ -214,7 +209,7 @@ describe('obsolete preset recall upgrades', () => {
 			id: 'kthx',
 			controlId: 'y',
 			options: {
-				val: '1$(internal:custom_var)',
+				val: migOpt('1$(internal:custom_var)'),
 			},
 		}
 
@@ -222,9 +217,9 @@ describe('obsolete preset recall upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteRecallPsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(true)
-		expect(options[ObsoletePresetValueOptionId]).toBe(twoDigitHex(PresetRecallDefault))
-		expect(options[ObsoletePresetVariableOptionId]).toBe('1$(internal:custom_var)')
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(true)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe(twoDigitHex(PresetRecallDefault))
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe('1$(internal:custom_var)')
 	})
 })
 
@@ -235,7 +230,7 @@ describe('obsolete preset save upgrades', () => {
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				val: twoDigitHex(66), // '42'
+				val: migOpt(twoDigitHex(66)), // '42'
 			},
 		}
 
@@ -243,9 +238,9 @@ describe('obsolete preset save upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteSavePsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(false)
-		expect(options[ObsoletePresetValueOptionId]).toBe('42')
-		expect(options[ObsoletePresetVariableOptionId]).toBe('66')
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(false)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe('42')
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe('66')
 	})
 
 	test('upgradable with variable preset containing number', async () => {
@@ -254,7 +249,7 @@ describe('obsolete preset save upgrades', () => {
 			id: 'kthx',
 			controlId: 'w',
 			options: {
-				val: '42',
+				val: migOpt('42'),
 			},
 		}
 
@@ -262,9 +257,9 @@ describe('obsolete preset save upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteSavePsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(true)
-		expect(options[ObsoletePresetValueOptionId]).toBe(twoDigitHex(42))
-		expect(options[ObsoletePresetVariableOptionId]).toBe('42')
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(true)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe(twoDigitHex(42))
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe('42')
 	})
 
 	test('upgradable with variable preset containing variable', async () => {
@@ -273,7 +268,7 @@ describe('obsolete preset save upgrades', () => {
 			id: 'kthx',
 			controlId: 'w',
 			options: {
-				val: '1$(internal:custom_var)',
+				val: migOpt('1$(internal:custom_var)'),
 			},
 		}
 
@@ -281,9 +276,9 @@ describe('obsolete preset save upgrades', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(ObsoleteSavePsetId)
-		expect(options[ObsoletePresetUseVariablesOptionId]).toBe(true)
-		expect(options[ObsoletePresetValueOptionId]).toBe(twoDigitHex(PresetSetDefault))
-		expect(options[ObsoletePresetVariableOptionId]).toBe('1$(internal:custom_var)')
+		expect(migValue(options[ObsoletePresetUseVariablesOptionId])).toBe(true)
+		expect(migValue(options[ObsoletePresetValueOptionId])).toBe(twoDigitHex(PresetSetDefault))
+		expect(migValue(options[ObsoletePresetVariableOptionId])).toBe('1$(internal:custom_var)')
 	})
 })
 
@@ -294,9 +289,9 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 			id: 'bai',
 			controlId: 'm',
 			options: {
-				useVariables: 42,
-				val: 17,
-				presetVariable: 'element',
+				useVariables: migOpt(42),
+				val: migOpt(17),
+				presetVariable: migOpt('element'),
 			},
 		}
 
@@ -304,9 +299,9 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe('foobar')
-		expect(options.useVariables).toBe(42)
-		expect(options.val).toBe(17)
-		expect(options.presetVariable).toBe('element')
+		expect(migValue(options.useVariables)).toBe(42)
+		expect(migValue(options.val)).toBe(17)
+		expect(migValue(options.presetVariable)).toBe('element')
 		expect('isText' in options).toBe(false)
 		expect('asText' in options).toBe(false)
 		expect('asNumber' in options).toBe(false)
@@ -318,9 +313,9 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				useVariables: true,
-				val: '42',
-				presetVariable: '6$(custom:hello)',
+				useVariables: migOpt(true),
+				val: migOpt('42'),
+				presetVariable: migOpt('6$(custom:hello)'),
 			},
 		}
 
@@ -329,11 +324,11 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 		const { actionId, options } = action
 		expect(actionId).toBe(SetPresetId)
 		expect(ObsoletePresetUseVariablesOptionId in options).toBe(false)
-		expect(options[PresetIsTextId]).toBe(true)
+		expect(migValue(options[PresetIsTextId])).toBe(true)
 		expect(ObsoletePresetValueOptionId in options).toBe(false)
-		expect(options[PresetAsNumberId]).toBe(66)
+		expect(migValue(options[PresetAsNumberId])).toBe(66)
 		expect(ObsoletePresetVariableOptionId in options).toBe(false)
-		expect(options[PresetAsTextId]).toBe('6$(custom:hello)')
+		expect(migValue(options[PresetAsTextId])).toBe('6$(custom:hello)')
 	})
 
 	test('upgradable recall preset', async () => {
@@ -342,9 +337,9 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				useVariables: true,
-				val: '17',
-				presetVariable: '$(custom:hello)3',
+				useVariables: migOpt(true),
+				val: migOpt('17'),
+				presetVariable: migOpt('$(custom:hello)3'),
 			},
 		}
 
@@ -353,11 +348,11 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 		const { actionId, options } = action
 		expect(actionId).toBe(RecallPresetId)
 		expect(ObsoletePresetUseVariablesOptionId in options).toBe(false)
-		expect(options[PresetIsTextId]).toBe(true)
+		expect(migValue(options[PresetIsTextId])).toBe(true)
 		expect(ObsoletePresetValueOptionId in options).toBe(false)
-		expect(options[PresetAsNumberId]).toBe(23)
+		expect(migValue(options[PresetAsNumberId])).toBe(23)
 		expect(ObsoletePresetVariableOptionId in options).toBe(false)
-		expect(options[PresetAsTextId]).toBe('$(custom:hello)3')
+		expect(migValue(options[PresetAsTextId])).toBe('$(custom:hello)3')
 	})
 
 	test('upgradable set preset drive speed', async () => {
@@ -366,8 +361,8 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 			id: 'kthx',
 			controlId: 'z',
 			options: {
-				val: '69',
-				speed: '13',
+				val: migOpt('69'),
+				speed: migOpt('13'),
 			},
 		}
 
@@ -375,7 +370,7 @@ describe('obsolete preset/speed encoding upgrades to preset actions', () => {
 
 		const { actionId, options } = action
 		expect(actionId).toBe(PresetActionId.SetPresetDriveSpeed)
-		expect(options[SetPresetDriveSpeedPresetId]).toBe(105)
-		expect(options[SetPresetDriveSpeedSpeedId]).toBe(19)
+		expect(migValue(options[SetPresetDriveSpeedPresetId])).toBe(105)
+		expect(migValue(options[SetPresetDriveSpeedSpeedId])).toBe(19)
 	})
 })

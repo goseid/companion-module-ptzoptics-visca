@@ -1,6 +1,7 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"id": "ptzoptics-visca",
+	"type": "connection",
 	"name": "PTZOptics Visca",
 	"shortname": "visca",
 	"description": "Module to control PTZ cameras with PTZoptics Visca protocol over IP",

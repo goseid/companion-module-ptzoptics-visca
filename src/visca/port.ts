@@ -726,7 +726,7 @@ export class VISCAPort {
 			}
 
 			let i = 1
-			let terminatorOffset = -1
+			let terminatorOffset: number
 			for (;;) {
 				// VISCA return messages terminate with 0xFF.
 				terminatorOffset = receivedData.indexOf(0xff, i)
@@ -1262,7 +1262,7 @@ export class VISCAPort {
 		if (this.#instance.debugLogging) {
 			this.#instance.log('info', `SEND: ${prettyBytes(bytes)}...`)
 		}
-		const sent = await socket.send(Buffer.from(bytes))
+		const sent = socket.send(Buffer.from(bytes))
 		if (!sent) {
 			return new Error('Data not sent: socket is closed')
 		}

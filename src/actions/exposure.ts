@@ -1,4 +1,5 @@
 import type { CompanionActionEvent, CompanionMigrationAction, CompanionOptionValues } from '@companion-module/base'
+import { optString } from '../utils/option-value.js'
 import type { ActionDefinitions } from './actionid.js'
 import {
 	BacklightOff,
@@ -33,6 +34,7 @@ import {
 import type { PtzOpticsInstance } from '../instance.js'
 import { optionConversions } from './option-conversion.js'
 import { twoDigitHex } from '../utils/two-digit-hex.js'
+import { migOpt, migValue } from '../utils/migration.js'
 
 export enum ExposureActionId {
 	BacklightOn = 'backlightOn',
@@ -109,7 +111,7 @@ const DefaultShutterSetting = 4
 // XXX These mappings aren't all correct on G3, 1/180 seems really to be 1/200
 //     and 1/90-30 seems really to be 1/60-50-30.
 function getShutterSetting(options: CompanionOptionValues): ShutterSetting {
-	let setting = parseInt(String(options[ShutterSettingId]), 16)
+	let setting = parseInt(optString(options[ShutterSettingId]), 16)
 	if (setting < 0x01) {
 		setting = 0x01
 	} else if (0x11 < setting) {
@@ -455,11 +457,11 @@ const oldIrisHexToNew: Record<string, string> = {
 
 export function tryUpdateIrisHexValues(action: CompanionMigrationAction): boolean {
 	if (action.actionId !== (ExposureActionId.SetIris as string)) return false
-	const val = action.options[IrisSettingId]
+	const val = migValue(action.options[IrisSettingId])
 	if (typeof val !== 'string') return false
 	const upper = val.toUpperCase()
 	const replacement = oldIrisHexToNew[upper]
 	if (replacement === undefined) return false
-	action.options[IrisSettingId] = replacement
+	action.options[IrisSettingId] = migOpt(replacement)
 	return true
 }

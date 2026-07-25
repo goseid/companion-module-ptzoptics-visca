@@ -6,6 +6,7 @@ import type {
 	DropdownChoice,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
+import { optString } from '../utils/option-value.js'
 import type { ActionDefinitions } from './actionid.js'
 import { isValidPreset, PresetDriveSpeed, PresetRecall, PresetRecallSpeed, PresetSave } from '../camera/presets.js'
 import { FeedbackId } from '../feedbacks.js'
@@ -13,6 +14,7 @@ import type { PtzOpticsInstance } from '../instance.js'
 import { speedChoices } from './speeds.js'
 import { repr } from '../utils/repr.js'
 import { twoDigitHex } from '../utils/two-digit-hex.js'
+import { migOpt, migValue } from '../utils/migration.js'
 import { ObsoletePtSpeedSId, PanTiltActionId, PanTiltSpeedSetSpeedId } from './pan-tilt.js'
 
 /** The id of the recall-preset action. */
@@ -133,44 +135,44 @@ export function tryUpdateRecallSetPresetActions(action: CompanionMigrationAction
 	switch (actionId) {
 		case ObsoleteRecallPsetFromVar: {
 			action.actionId = ObsoleteRecallPsetId
-			options[ObsoletePresetUseVariablesOptionId] = true
+			options[ObsoletePresetUseVariablesOptionId] = migOpt(true)
 
-			const textinput = String(options[ObsoletePresetValueOptionId])
-			options[ObsoletePresetVariableOptionId] = textinput
+			const textinput = optString(migValue(options[ObsoletePresetValueOptionId]))
+			options[ObsoletePresetVariableOptionId] = migOpt(textinput)
 
 			const n = parseCompleteDecimal(textinput)
-			options[ObsoletePresetValueOptionId] = twoDigitHex(isValidPreset(n) ? n : PresetRecallDefault)
+			options[ObsoletePresetValueOptionId] = migOpt(twoDigitHex(isValidPreset(n) ? n : PresetRecallDefault))
 			return true
 		}
 
 		case ObsoleteSavePsetFromVar: {
 			action.actionId = ObsoleteSavePsetId
-			options[ObsoletePresetUseVariablesOptionId] = true
+			options[ObsoletePresetUseVariablesOptionId] = migOpt(true)
 
-			const textinput = String(options[ObsoletePresetValueOptionId])
-			options[ObsoletePresetVariableOptionId] = textinput
+			const textinput = optString(migValue(options[ObsoletePresetValueOptionId]))
+			options[ObsoletePresetVariableOptionId] = migOpt(textinput)
 
 			const n = parseCompleteDecimal(textinput)
-			options[ObsoletePresetValueOptionId] = twoDigitHex(isValidPreset(n) ? n : PresetSetDefault)
+			options[ObsoletePresetValueOptionId] = migOpt(twoDigitHex(isValidPreset(n) ? n : PresetSetDefault))
 			return true
 		}
 
 		case ObsoleteRecallPsetId:
 			if (!(ObsoletePresetUseVariablesOptionId in options)) {
-				options[ObsoletePresetUseVariablesOptionId] = false
+				options[ObsoletePresetUseVariablesOptionId] = migOpt(false)
 
-				const n = parseInt(String(options[ObsoletePresetValueOptionId]), 16)
-				options[ObsoletePresetVariableOptionId] = String(isValidPreset(n) ? n : PresetRecallDefault)
+				const n = parseInt(optString(migValue(options[ObsoletePresetValueOptionId])), 16)
+				options[ObsoletePresetVariableOptionId] = migOpt(String(isValidPreset(n) ? n : PresetRecallDefault))
 				return true
 			}
 			return false
 
 		case ObsoleteSavePsetId:
 			if (!(ObsoletePresetUseVariablesOptionId in options)) {
-				options[ObsoletePresetUseVariablesOptionId] = false
+				options[ObsoletePresetUseVariablesOptionId] = migOpt(false)
 
-				const n = parseInt(String(options[ObsoletePresetValueOptionId]), 16)
-				options[ObsoletePresetVariableOptionId] = String(isValidPreset(n) ? n : PresetSetDefault)
+				const n = parseInt(optString(migValue(options[ObsoletePresetValueOptionId])), 16)
+				options[ObsoletePresetVariableOptionId] = migOpt(String(isValidPreset(n) ? n : PresetSetDefault))
 				return true
 			}
 			return false
@@ -260,7 +262,7 @@ export function tryUpdatePresetAndSpeedEncodingsInActions(action: CompanionMigra
 			options[PresetIsTextId] = options[ObsoletePresetUseVariablesOptionId]
 			delete options[ObsoletePresetUseVariablesOptionId]
 
-			options[PresetAsNumberId] = parseInt(String(options[ObsoletePresetValueOptionId]), 16)
+			options[PresetAsNumberId] = migOpt(parseInt(optString(migValue(options[ObsoletePresetValueOptionId])), 16))
 			delete options[ObsoletePresetValueOptionId]
 
 			options[PresetAsTextId] = options[ObsoletePresetVariableOptionId]
@@ -271,10 +273,14 @@ export function tryUpdatePresetAndSpeedEncodingsInActions(action: CompanionMigra
 		case ObsoleteSpeedPsetId: {
 			action.actionId = SetPresetDriveSpeedId
 
-			options[SetPresetDriveSpeedPresetId] = parseInt(String(options[ObsoletePresetValueOptionId]), 16)
+			options[SetPresetDriveSpeedPresetId] = migOpt(
+				parseInt(optString(migValue(options[ObsoletePresetValueOptionId])), 16),
+			)
 			delete options[ObsoletePresetValueOptionId]
 
-			options[SetPresetDriveSpeedSpeedId] = parseInt(String(options[SetPresetDriveSpeedSpeedId]), 16)
+			options[SetPresetDriveSpeedSpeedId] = migOpt(
+				parseInt(optString(migValue(options[SetPresetDriveSpeedSpeedId])), 16),
+			)
 
 			return true
 		}
@@ -282,7 +288,7 @@ export function tryUpdatePresetAndSpeedEncodingsInActions(action: CompanionMigra
 		case ObsoletePtSpeedSId: {
 			action.actionId = PanTiltActionId.SetMovementSpeed
 
-			options[PanTiltSpeedSetSpeedId] = parseInt(String(options[PanTiltSpeedSetSpeedId]), 16)
+			options[PanTiltSpeedSetSpeedId] = migOpt(parseInt(optString(migValue(options[PanTiltSpeedSetSpeedId])), 16))
 			return true
 		}
 
@@ -304,13 +310,15 @@ export function tryUpdatePresetAndSpeedEncodingsInActions(action: CompanionMigra
  */
 export async function getPresetNumber(
 	options: CompanionOptionValues,
-	context: CompanionActionContext,
+	_context: CompanionActionContext,
 ): Promise<number | string> {
 	const isText = Boolean(options[PresetIsTextId])
 	let preset
 	if (isText) {
-		const presetStr = String(options[PresetAsTextId])
-		preset = parseCompleteDecimal(await context.parseVariablesInString(presetStr))
+		// In API 2.0 Companion resolves variables/expressions before the callback,
+		// so the text option is already the final resolved value.
+		const presetStr = optString(options[PresetAsTextId])
+		preset = parseCompleteDecimal(presetStr)
 
 		if (!isValidPreset(preset)) {
 			return `Preset field ${repr(presetStr)} evaluated to an invalid preset`
