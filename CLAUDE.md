@@ -9,7 +9,7 @@ A Bitfocus Companion module that controls PTZOptics cameras (and compatible) via
 ## Commands
 
 ```bash
-yarn install          # Install dependencies (Yarn 4.12.0 via Corepack)
+yarn install          # Install dependencies (Yarn 4.14.1 via Corepack)
 yarn build            # Clean dist/ and compile TypeScript
 yarn dev              # Watch mode compilation
 yarn test             # Run Vitest test suite
@@ -23,7 +23,7 @@ yarn check            # Full check without install: types, lint, knip, build
 yarn package          # Build and package for Companion distribution
 ```
 
-Requires Node.js ^22.11.
+Requires Node.js ^22.11. Built on `@companion-module/base` **API 2.0** (base `~2.0.4`, tools `^3.0.1`); targets Companion 4.x (deliberately not 2.1 / Companion 5.0+). The entry point `src/main.ts` `export default`s the instance class and re-exports `UpgradeScripts` (no `runEntrypoint`).
 
 ## Architecture
 
@@ -61,17 +61,18 @@ The codebase has three distinct layers with a strict dependency direction:
 
 - **Variables** (`src/variables.ts`): Camera state is polled via VISCA inquiries and exposed as Companion variables. The poll loop cycles through: pan/tilt position, lens block (zoom/focus position, focus mode), OSD state, sharpness mode, and CameraBlockInq (which provides exposure mode, WB mode, R/B gain, sharpness, shutter/iris/bright/gain positions, backlight, exposure comp). Pan/tilt positions are signed 16-bit integers (center=0, negative=left/down, positive=right/up). Iris and shutter position variables are converted to user-friendly labels (e.g., `ƒ 2.0`, `1/100`) via convert functions on the block inquiry parameters. Position bar variables (`pan_position_bar`, `tilt_position_bar`, `zoom_position_bar`, `focus_position_bar`, `iris_position_bar`) provide text-based progress bars (e.g., `L.....|.....R`, `D.....|.....U`, `W.....|.....T`) computed via `src/utils/progress-bar.ts`. Pan/tilt bars use `PanTiltBounds` (full signed 16-bit range) for normalization. Non-polled variables include `preset_speed` (1-24, default 12), `last_preset_selected`, and `preset_save_active`.
 
-- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode, Focus Position, Exposure Mode, WB Mode, Sharpness Mode, Iris Position, Shutter Position, Backlight On, Exp Comp On, Exp Comp Position, Bright Position, Gain Position, Zoom Position, Zoom Speed, Focus Speed, Pan/Tilt Position, Preset Speed, Preset Selected, Preset Save Active). Exposure comp position uses display values (-7 to +7) in feedbacks and actions, converted from/to camera values (0x0-0xE) internally. Selectable feedbacks use a dropdown option for the mode/position value rather than separate feedbacks per value. Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion because `getVariableValue()` always returns strings.
+- **Feedbacks** (`src/feedbacks.ts`): Boolean feedbacks check variable state and apply styles (e.g., Focus Mode, Focus Position, Exposure Mode, WB Mode, Sharpness Mode, Iris Position, Shutter Position, Backlight On, Exp Comp On, Exp Comp Position, Bright Position, Gain Position, Zoom Position, Zoom Speed, Focus Speed, Pan/Tilt Position, Preset Speed, Preset Selected, Preset Save Active). Exposure comp position uses display values (-7 to +7) in feedbacks and actions, converted from/to camera values (0x0-0xE) internally. Selectable feedbacks use a dropdown option for the mode/position value rather than separate feedbacks per value. Advanced feedbacks return dynamic text (e.g., Exposure Mode Text). When referencing boolean feedbacks in presets, the `style` property must be specified inline on the preset feedback — `defaultStyle` on the definition only applies when users manually add a feedback. Numeric variable comparisons require `Number()` conversion, and stringly comparisons use `optString()` (`src/utils/option-value.ts`) — in API 2.0 `getVariableValue()` and option values are typed as `JsonValue`, so a bare `String()` on them trips `no-base-to-string`.
 
 ### Presets and Assets
 
-- **Presets** (`src/presets.ts`): Button presets provide pre-configured buttons for Companion's UI. `getPresets(presetColorText, presetColorBG)` accepts config-driven colors for camera preset buttons. Rotary action presets (those with `options: { rotaryActions: true }`) support encoder rotation for incremental adjustments and use a shared `IMAGE_ROTARY_BG` background image. Pan/tilt position presets (rotary and standard step buttons) use relative positioning actions that read current position from polled variables and send `MoveToAbsolutePanTilt` with a step offset of 1. Smart preset buttons (category "Presets") support hold-to-save: short press (<1s) recalls, long press (>1s) saves. They use `PresetSaveActive` feedback (yellow) and `PresetSelected` feedback (orange) — save-active is listed last so it takes visual priority. Presets are re-registered in `configUpdated()` to pick up color changes.
+- **Presets** (`src/presets.ts`): Button presets (API 2.0 `type: 'simple'`) provide pre-configured buttons. `getPresets(presetColorText, presetColorBG)` returns `{ structure, presets }` — a `CompanionPresetSection[]` grouping (derived one-to-one from functional categories: Pan/Tilt, Lens, Exposure, Color, Image, Auto Tracking, OSD Menu, Presets) plus the flat preset definitions — passed to `setPresetDefinitions(structure, presets)`. Rotary action presets are enabled by the presence of `rotate_left`/`rotate_right` in a step (2.0 removed the old `options: { rotaryActions: true }` flag) and use a shared `IMAGE_ROTARY_BG` background image. Pan/tilt position presets (rotary and standard step buttons) use relative positioning actions that read current position from polled variables and send `MoveToAbsolutePanTilt` with a step offset of 1.
+- **Local-variable presets**: many presets declare per-button `localVariables` (`variableType: 'simple'` with a `startupValue`) so a user can copy a button and retarget it by editing just the variable(s) — the ~245 smart preset buttons (`PresetNumber`), Absolute Position (`PanPosition`/`TiltPosition`), RB Gain Direct (`RedGain`/`BlueGain`), and Focus/Gain/Bright/ExpComp Set. Their text, actions, and feedback reference `$(local:NAME)`. Number-typed action/feedback options reference a local variable via **expression mode** (`{ isExpression: true, value: '$(local:NAME)' }`), since 2.0 removed value-mode `useVariables: { local: true }`; Companion resolves these before the callback runs. Smart preset buttons support hold-to-save: short press (<1s) recalls, long press (>1s) saves, using `PresetSaveActive` feedback (yellow, listed last for visual priority) and `PresetSelected` feedback (orange). Presets are re-registered in `configUpdated()` to pick up color changes.
 
 - **Assets** (`src/assets/assets.ts`): Base64-encoded PNG images used in preset button styles. Includes directional arrows (`IMAGE_UP`, `IMAGE_DOWN`, etc.) and the rotary encoder background (`IMAGE_ROTARY_BG`).
 
 ### Instance Lifecycle
 
-`PtzOpticsInstance` (extends `InstanceBase<RawConfig>`) implements three Companion lifecycle methods:
+`PtzOpticsInstance` (extends `InstanceBase<PtzOpticsInstanceTypes>`, a schema bundling config/secrets/actions/feedbacks/variables) implements three Companion lifecycle methods:
 
 - `init()` — Registers actions, feedbacks, presets, and variables; opens VISCA connection
 - `configUpdated()` — Validates new config, re-registers presets (for color changes), reconnects and restarts polling if needed
@@ -105,7 +106,7 @@ Up = `XX 02 FF`, Down = `XX 03 FF`, Reset = `XX 00 FF`. Direct commands use `XX 
 
 ### Upgrade System
 
-`src/upgrades.ts` contains ordered migration scripts (using `ActionUpdater`/`ConfigUpdater` helpers) that transform saved configs and actions when the module version changes. These run automatically via Companion.
+`src/upgrades.ts` contains ordered migration scripts (using `ActionUpdater`/`ConfigUpdater` helpers) that transform saved configs and actions when the module version changes. These run automatically via Companion. In API 2.0, migration option values are `ExpressionOrValue`-wrapped (`{ isExpression, value }`); the `tryUpdate*` functions read/write them via `migValue`/`migOpt` (`src/utils/migration.ts`).
 
 ## Lint & Style Rules
 
