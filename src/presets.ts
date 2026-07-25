@@ -315,9 +315,24 @@ export function getPresets(
 
 	presets['absolute_position_center'] = {
 		type: 'simple',
-		name: 'Center (0, 0)',
+		name: 'Absolute Position',
+		// Per-button `PanPosition`/`TiltPosition` local variables (default 0,0 =
+		// center).  Copy the button and edit the two variables to make a custom
+		// position-recall button.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'PanPosition',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'TiltPosition',
+				startupValue: 0,
+			},
+		],
 		style: {
-			text: 'Center\\n0, 0',
+			text: 'Abs Pos\\n$(local:PanPosition), $(local:TiltPosition)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -327,13 +342,14 @@ export function getPresets(
 				down: [
 					{
 						actionId: PanTiltActionId.AbsolutePosition,
+						// Use the text/expression path per axis so the local variables resolve.
 						options: {
-							panPosIsText: false,
+							panPosIsText: true,
 							panPosAsNumber: 0,
-							panPosAsText: '0',
-							tiltPosIsText: false,
+							panPosAsText: { isExpression: true, value: '$(local:PanPosition)' },
+							tiltPosIsText: true,
 							tiltPosAsNumber: 0,
-							tiltPosAsText: '0',
+							tiltPosAsText: { isExpression: true, value: '$(local:TiltPosition)' },
 							panSpeed: 12,
 							tiltSpeed: 12,
 						},
@@ -346,8 +362,8 @@ export function getPresets(
 			{
 				feedbackId: FeedbackId.PanTiltPosition,
 				options: {
-					[PanTiltPositionPanId]: 0,
-					[PanTiltPositionTiltId]: 0,
+					[PanTiltPositionPanId]: { isExpression: true, value: '$(local:PanPosition)' },
+					[PanTiltPositionTiltId]: { isExpression: true, value: '$(local:TiltPosition)' },
 				},
 				style: {
 					color: combineRgb(255, 255, 255),
@@ -1176,8 +1192,17 @@ export function getPresets(
 	presets['focus_direct_preset'] = {
 		type: 'simple',
 		name: 'Focus Direct',
+		// Per-button `FocusPosition` local variable: copy the button and edit the
+		// variable to make a custom focus-point button.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'FocusPosition',
+				startupValue: 1500,
+			},
+		],
 		style: {
-			text: 'Focus\\nDirect\\n1500',
+			text: 'Focus\\nDirect\\n$(local:FocusPosition)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1187,7 +1212,7 @@ export function getPresets(
 				down: [
 					{
 						actionId: FocusActionId.SetFocusPosition,
-						options: { [FocusPositionId]: 1500 },
+						options: { [FocusPositionId]: { isExpression: true, value: '$(local:FocusPosition)' } },
 					},
 				],
 				up: [],
@@ -1196,7 +1221,7 @@ export function getPresets(
 		feedbacks: [
 			{
 				feedbackId: FeedbackId.FocusPosition,
-				options: { [FocusPositionValueId]: 1500 },
+				options: { [FocusPositionValueId]: { isExpression: true, value: '$(local:FocusPosition)' } },
 				style: {
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(223, 85, 0),
@@ -1721,8 +1746,17 @@ export function getPresets(
 	presets['exp_comp_set_preset'] = {
 		type: 'simple',
 		name: 'Exp Comp Set',
+		// Per-button `ExpComp` local variable (display value -7..+7): copy the
+		// button and edit the variable to make a custom exposure-comp button.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'ExpComp',
+				startupValue: 0,
+			},
+		],
 		style: {
-			text: 'EXP Comp\\nSet\\n0',
+			text: 'EXP Comp\\nSet\\n$(local:ExpComp)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -1733,7 +1767,7 @@ export function getPresets(
 					{
 						actionId: ExposureActionId.ExpCompDirect,
 						options: {
-							position: 0,
+							position: { isExpression: true, value: '$(local:ExpComp)' },
 						},
 					},
 				],
@@ -1744,7 +1778,7 @@ export function getPresets(
 			{
 				feedbackId: FeedbackId.ExpCompPosition,
 				options: {
-					[ExpCompPositionValueId]: 0,
+					[ExpCompPositionValueId]: { isExpression: true, value: '$(local:ExpComp)' },
 				},
 				style: {
 					color: combineRgb(255, 255, 255),
@@ -2009,8 +2043,17 @@ export function getPresets(
 	presets['gain_set_preset'] = {
 		type: 'simple',
 		name: 'Gain Set',
+		// Per-button `Gain` local variable: copy the button and edit the variable
+		// to make a custom gain button.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'Gain',
+				startupValue: 2,
+			},
+		],
 		style: {
-			text: 'Gain\\nSet\\n2',
+			text: 'Gain\\nSet\\n$(local:Gain)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -2021,7 +2064,7 @@ export function getPresets(
 					{
 						actionId: ExposureActionId.GainDirect,
 						options: {
-							gain: 2,
+							gain: { isExpression: true, value: '$(local:Gain)' },
 						},
 					},
 				],
@@ -2032,7 +2075,7 @@ export function getPresets(
 			{
 				feedbackId: FeedbackId.GainPosition,
 				options: {
-					[GainPositionValueId]: 2,
+					[GainPositionValueId]: { isExpression: true, value: '$(local:Gain)' },
 				},
 				style: {
 					color: combineRgb(255, 255, 255),
@@ -2297,8 +2340,17 @@ export function getPresets(
 	presets['bright_set_preset'] = {
 		type: 'simple',
 		name: 'Bright Set',
+		// Per-button `Bright` local variable: copy the button and edit the variable
+		// to make a custom bright-level button.
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'Bright',
+				startupValue: 7,
+			},
+		],
 		style: {
-			text: 'Bright\\nSet\\n7',
+			text: 'Bright\\nSet\\n$(local:Bright)',
 			size: '14',
 			color: combineRgb(255, 255, 255),
 			bgcolor: combineRgb(0, 0, 0),
@@ -2309,7 +2361,7 @@ export function getPresets(
 					{
 						actionId: ExposureActionId.BrightDirect,
 						options: {
-							position: 7,
+							position: { isExpression: true, value: '$(local:Bright)' },
 						},
 					},
 				],
@@ -2320,7 +2372,7 @@ export function getPresets(
 			{
 				feedbackId: FeedbackId.BrightPosition,
 				options: {
-					[BrightPositionValueId]: 7,
+					[BrightPositionValueId]: { isExpression: true, value: '$(local:Bright)' },
 				},
 				style: {
 					color: combineRgb(255, 255, 255),

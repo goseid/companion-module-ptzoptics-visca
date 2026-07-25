@@ -12,13 +12,14 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 
 - Signed 16-bit pan/tilt **position variables** (center=0, ±left/right, ±down/up).
 - Pan/Tilt **position actions** (absolute + relative/step).
-- **Position feedback** and center-position preset.
+- **Position feedback**; **Absolute Position** preset driven by `PanPosition`/`TiltPosition` local variables (default 0,0 = center) for custom position-recall buttons.
 - `pan_position_bar` / `tilt_position_bar` text progress bars; step + rotary presets.
 
 ## Zoom / Focus
 
 - **Focus mode** toggle action + consolidated selectable focus-mode feedback.
 - Zoom/Focus **position actions**, feedbacks, and step/direct presets.
+- **Focus Direct** preset driven by a `FocusPosition` local variable (custom focus-point buttons).
 - `zoom_position_bar` / `focus_position_bar` bars; rotary-encoder presets + background image.
 - Dual zoom coordinate handling (stepper vs ZoomDirect) for correct stepping.
 
@@ -31,6 +32,7 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 - **Bright** (AE level) position feedback, reset action, presets.
 - **Exposure comp** feedbacks + on/off toggle + presets (display −7..+7).
 - **Backlight** on/off toggle + feedback.
+- **Gain Set** / **Bright Set** / **Exp Comp Set** presets driven by `Gain`/`Bright`/`ExpComp` local variables (custom value buttons).
 - Gain inquiry (`GainPositionInquiry`, kept for future use).
 - `iris_position_bar` bar.
 
