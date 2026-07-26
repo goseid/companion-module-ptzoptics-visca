@@ -40,6 +40,9 @@ const PresetSpeedDownId = 'presetSpeedDown'
 /** The id of the set-preset-speed action. */
 const SetPresetSpeedId = 'setPresetSpeed'
 
+/** The id of the clear-preset-save-indicator action. */
+const ClearPresetSaveActiveId = 'clearPresetSaveActive'
+
 /** The id of the preset speed option. */
 export const PresetSpeedOptionId = 'presetSpeed'
 
@@ -52,6 +55,7 @@ export enum PresetActionId {
 	PresetSpeedUp = PresetSpeedUpId,
 	PresetSpeedDown = PresetSpeedDownId,
 	SetPresetSpeed = SetPresetSpeedId,
+	ClearPresetSaveActive = ClearPresetSaveActiveId,
 }
 
 /**
@@ -367,8 +371,10 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 				// Both save and recall leave the camera parked at this preset, so
 				// update the "last selected" variable/feedback either way — this is
 				// what lets native (non-smart) buttons drive the selected highlight.
-				instance.setVariableValues({ last_preset_selected: String(preset) })
-				instance.checkFeedbacks(FeedbackId.PresetSelected)
+				// A save also raises the (global) save-active indicator; a native
+				// button clears it on release with the ClearPresetSaveActive action.
+				instance.setVariableValues({ last_preset_selected: String(preset), preset_save_active: 'true' })
+				instance.checkFeedbacks(FeedbackId.PresetSelected, FeedbackId.PresetSaveActive)
 			},
 		},
 		[PresetActionId.RecallPreset]: {
@@ -381,9 +387,23 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 					return
 				}
 
+				// Recall at the configured global recall speed (like the smart preset).
+				const speed = Number(instance.getVariableValue('preset_speed')) || 12
+				instance.sendCommand(PresetRecallSpeed, { speed })
 				instance.sendCommand(PresetRecall, { preset })
-				instance.setVariableValues({ last_preset_selected: String(preset) })
-				instance.checkFeedbacks(FeedbackId.PresetSelected)
+				instance.setVariableValues({ last_preset_selected: String(preset), preset_save_active: 'false' })
+				instance.checkFeedbacks(FeedbackId.PresetSelected, FeedbackId.PresetSaveActive)
+			},
+		},
+		[PresetActionId.ClearPresetSaveActive]: {
+			name: 'Clear Preset Save Indicator',
+			description:
+				'Turn off the global "preset save active" highlight. Pair with Set Preset on a native ' +
+				'hold-to-save button: put Set Preset in a run-while-held group and this on release.',
+			options: [],
+			callback: async () => {
+				instance.setVariableValues({ preset_save_active: 'false' })
+				instance.checkFeedbacks(FeedbackId.PresetSaveActive)
 			},
 		},
 		[PresetActionId.SetPresetDriveSpeed]: {
