@@ -49,10 +49,11 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 
 ## Presets (buttons)
 
-- **Smart preset buttons** (~245, one per valid preset): each carries a per-button `PresetNumber` local variable (API 2.0) set to its preset number, so the button text, recall/save actions, and "selected" feedback all follow the variable. Drag in the presets you need, then copy any button and change only `PresetNumber` to retarget it — clone a customized button without re-editing every field.
-- Hold-to-save behavior: short press (<1s) recalls, long press (>1s) saves.
+- **Camera preset buttons** (~245, one per valid preset): native hold-to-save built from Companion duration groups — short release recalls (at the global recall speed), holding >1s saves and lights the (global) save-active highlight until release. Transparent (visible/re-timeable timing, stackable actions) and safeguard-correct. Each carries a `PresetNumber` local variable set to its number; copy any button and change only `PresetNumber` to retarget it.
+- Enabler actions: **Recall Preset** / **Set Preset** update `last_preset_selected` (and Set raises / Recall clears `preset_save_active`); **Clear Preset Save Indicator** turns the highlight off on release.
 - Config-driven preset button colors; global **preset recall speed** (`81 01 06 01 ss FF`).
-- `PresetSaveActive` (yellow) + `PresetSelected` (orange) feedbacks.
+- `PresetSaveActive` (yellow, global) + `PresetSelected` (orange) feedbacks.
+- **Smart preset** actions (`SmartPresetDown`/`SmartPresetUp`, module-timer hold-to-save on a single down/up) retained for backward compatibility; no longer used by any shipped preset.
 - Removed the separate "Recall Preset" / "Save Preset" categories.
 
 ## Infrastructure / fixes

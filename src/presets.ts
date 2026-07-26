@@ -3491,91 +3491,20 @@ export function getPresets(
 		feedbacks: [],
 	}
 
-	// Native hold-to-save camera preset (transparent alternative to the smart
-	// preset): short release recalls, holding >1s saves and lights the (global)
-	// save-active highlight, and releasing after the hold clears it — all built
-	// from Companion's native duration groups + our Recall/Set/Clear actions, so
-	// a user can see and re-time the behavior and stack their own actions.
-	presets['native_camera_preset'] = {
-		type: 'simple',
-		name: 'Camera Preset (native hold-to-save)',
-		localVariables: [
-			{
-				variableType: 'simple',
-				variableName: 'PresetNumber',
-				startupValue: 1,
-			},
-		],
-		style: {
-			text: 'Preset\\n$(local:PresetNumber)\\nnative',
-			size: '18',
-			color: presetColorText,
-			bgcolor: presetColorBG,
-		},
-		steps: [
-			{
-				down: [],
-				// Short press (released before the hold): recall.
-				up: [
-					{
-						actionId: PresetActionId.RecallPreset,
-						options: { [PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' } },
-					},
-				],
-				// Held ≥1s (runs while held): save + raise the save-active highlight.
-				1000: {
-					options: { runWhileHeld: true },
-					actions: [
-						{
-							actionId: PresetActionId.SetPreset,
-							options: { [PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' } },
-						},
-					],
-				},
-				// Released after the hold (not run-while-held → fires on release):
-				// clear the save-active highlight.
-				1001: {
-					actions: [
-						{
-							actionId: PresetActionId.ClearPresetSaveActive,
-							options: {},
-						},
-					],
-				},
-			},
-		],
-		feedbacks: [
-			{
-				feedbackId: FeedbackId.PresetSelected,
-				options: { [PresetSelectedValueId]: { isExpression: true, value: '$(local:PresetNumber)' } },
-				style: {
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(223, 85, 0),
-				},
-			},
-			{
-				feedbackId: FeedbackId.PresetSaveActive,
-				options: {},
-				style: {
-					color: combineRgb(0, 0, 0),
-					bgcolor: combineRgb(255, 255, 0),
-				},
-			},
-		],
-	}
-
-	// Smart preset buttons: one per valid preset (short press = recall, hold > 1s
-	// = save).  Each carries a per-button `PresetNumber` local variable set to its
-	// preset number, so the button text, recall/save actions, and "selected"
-	// feedback all follow the variable.  Copy any button and change `PresetNumber`
-	// to retarget the whole button to a different preset.
-	const smartPresetIds: string[] = []
+	// Camera preset buttons: one per valid preset.  Short press recalls; holding
+	// >1s saves and lights the (global) save-active highlight until release.  Each
+	// carries a `PresetNumber` local variable set to its preset number, so the
+	// text, recall/save, and "selected" feedback all follow it — copy any button
+	// and change `PresetNumber` to retarget it.  Built from native duration groups
+	// (see the Recall/Set/ClearPresetSaveActive actions) so the timing and any
+	// stacked actions are visible and editable.
+	const cameraPresetIds: string[] = []
 	for (let n = 0; n < 255; n++) {
 		if (!isValidPreset(n)) continue
 
-		const smartPresetId = `smart_preset_${n}`
-		smartPresetIds.push(smartPresetId)
-		presets[smartPresetId] = {
+		const cameraPresetId = `camera_preset_${n}`
+		cameraPresetIds.push(cameraPresetId)
+		presets[cameraPresetId] = {
 			type: 'simple',
 			name: `Preset ${n}`,
 			localVariables: [
@@ -3593,24 +3522,33 @@ export function getPresets(
 			},
 			steps: [
 				{
-					down: [
-						{
-							actionId: PresetActionId.SmartPresetDown,
-							options: {
-								// Expression mode so the per-button local variable resolves.
-								[PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' },
-							},
-						},
-					],
+					down: [],
+					// Short press (released before the hold): recall.
 					up: [
 						{
-							actionId: PresetActionId.SmartPresetUp,
-							options: {
-								// Expression mode so the per-button local variable resolves.
-								[PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' },
-							},
+							actionId: PresetActionId.RecallPreset,
+							options: { [PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' } },
 						},
 					],
+					// Held ≥1s (runs while held): save + raise the save-active highlight.
+					1000: {
+						options: { runWhileHeld: true },
+						actions: [
+							{
+								actionId: PresetActionId.SetPreset,
+								options: { [PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' } },
+							},
+						],
+					},
+					// Released after the hold (fires on release): clear the highlight.
+					1001: {
+						actions: [
+							{
+								actionId: PresetActionId.ClearPresetSaveActive,
+								options: {},
+							},
+						],
+					},
 				},
 			],
 			feedbacks: [
@@ -3903,8 +3841,7 @@ export function getPresets(
 			id: 'presets',
 			name: 'Presets',
 			definitions: [
-				'native_camera_preset',
-				...smartPresetIds,
+				...cameraPresetIds,
 				'preset_speed_preset',
 				'preset_speed_up_preset',
 				'preset_speed_down_preset',
