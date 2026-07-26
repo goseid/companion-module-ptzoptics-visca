@@ -11,6 +11,6 @@ It _may_ work with other manufacturers' cameras, but it isn't guaranteed to do s
 
 ## Presets
 
-The **Presets** category provides smart camera-preset buttons (one per preset): a short press (< 1 second) recalls the preset, and a long press (> 1 second) saves it.
+The **Presets** category provides camera-preset buttons (one per preset): a short press (< 1 second) recalls the preset, and a long press (> 1 second) saves it — holding lights the other preset buttons until you let go so the save is visible even if your finger covers the button.
 
-Several presets — the smart preset buttons, **Absolute Position**, **Focus Direct**, **Gain / Bright / Exp Comp Set**, and **RB Gain Direct** — are driven by **button-local variables**. To make a custom button, drag one in, then copy it and edit its local variable(s) (for example `PresetNumber`, or `PanPosition` / `TiltPosition`) in the button's **Local Variables** section. The button's text, actions, and feedback all follow the variable, so you only change the value in one place instead of editing every field.
+Several presets — the camera preset buttons, **Absolute Position**, **Focus Direct**, **Gain / Bright / Exp Comp Set**, and **RB Gain Direct** — are driven by **button-local variables**. To make a custom button, drag one in, then copy it and edit its local variable(s) (for example `PresetNumber`, or `PanPosition` / `TiltPosition`) in the button's **Local Variables** section. The button's text, actions, and feedback all follow the variable, so you only change the value in one place instead of editing every field.
