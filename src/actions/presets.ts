@@ -1,5 +1,4 @@
 import type {
-	CompanionActionContext,
 	CompanionActionEvent,
 	CompanionMigrationAction,
 	CompanionOptionValues,
@@ -298,39 +297,21 @@ export function tryUpdatePresetAndSpeedEncodingsInActions(action: CompanionMigra
 }
 
 /**
- * Given options for an action with a preset option that supports variables,
- * compute the desired preset.
+ * Given options for a preset action, compute the desired preset.  The preset
+ * field is a dropdown the user can switch to Expression mode; in API 2.0
+ * Companion resolves value/expression before the callback, so the option is
+ * already the final value (a number, or a string from an expression).
  *
  * @param options
  *   Options from the action.
- * @param context
- *   The context supplied to the action.
  * @returns
  *   An error string if the preset isn't validly identified, or else the preset.
  */
-export async function getPresetNumber(
-	options: CompanionOptionValues,
-	_context: CompanionActionContext,
-): Promise<number | string> {
-	const isText = Boolean(options[PresetIsTextId])
-	let preset
-	if (isText) {
-		// In API 2.0 Companion resolves variables/expressions before the callback,
-		// so the text option is already the final resolved value.
-		const presetStr = optString(options[PresetAsTextId])
-		preset = parseCompleteDecimal(presetStr)
-
-		if (!isValidPreset(preset)) {
-			return `Preset field ${repr(presetStr)} evaluated to an invalid preset`
-		}
-	} else {
-		preset = Number(options[PresetAsNumberId])
-
-		if (!isValidPreset(preset)) {
-			return `Invalid preset selected: ${preset}`
-		}
+export async function getPresetNumber(options: CompanionOptionValues): Promise<number | string> {
+	const preset = Number(options[PresetAsNumberId])
+	if (!isValidPreset(preset)) {
+		return `Invalid preset: ${repr(options[PresetAsNumberId])}`
 	}
-
 	return preset
 }
 
@@ -358,28 +339,15 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 	function presetNumberOptions(defaultPreset: number): SomeCompanionActionInputField[] {
 		return [
 			{
-				type: 'checkbox',
-				label: 'Specify preset textually (supporting variables)',
-				id: PresetIsTextId,
-				default: false,
-			},
-			{
 				type: 'dropdown',
 				label: 'Preset number',
 				id: PresetAsNumberId,
 				choices: PRESET_CHOICES,
 				minChoicesForSearch: 1,
 				default: defaultPreset,
-				isVisibleExpression: `!$(options:${PresetIsTextId})`,
-			},
-			{
-				type: 'textinput',
-				label: 'Preset number',
-				id: PresetAsTextId,
-				useVariables: true,
-				tooltip: 'Preset number range of 0-89, 100-254',
-				default: `${defaultPreset}`,
-				isVisibleExpression: `!!$(options:${PresetIsTextId})`,
+				// Switch this field to Expression mode (in Companion) to drive the
+				// preset from a variable or formula, e.g. `$(local:PresetNumber)`.
+				tooltip: 'Valid preset numbers: 0-89, 100-254. Use Expression mode for a variable or formula.',
 			},
 		]
 	}
@@ -388,8 +356,8 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 		[PresetActionId.SetPreset]: {
 			name: 'Set Preset',
 			options: presetNumberOptions(PresetSetDefault),
-			callback: async ({ options }, context) => {
-				const preset = await getPresetNumber(options, context)
+			callback: async ({ options }) => {
+				const preset = await getPresetNumber(options)
 				if (typeof preset === 'string') {
 					instance.log('error', preset)
 					return
@@ -401,8 +369,8 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 		[PresetActionId.RecallPreset]: {
 			name: 'Recall Preset',
 			options: presetNumberOptions(PresetRecallDefault),
-			callback: async ({ options }, context) => {
-				const preset = await getPresetNumber(options, context)
+			callback: async ({ options }) => {
+				const preset = await getPresetNumber(options)
 				if (typeof preset === 'string') {
 					instance.log('error', preset)
 					return
@@ -440,8 +408,8 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 		[PresetActionId.SmartPresetDown]: {
 			name: 'Smart Preset (Press)',
 			options: presetNumberOptions(PresetRecallDefault),
-			callback: async ({ options }, context) => {
-				const preset = await getPresetNumber(options, context)
+			callback: async ({ options }) => {
+				const preset = await getPresetNumber(options)
 				if (typeof preset === 'string') {
 					instance.log('error', preset)
 					return
@@ -453,8 +421,8 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 		[PresetActionId.SmartPresetUp]: {
 			name: 'Smart Preset (Release)',
 			options: presetNumberOptions(PresetRecallDefault),
-			callback: async ({ options }, context) => {
-				const preset = await getPresetNumber(options, context)
+			callback: async ({ options }) => {
+				const preset = await getPresetNumber(options)
 				if (typeof preset === 'string') {
 					instance.log('error', preset)
 					return

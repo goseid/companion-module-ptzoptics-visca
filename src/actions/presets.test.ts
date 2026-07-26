@@ -21,16 +21,13 @@ import {
 	tryUpdatePresetAndSpeedEncodingsInActions,
 	tryUpdateRecallSetPresetActions,
 } from './presets.js'
-import { MockContext } from '../__tests__/mock-context.js'
 import { repr } from '../utils/repr.js'
 import { twoDigitHex } from '../utils/two-digit-hex.js'
 
-function optionsWithPresetAsNumberOrText(isText: boolean, asText: string, asNumber: number): CompanionOptionValues {
-	return {
-		[PresetIsTextId]: isText,
-		[PresetAsTextId]: asText,
-		[PresetAsNumberId]: asNumber,
-	}
+function presetOptions(presetAsNumber: number | string): CompanionOptionValues {
+	// The single preset field resolves (value or expression) to a number or a
+	// numeric string before the callback; getPresetNumber reads it directly.
+	return { [PresetAsNumberId]: presetAsNumber }
 }
 
 function expectIsErrorString(result: number | string): void {
@@ -39,107 +36,32 @@ function expectIsErrorString(result: number | string): void {
 	}
 }
 
-describe('test invalid preset input', () => {
-	test('User enters "foo" (not a number at all) as the preset', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, 'foo', PresetSetDefault)
-		const preset = await getPresetNumber(options, context)
-		expectIsErrorString(preset)
+describe('getPresetNumber', () => {
+	test('valid preset chosen from the dropdown (number value)', async () => {
+		expect(await getPresetNumber(presetOptions(37))).toBe(37)
 	})
 
-	test('User enters "foo" (not a number at all) as the preset but number input is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, 'foo', PresetSetDefault)
-		const preset = await getPresetNumber(options, context)
-		expect(preset).toBe(PresetSetDefault)
+	test('valid preset from a resolved expression (numeric string)', async () => {
+		expect(await getPresetNumber(presetOptions('37'))).toBe(37)
 	})
 
-	test('User enters an invalid preset', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '99', PresetRecallDefault)
-		const result = await getPresetNumber(options, context)
-		expectIsErrorString(result)
+	test('boundary presets are valid', async () => {
+		expect(await getPresetNumber(presetOptions(0))).toBe(0)
+		expect(await getPresetNumber(presetOptions(89))).toBe(89)
+		expect(await getPresetNumber(presetOptions(100))).toBe(100)
+		expect(await getPresetNumber(presetOptions(254))).toBe(254)
 	})
 
-	test('User enters an invalid preset but number input is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '99', PresetRecallDefault)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(PresetRecallDefault)
+	test('non-numeric value is an error', async () => {
+		expectIsErrorString(await getPresetNumber(presetOptions('foo')))
 	})
 
-	test('Text input resolves to 255 (an invalid preset)', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '255', 250)
-		const result = await getPresetNumber(options, context)
-		expectIsErrorString(result)
+	test('out-of-range preset in the 90-99 gap is an error', async () => {
+		expectIsErrorString(await getPresetNumber(presetOptions(99)))
 	})
 
-	test('Text input resolves to invalid 255 but number input is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '255', 250)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(250)
-	})
-})
-
-describe('test recall preset values', () => {
-	test('User enters "37" as the preset', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '37', 11)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(37)
-	})
-
-	test('User enters "37" as the preset but number is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '37', 11)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(11)
-	})
-
-	test('Text input resolves to dec 254', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '254', 16)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(254)
-	})
-
-	test('Text input resolves to dec 254 but number is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '254', 16)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(16)
-	})
-})
-
-describe('test set preset values', () => {
-	test('User enters "37" as the preset', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '37', 82)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(37)
-	})
-
-	test('User enters "37" as the preset but number is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '37', 82)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(82)
-	})
-
-	test('Text input resolves to dec 254', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(true, '254', 77)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(254)
-	})
-
-	test('Text input resolves to dec 254 but number is used', async () => {
-		const context = new MockContext()
-		const options = optionsWithPresetAsNumberOrText(false, '254', 77)
-		const result = await getPresetNumber(options, context)
-		expect(result).toBe(77)
+	test('preset above 254 is an error', async () => {
+		expectIsErrorString(await getPresetNumber(presetOptions(255)))
 	})
 })
 

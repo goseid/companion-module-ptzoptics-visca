@@ -21,13 +21,7 @@ import { AutoTrackingActionId, TrackingId } from './actions/auto-tracking.js'
 import { NoiseReductionActionId } from './actions/noise-reduction.js'
 import { OnScreenDisplayMenuStateId, OSDActionId, OSDNavigateDirectionId } from './actions/osd.js'
 import { PanTiltActionId } from './actions/pan-tilt.js'
-import {
-	PresetActionId,
-	PresetAsNumberId,
-	PresetAsTextId,
-	PresetIsTextId,
-	PresetSpeedOptionId,
-} from './actions/presets.js'
+import { PresetActionId, PresetAsNumberId, PresetSpeedOptionId } from './actions/presets.js'
 import { isValidPreset } from './camera/presets.js'
 import { SharpnessActionId, SharpnessModeId, SharpnessPositionId } from './actions/sharpness.js'
 import { WhiteBalanceActionId, WhiteBalanceModeId } from './actions/white-balance.js'
@@ -344,12 +338,8 @@ export function getPresets(
 						actionId: PanTiltActionId.AbsolutePosition,
 						// Use the text/expression path per axis so the local variables resolve.
 						options: {
-							panPosIsText: true,
-							panPosAsNumber: 0,
-							panPosAsText: { isExpression: true, value: '$(local:PanPosition)' },
-							tiltPosIsText: true,
-							tiltPosAsNumber: 0,
-							tiltPosAsText: { isExpression: true, value: '$(local:TiltPosition)' },
+							panPosAsNumber: { isExpression: true, value: '$(local:PanPosition)' },
+							tiltPosAsNumber: { isExpression: true, value: '$(local:TiltPosition)' },
 							panSpeed: 12,
 							tiltSpeed: 12,
 						},
@@ -3534,10 +3524,8 @@ export function getPresets(
 						{
 							actionId: PresetActionId.SmartPresetDown,
 							options: {
-								[PresetIsTextId]: true,
-								[PresetAsNumberId]: n,
 								// Expression mode so the per-button local variable resolves.
-								[PresetAsTextId]: { isExpression: true, value: '$(local:PresetNumber)' },
+								[PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' },
 							},
 						},
 					],
@@ -3545,10 +3533,8 @@ export function getPresets(
 						{
 							actionId: PresetActionId.SmartPresetUp,
 							options: {
-								[PresetIsTextId]: true,
-								[PresetAsNumberId]: n,
 								// Expression mode so the per-button local variable resolves.
-								[PresetAsTextId]: { isExpression: true, value: '$(local:PresetNumber)' },
+								[PresetAsNumberId]: { isExpression: true, value: '$(local:PresetNumber)' },
 							},
 						},
 					],

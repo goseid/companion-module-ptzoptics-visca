@@ -1,9 +1,4 @@
-import type {
-	CompanionActionContext,
-	CompanionActionEvent,
-	CompanionOptionValues,
-	SomeCompanionActionInputField,
-} from '@companion-module/base'
+import type { CompanionActionEvent, CompanionOptionValues, SomeCompanionActionInputField } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
 import {
 	MoveToAbsolutePanTilt,
@@ -67,27 +62,20 @@ const PAN_TILT_POSITION_SPEED = 12
 
 type PanOrTilt = 'pan' | 'tilt'
 
-const posIsText = (type: PanOrTilt) => `${type}PosIsText`
-const posAsText = (type: PanOrTilt) => `${type}PosAsText`
 const posAsNumber = (type: PanOrTilt) => `${type}PosAsNumber`
 
 const speedMinMax = (type: PanOrTilt): [number, number] => (type === 'pan' ? [0x01, 0x18] : [0x01, 0x14])
 
 const speed = (type: PanOrTilt) => `${type}Speed`
 
-async function getPosition(
-	options: CompanionOptionValues,
-	type: PanOrTilt,
-	_context: CompanionActionContext,
-): Promise<number | string> {
-	const isText = Boolean(options[`${type}PosIsText`])
-	// In API 2.0 Companion resolves variables/expressions before the callback,
-	// so the text option is already the final resolved value.
-	const pos = isText ? Number(options[`${type}PosAsText`]) : Number(options[`${type}PosAsNumber`])
+function getPosition(options: CompanionOptionValues, type: PanOrTilt): number | string {
+	// The position field is a number the user can switch to Expression mode;
+	// Companion resolves value/expression before the callback.
+	const pos = Number(options[posAsNumber(type)])
 	const { min, max } = PanTiltBounds[type]
 	return min <= pos && pos <= max
 		? pos
-		: `${type[0].toUpperCase()}${type.slice(1)} position ${pos} not in range ${min} through ${max}`
+		: `${type[0].toUpperCase()}${type.slice(1)} position ${repr(options[posAsNumber(type)])} not in range ${min} through ${max}`
 }
 
 function getSpeed(options: CompanionOptionValues, type: PanOrTilt): number | string {
@@ -118,32 +106,15 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 	function positionTypeOptions(type: PanOrTilt): SomeCompanionActionInputField[] {
 		const uppercased = `${type[0].toUpperCase()}${type.slice(1)}`
 		const { min, max } = PanTiltBounds[type]
-		const positionTooltip = `${uppercased} position (${min} through ${max})`
 		return [
-			{
-				type: 'checkbox',
-				id: posIsText(type),
-				label: `Specify ${type} position from text`,
-				default: false,
-			},
 			{
 				type: 'number',
 				id: posAsNumber(type),
 				label: `${uppercased} position`,
-				tooltip: positionTooltip,
+				tooltip: `${uppercased} position (${min} through ${max}). Use Expression mode for a variable or formula.`,
 				default: 0,
 				min,
 				max,
-				isVisibleExpression: `!$(options:${posIsText(type)})`,
-			},
-			{
-				type: 'textinput',
-				id: posAsText(type),
-				label: `${uppercased} position`,
-				tooltip: positionTooltip,
-				useVariables: true,
-				default: '0',
-				isVisibleExpression: `!!$(options:${posIsText(type)})`,
 			},
 		]
 	}
@@ -171,14 +142,14 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 					default: 12,
 				},
 			],
-			callback: async ({ options }, context) => {
-				const panPosition = await getPosition(options, 'pan', context)
+			callback: async ({ options }) => {
+				const panPosition = getPosition(options, 'pan')
 				if (typeof panPosition === 'string') {
 					instance.log('error', `Pan/tilt to absolute: ${panPosition}`)
 					return
 				}
 
-				const tiltPosition = await getPosition(options, 'tilt', context)
+				const tiltPosition = getPosition(options, 'tilt')
 				if (typeof tiltPosition === 'string') {
 					instance.log('error', `Pan/tilt to absolute: ${tiltPosition}`)
 					return
@@ -203,31 +174,16 @@ export function panTiltActions(instance: PtzOpticsInstance): ActionDefinitions<P
 					tiltSpeed,
 				})
 			},
-			learn: async ({ options }, _context) => {
+			learn: async ({ options }) => {
 				const answer = await instance.sendInquiry(PanTiltPositionInquiry)
 				if (answer === null) {
 					return undefined
 				}
 
-				const learnedOpts: CompanionOptionValues = {}
-
-				const panPosIsText = Boolean(options[posIsText('pan')])
-				if (panPosIsText) {
-					learnedOpts[posAsText('pan')] = String(answer.panPosition)
-				} else {
-					learnedOpts[posAsNumber('pan')] = answer.panPosition
-				}
-
-				const tiltPosIsText = Boolean(options[posIsText('tilt')])
-				if (tiltPosIsText) {
-					learnedOpts[posAsText('tilt')] = String(answer.tiltPosition)
-				} else {
-					learnedOpts[posAsNumber('tilt')] = answer.tiltPosition
-				}
-
 				return {
 					...options,
-					...learnedOpts,
+					[posAsNumber('pan')]: answer.panPosition,
+					[posAsNumber('tilt')]: answer.tiltPosition,
 				}
 			},
 		},
