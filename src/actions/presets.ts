@@ -364,6 +364,11 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 				}
 
 				instance.sendCommand(PresetSave, { preset })
+				// Both save and recall leave the camera parked at this preset, so
+				// update the "last selected" variable/feedback either way — this is
+				// what lets native (non-smart) buttons drive the selected highlight.
+				instance.setVariableValues({ last_preset_selected: String(preset) })
+				instance.checkFeedbacks(FeedbackId.PresetSelected)
 			},
 		},
 		[PresetActionId.RecallPreset]: {
@@ -377,6 +382,8 @@ export function presetActions(instance: PtzOpticsInstance): ActionDefinitions<Pr
 				}
 
 				instance.sendCommand(PresetRecall, { preset })
+				instance.setVariableValues({ last_preset_selected: String(preset) })
+				instance.checkFeedbacks(FeedbackId.PresetSelected)
 			},
 		},
 		[PresetActionId.SetPresetDriveSpeed]: {
