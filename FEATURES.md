@@ -22,6 +22,7 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 - **Focus Direct** preset driven by a `FocusPosition` local variable (custom focus-point buttons).
 - `zoom_position_bar` / `focus_position_bar` bars; rotary-encoder presets + background image.
 - Dual zoom coordinate handling (stepper vs ZoomDirect) for correct stepping.
+- **Smooth rotary** (pan/tilt/zoom/focus): shared optimistic-target accumulator resyncs on idle and coalesces sends so fast encoder spins don't undershoot or flood the queue (velocity-free — per-tick step unchanged).
 
 ## Exposure
 
