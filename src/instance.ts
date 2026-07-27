@@ -187,6 +187,18 @@ export class PtzOpticsInstance extends InstanceBase<PtzOpticsInstanceTypes> {
 		if (this.#speed > 0x01) this.#speed--
 	}
 
+	/**
+	 * Cleanup callbacks run on `destroy()` — used by action factories (e.g. the
+	 * rotary throttle in `panTiltActions`) that own timers Companion won't
+	 * otherwise clear.
+	 */
+	#cleanupCallbacks: Array<() => void> = []
+
+	/** Register a callback to run when this instance is destroyed. */
+	registerCleanup(fn: () => void): void {
+		this.#cleanupCallbacks.push(fn)
+	}
+
 	// -- Smart preset hold-to-save state --
 
 	/** Timer handle for the smart-preset hold detection. */
@@ -301,6 +313,8 @@ export class PtzOpticsInstance extends InstanceBase<PtzOpticsInstanceTypes> {
 	override async destroy(): Promise<void> {
 		this.log('info', `destroying module: ${this.id}`)
 		this.#clearSmartPresetTimer()
+		for (const fn of this.#cleanupCallbacks) fn()
+		this.#cleanupCallbacks = []
 		this.#stopPolling()
 		this.#visca.close('Instance is being destroyed', InstanceStatus.Disconnected)
 	}
