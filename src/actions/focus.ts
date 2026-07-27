@@ -16,6 +16,10 @@ import {
 import { FeedbackId } from '../feedbacks.js'
 import type { PtzOpticsInstance } from '../instance.js'
 import { optionConversions } from './option-conversion.js'
+import { createRotaryAccumulator } from '../utils/rotary-accumulator.js'
+
+/** Per-tick focus step (FocusDirect units) for rotary Far/Near. */
+const FOCUS_POSITION_STEP = 1
 
 export enum FocusActionId {
 	SelectFocusMode = 'focusM',
@@ -50,6 +54,16 @@ const [getFocusMode, focusModeToOption] = optionConversions<FocusMode, typeof Fo
 )
 
 export function focusActions(instance: PtzOpticsInstance): ActionDefinitions<FocusActionId> {
+	// Smooth, velocity-free rotary focus: accumulate against an optimistic target
+	// so fast spins don't undershoot from stale polled reads, and coalesce sends.
+	const focusStep = createRotaryAccumulator({
+		min: 0,
+		max: 0xffff,
+		getCurrent: () => Number(instance.getVariableValue('focus_position')) || 0,
+		sendTarget: (position) => instance.sendCommand(FocusDirect, { position }),
+		registerCleanup: (fn) => instance.registerCleanup(fn),
+	})
+
 	return {
 		[FocusActionId.SelectFocusMode]: {
 			name: 'Focus Mode',
@@ -142,18 +156,14 @@ export function focusActions(instance: PtzOpticsInstance): ActionDefinitions<Foc
 			name: 'Focus Position Far',
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
-				const current = Number(instance.getVariableValue('focus_position')) || 0
-				const position = Math.min(current + 1, 0xffff)
-				instance.sendCommand(FocusDirect, { position })
+				focusStep(FOCUS_POSITION_STEP)
 			},
 		},
 		[FocusActionId.FocusPositionNear]: {
 			name: 'Focus Position Near',
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
-				const current = Number(instance.getVariableValue('focus_position')) || 0
-				const position = Math.max(current - 1, 0)
-				instance.sendCommand(FocusDirect, { position })
+				focusStep(-FOCUS_POSITION_STEP)
 			},
 		},
 		[FocusActionId.SetFocusPosition]: {

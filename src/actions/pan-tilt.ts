@@ -11,6 +11,7 @@ import {
 import type { PtzOpticsInstance } from '../instance.js'
 import { speedChoices } from './speeds.js'
 import { repr } from '../utils/repr.js'
+import { ROTARY_RESYNC_MS, ROTARY_THROTTLE_MS } from '../utils/rotary-accumulator.js'
 
 /**
  * The id of the obsolete action to set module-global pan/tilt speed using
@@ -59,27 +60,6 @@ const PAN_TILT_POSITION_STEP = 1
 
 /** Default speed for relative pan/tilt position movements. */
 const PAN_TILT_POSITION_SPEED = 12
-
-/**
- * Idle time (ms) after which a rotary axis resyncs its optimistic target to the
- * polled position, so rotary moves don't fight movements made by other controls.
- * Must be longer than the poll refresh so the polled value is fresh after a pause.
- */
-const ROTARY_RESYNC_MS = 400
-
-/**
- * Coalescing window (ms): ticks within this window of the last send only update
- * the accumulated target, then a single command moves to the total (so 4 quick
- * clicks become one move to current+4 rather than 4 separate 1-step moves).  The
- * first click of a move still sends immediately (leading edge); only rapid
- * follow-ups combine.  Wider = more coalescing on fast spins (fewer, larger
- * moves); narrower = more individual steps.
- *
- * The Stream Deck encoder tops out at ~50ms/tick (20 ticks/sec), so 150ms folds
- * ~3 ticks per send on a fast spin while deliberate single clicks (>=~600ms
- * apart, measured) always send individually.
- */
-const ROTARY_THROTTLE_MS = 150
 
 const clamp = (value: number, lo: number, hi: number): number => Math.min(Math.max(value, lo), hi)
 

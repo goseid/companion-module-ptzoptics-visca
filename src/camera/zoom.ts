@@ -19,6 +19,7 @@ export const ZoomDirect = new ModuleDefinedCommand([0x81, 0x01, 0x04, 0x47, 0x00
 	},
 })
 
+/** @public Kept for future use — reads zoom position in ZoomDirect coordinates. */
 export const ZoomPositionInquiry = new ModuleDefinedInquiry([0x81, 0x09, 0x04, 0x47, 0xff], {
 	bytes: [0x90, 0x50, 0x00, 0x00, 0x00, 0x00, 0xff],
 	params: {

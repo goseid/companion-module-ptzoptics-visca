@@ -1,16 +1,9 @@
 import type { CompanionActionEvent } from '@companion-module/base'
 import type { ActionDefinitions } from './actionid.js'
-import {
-	ZoomDirect,
-	ZoomIn,
-	ZoomInVariable,
-	ZoomOut,
-	ZoomOutVariable,
-	ZoomPositionInquiry,
-	ZoomStop,
-} from '../camera/zoom.js'
+import { ZoomDirect, ZoomIn, ZoomInVariable, ZoomOut, ZoomOutVariable, ZoomStop } from '../camera/zoom.js'
 import type { PtzOpticsInstance } from '../instance.js'
 import { FeedbackId } from '../feedbacks.js'
+import { createRotaryAccumulator } from '../utils/rotary-accumulator.js'
 
 export enum ZoomActionId {
 	StartZoomIn = 'zoomI',
@@ -43,6 +36,18 @@ const ZOOM_DIRECT_STEP = 4
 const STEPPER_TO_DIRECT_RATIO = 3.1875
 
 export function zoomActions(instance: PtzOpticsInstance): ActionDefinitions<ZoomActionId> {
+	// Smooth, velocity-free rotary zoom.  ZoomDirect uses a different coordinate
+	// system than the polled `zoom_position` (stepper units), so seed the target
+	// from the polled value scaled by STEPPER_TO_DIRECT_RATIO and accumulate in
+	// ZoomDirect units — this also drops the former per-tick position inquiry.
+	const zoomStep = createRotaryAccumulator({
+		min: 0,
+		max: 0xffff,
+		getCurrent: () => Math.round((Number(instance.getVariableValue('zoom_position')) || 0) * STEPPER_TO_DIRECT_RATIO),
+		sendTarget: (position) => instance.sendCommand(ZoomDirect, { position }),
+		registerCleanup: (fn) => instance.registerCleanup(fn),
+	})
+
 	return {
 		[ZoomActionId.StartZoomIn]: {
 			name: 'Zoom In',
@@ -85,20 +90,14 @@ export function zoomActions(instance: PtzOpticsInstance): ActionDefinitions<Zoom
 			name: 'Zoom Position In',
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
-				const answer = await instance.sendInquiry(ZoomPositionInquiry)
-				if (answer === null) return
-				const position = Math.min(answer.position + ZOOM_DIRECT_STEP, 0xffff)
-				instance.sendCommand(ZoomDirect, { position })
+				zoomStep(ZOOM_DIRECT_STEP)
 			},
 		},
 		[ZoomActionId.ZoomPositionOut]: {
 			name: 'Zoom Position Out',
 			options: [],
 			callback: async (_event: CompanionActionEvent) => {
-				const answer = await instance.sendInquiry(ZoomPositionInquiry)
-				if (answer === null) return
-				const position = Math.max(answer.position - ZOOM_DIRECT_STEP, 0)
-				instance.sendCommand(ZoomDirect, { position })
+				zoomStep(-ZOOM_DIRECT_STEP)
 			},
 		},
 		[ZoomActionId.SetZoomPosition]: {
