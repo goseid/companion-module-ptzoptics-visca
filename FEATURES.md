@@ -50,7 +50,7 @@ Branched from upstream at `c7b82d8` (2026-02-24).
 
 ## Presets (buttons)
 
-- **Camera preset buttons** (~245, one per valid preset): native hold-to-save built from Companion duration groups — short release recalls (at the global recall speed), holding >1s saves and lights the (global) save-active highlight until release. Transparent (visible/re-timeable timing, stackable actions) and safeguard-correct. Each carries a `PresetNumber` local variable set to its number; copy any button and change only `PresetNumber` to retarget it.
+- **Camera preset buttons** (~245, one per valid preset): native hold-to-save built from Companion duration groups — short release recalls (at the global recall speed), holding >1s saves and lights the (global) save-active highlight until release. Transparent (visible/re-timeable timing, stackable actions) and safeguard-correct. Each carries a `PresetNumber` local variable set to its number (copy any button and change only `PresetNumber` to retarget it) plus a `PresetName` label variable (default "Preset") for the top text line, so a button can be given a friendly name without touching its actions.
 - Enabler actions: **Recall Preset** / **Set Preset** update `last_preset_selected` (and Set raises / Recall clears `preset_save_active`); **Clear Preset Save Indicator** turns the highlight off on release.
 - Config-driven preset button colors; global **preset recall speed** (`81 01 06 01 ss FF`).
 - `PresetSaveActive` (yellow, global) + `PresetSelected` (orange) feedbacks.
