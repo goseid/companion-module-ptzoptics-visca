@@ -3495,7 +3495,9 @@ export function getPresets(
 	// >1s saves and lights the (global) save-active highlight until release.  Each
 	// carries a `PresetNumber` local variable set to its preset number, so the
 	// text, recall/save, and "selected" feedback all follow it — copy any button
-	// and change `PresetNumber` to retarget it.  Built from native duration groups
+	// and change `PresetNumber` to retarget it.  A `PresetName` local variable
+	// (default "Preset") sets the top text line, so users can give a button a
+	// friendly label without touching the actions.  Built from native duration groups
 	// (see the Recall/Set/ClearPresetSaveActive actions) so the timing and any
 	// stacked actions are visible and editable.
 	const cameraPresetIds: string[] = []
@@ -3513,9 +3515,14 @@ export function getPresets(
 					variableName: 'PresetNumber',
 					startupValue: n,
 				},
+				{
+					variableType: 'simple',
+					variableName: 'PresetName',
+					startupValue: 'Preset',
+				},
 			],
 			style: {
-				text: 'Preset\\n$(local:PresetNumber)',
+				text: '$(local:PresetName)\\n$(local:PresetNumber)',
 				size: '18',
 				color: presetColorText,
 				bgcolor: presetColorBG,
